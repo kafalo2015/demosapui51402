@@ -1,0 +1,119 @@
+<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.old.Main"
+    displayBlock="true"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout"
+    xmlns="sap.m"
+	>
+		
+		<l:BlockLayout id="BlockLayout" background="{/selectedBackground}">
+			<l:BlockLayoutRow accentCells="Accent1">
+				<l:BlockLayoutCell
+					id="Accent1"
+					backgroundColorSet="ColorSet6"  backgroundColorShade="ShadeD"
+					title=" ">
+				<VBox height = "" width = "140px">
+
+				
+         	    <Label text="Date Charg." labelFor="DP_DATE_CHARGEMENT" />
+				
+				<DatePicker
+					id="DP_DATE_CHARGEMENT"
+				    value="{
+					      path: 'chargementQuaiSelectionDateModel>/datechargement',		     
+						   formatOption: {
+							style: 'short',
+							strictParsing: 'true'
+						  }
+                            
+				     }"		
+					change=".handleChange" />   
+		   
+		    <Button 
+				text="Liste des chargements"
+				press=".handleNav">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+				<customData>
+					<core:CustomData
+						key="target"
+						value="pageChargList" />
+				</customData>
+			</Button>
+
+			<Button 
+				text="Chargement de quais"
+				press=".handleNav">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+				<customData>
+					<core:CustomData
+						key="target"
+						value="pageChargementQuai" />
+				</customData>
+			</Button>
+			<Button  
+				text="Application de tests"
+				press=".handleNav">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+				<customData>
+					<core:CustomData
+						key="target"
+						value="pageApp" />
+				</customData>
+			</Button>
+
+			
+		<Text maxLines="20" text="&#xA;&#xA;Version 09/04/2025&#xA;&#xA;Link vers le quai sans le bug sur le selected key"/> 
+        <Text maxLines="20" text="&#xA;&#xA;Version 10/04/2025&#xA;&#xA; Busy Indicator de chargement et NavigationList-> dernier quai OK"/> 
+		<Text maxLines="20" text="&#xA;&#xA;Version 11/04/2025 Busy Indicator de chargement V2 et NavigationList-> dernier quai OK"/> 
+
+
+		   <Button
+         id="helloDialogButton"
+         text="Appel dialog fragment"
+         press=".onOpenDialog"
+         class="sapUiSmallMarginEnd"/>
+			
+		</VBox>	
+					
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell title="" width ="6" backgroundColorSet="ColorSet6" backgroundColorShade="ShadeA" class="sapUiNoContentPadding">
+					<NavContainer
+						
+						id="navContainerMain"
+						width="90%"
+						height="150em"
+						class="navContainerControl sapUiSmallMarginBottom">
+
+			<Page title="Liste des chargements"  id = "pageChargList" enableScrolling = "false">
+					<content>
+		             <mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.ChargementList" />
+					</content>
+			</Page> 
+			
+				<Page title="Chargement des quais"  showHeader="false" id = "pageChargementQuai" enableScrolling = "false">
+					<content>
+		            <!-- <mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.AppChargementQuais" />-->
+					<mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.AppChargementQuaisIconTabBar" />
+					</content>
+				</Page>
+
+            <Page title="Application de tests" id = "pageApp">
+					<content>
+		             <mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.tests.TestApp" />
+					</content>
+				</Page>   
+
+		</NavContainer>	
+
+				</l:BlockLayoutCell>
+				
+			</l:BlockLayoutRow>
+            </l:BlockLayout>
+      
+</mvc:View>

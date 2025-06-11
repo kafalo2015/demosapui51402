@@ -1,0 +1,308 @@
+{
+    "_version": "1.70.1",
+    "sap.app": {
+        "id": "clf.demo.sapui51402.demosapui04042025",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "applicationVersion": {
+            "version": "0.0.1"
+        },
+      
+        
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "resources": "resources.json",
+        "sourceTemplate": {
+            "id": "@sap/generator-fiori:basic",
+            "version": "1.16.3",
+            "toolsId": "a010ed0b-a9c9-4fb5-a22d-27573be4e57d"
+        },
+        "dataSources": {
+            "ServiceJsonBas_local": {
+                "uri": "/rest_bac/POCUI5SERVICE/chargement",
+                "type": "JSON"               
+            },  
+            "ServiceJsonBas_build": {
+                "uri": "http://sexa-sapoc-s4.exaclair.clairefontaine.local:8001/POCUI5SERVICE/chargement",
+                "type": "JSON"  
+            },        
+            "ServiceRestJson_ChargQuai_local": {
+                "uri": "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement",
+                "type": "JSON"               
+            },  
+            "ServiceRestJson_ChargList_local": {
+                "uri": "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list",
+                "type": "JSON"               
+            }, 
+            "ServiceRestJson_ChargQuai_build": {
+                "uri": "http://shds-sapdev.exaclair.clairefontaine.local:1080/sap/bc/gui/sap/its/zpcf_chargement/chargement",
+                "type": "JSON"  
+            },
+            "ServiceRestJson_ChargList_build": {
+                "uri": "http://shds-sapdev.exaclair.clairefontaine.local:1080/sap/bc/gui/sap/its/zpcf_chargement/chargement_list",
+                "type": "JSON"  
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "",
+            "favIcon": "",
+            "phone": "",
+            "phone@2": "",
+            "tablet": "",
+            "tablet@2": ""
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.132.1",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.core": {},
+                "sap.ui.layout": {},
+                "sap.f": {},
+                "sap.tnt": {}
+               
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            
+          
+                   
+        },
+        "resources": {
+            "css": [
+                {
+                    "uri": "css/style.css"
+                }
+            ]
+        },
+        "routing": {
+            "config": {
+                "routerClass": "sap.m.routing.Router",
+                "controlAggregation": "pages",
+                "controlId": "navContainerMain",
+                "transition": "slide",
+                "bypassed": {
+               "target": "notFound"
+                  },
+                "type": "View",
+                "viewType": "XML",
+                "path": "clf.demo.sapui51402.demosapui51402.view"
+               
+            },
+            "routes": [
+                {
+                    "name": "RouteHome",
+                    "pattern": "",
+                    "target": [
+                        "TargetChargementList"
+                    ]
+                },
+                {
+                    "name": "RouteChargementList",
+                    "pattern": "chargementprevu",
+                    "target": [
+                        "TargetChargementList"
+                    ]
+                },
+                {
+                    "name": "RouteChargementQuais",
+                    "pattern": "chargementquais",
+                    "target": [
+                        "TargetChargementQuais"
+                    ]
+                },
+                {
+                    "name": "RouteChargementQuai08",
+                    "pattern": "chargementquai08",
+                    "target": [
+                        "TargetChargementQuai08"
+                    ]
+                },
+                 {
+                    "name": "RouteChargementQuai09",
+                    "pattern": "chargementquai09",
+                    "target": [
+                        "TargetChargementQuai09"
+                    ]
+                },
+                {
+                    "name": "RouteChargementQuai10",
+                    "pattern": "chargementquai10",
+                    "target": [
+                        "TargetChargementQuai10"
+                    ]
+                },
+                {
+                    "name": "RouteChargementQuai11",
+                    "pattern": "chargementquai11",
+                    "target": [
+                        "TargetChargementQuai11"
+                    ]
+                },   
+                {
+                    "name": "RouteChargementQuai12",
+                    "pattern": "chargementquai12",
+                    "target": [
+                        "TargetChargementQuai12"
+                    ]
+                },
+                {
+                    "name": "RouteChargementQuai13",
+                    "pattern": "chargementquai13",
+                    "target": [
+                        "TargetChargementQuai13"
+                    ]
+                },   
+                {
+                    "name": "RouteChargementQuai14",
+                    "pattern": "chargementquai14",
+                    "target": [
+                        "TargetChargementQuai14"
+                    ]
+                },
+                {
+                    "name": "RouteChargementQuai15",
+                    "pattern": "chargementquai15",
+                    "target": [
+                        "TargetChargementQuai15"
+                    ]
+                }                     
+            ],
+            "targets": {
+                "TargetChargementList": {
+                    "id": "ChargementList",
+                    "name": "ChargementList",
+                    "level" : 2,
+                    "transition": "slide",
+                    "clearControlAggregation": true
+                    
+                },
+                "TargetChargementQuais": {
+                    "id": "AppChargementQuaisIconTabBar",
+                    "name": "AppChargementQuaisIconTabBar",
+                    "level" : 2,
+					"transition": "slide"
+                },
+                "TargetChargementQuai08": {
+                    "id": "quai8",
+                    "name": "quai8",
+                    "parent" :  "TargetChargementQuais",
+                    "controlId": "idIconTabBarQuais",
+                    "controlAggregation": "content",
+                    "clearControlAggregation": true,
+                    "level" : 8,
+                    "transition": "fade"
+                    
+                },
+                  "TargetChargementQuai09": {
+                    "id": "quai9",
+                    "name": "quai9",
+                    "parent" :  "TargetChargementQuais",
+                    "controlId": "idIconTabBarQuais",
+                    "controlAggregation": "content",
+                    "clearControlAggregation": true,
+                    "level" : 9,
+                    "transition": "fade"
+                    
+                },
+                "TargetChargementQuai10": {
+                    "id": "quai10",
+                    "name": "quai10",
+                    "parent" :  "TargetChargementQuais",
+                    "controlId": "idIconTabBarQuais",
+                    "controlAggregation": "content",
+                    "clearControlAggregation": true,
+                    "level" : 2,
+                    "transition": "slide"
+                    
+                },
+                "TargetChargementQuai11": {
+                    "id": "quai11",
+                    "name": "quai11",
+                    "parent" :  "TargetChargementQuais",
+                    "controlId": "idIconTabBarQuais",
+                    "controlAggregation": "content",
+                    "clearControlAggregation": true,
+                    "level" : 2,
+                    "transition": "slide"
+                    
+                },
+                "TargetChargementQuai12": {
+                    "id": "quai12",
+                    "name": "quai12",
+                    "parent" :  "TargetChargementQuais",
+                    "controlId": "idIconTabBarQuais",
+                    "controlAggregation": "content",
+                    "clearControlAggregation": true,
+                    "level" : 2,
+                    "transition": "slide"
+                    
+                },
+                "TargetChargementQuai13": {
+                    "id": "quai13",
+                    "name": "quai13",
+                    "parent" :  "TargetChargementQuais",
+                    "controlId": "idIconTabBarQuais",
+                    "controlAggregation": "content",
+                    "clearControlAggregation": true,
+                    "level" : 2,
+                    "transition": "slide"
+                   
+                },
+                "TargetChargementQuai14": {
+                    "id": "quai14",
+                    "name": "quai14",
+                    "parent" :  "TargetChargementQuais",
+                    "controlId": "idIconTabBarQuais",
+                    "controlAggregation": "content",
+                    "clearControlAggregation": true,
+                    "level" : 2,
+                    "transition": "slide"
+                   
+                },
+                "TargetChargementQuai15": {
+                    "id": "quai15",
+                    "name": "quai15",
+                    "parent" :  "TargetChargementQuais",
+                    "controlId": "idIconTabBarQuais",
+                    "controlAggregation": "content",
+                    "clearControlAggregation": true,
+                    "level" : 2,
+                    "transition": "slide"
+                    
+                },
+                "TargetMain": {
+                    "id": "Main",
+                    "name": "Main"
+                },
+                "notFound": {
+                    "id": "notFound",
+                    "name": "NotFound",
+                     "path": "clf.demo.sapui51402.demosapui51402.view.error",
+                     "viewPath": "clf.demo.sapui51402.demosapui51402.view.error",
+                     "transition": "show"
+                 }
+
+            }
+        },
+        "rootView": {
+            "viewName": "clf.demo.sapui51402.demosapui51402.view.MainSideNavigation",       
+            "type": "XML",
+            "id": "App"
+        }
+    }
+}

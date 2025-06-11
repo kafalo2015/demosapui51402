@@ -1,0 +1,135 @@
+<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.ChargementQuais"
+    xmlns:l="sap.ui.layout"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:si="sap.suite.ui.commons.statusindicator"
+    xmlns="sap.m"
+	height = "100%">
+	  
+ <l:BlockLayout id="blockLayout" class="sapUiSmallMargin">
+		<l:BlockLayoutRow >
+			<l:BlockLayoutCell
+			   title="Quai: {chargementModelJson>/results/0/quai} Transport: {chargementModelJson>/results/0/numtransport}"
+			   titleAlignment = "Begin"
+			   width = "75"
+			   class="sapUiContentPadding sapUiNoMarginBegin sapUiNoMarginBottom"
+			   backgroundColorSet="ColorSet9"
+			   backgroundColorShade="ShadeE">
+					<FlexBox
+				     direction="Row"
+				     justifyContent="Start"
+				     alignItems="Center">
+					 <items>
+                        <Label  id= "LabelChargeur" class="sapUiTinyMarginEnd" text="Chargeur"  design="Bold"  />
+						<Text id="Chargeur_txt"  class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/0/zpcfName1}"/>
+						 <Label id= "LabelTransporteur" class="sapUiTinyMarginEnd" text="Transporteur"  design="Bold" />
+				         <Text id= "NumTransporteur_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/0/transporteur}"/>
+				         <Label id= "LabelFauxCam" text="Faux Camion" class="sapUiTinyMarginEnd" design="Bold" /> 
+				        <Text id="faux_camion_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/0/fauxcamion}"/>
+						 </items>
+				</FlexBox> 
+			</l:BlockLayoutCell>
+			<l:BlockLayoutCell
+			   title=""
+			   width = "25"
+			   backgroundColorSet="ColorSet9"
+			   backgroundColorShade="ShadeD">
+					 <ProgressIndicator
+						id="LoadingIndicator"
+						class="sapUiSmallMarginBottom"
+						percentValue="{= %{chargementModelJson>/results/0/umCharg} === 0?0:%{chargementModelJson>/results/0/umCharg} / %{chargementModelJson>/results/0/umNb} * 100 }"
+						displayValue="{= %{chargementModelJson>/results/0/umCharg} === 0?0:%{chargementModelJson>/results/0/umCharg} / %{chargementModelJson>/results/0/umNb} * 100 }%"
+						state="Information"
+						displayOnly="true"
+						displayAnimation= "true" />
+				     <FlexBox
+						direction="Row"
+						justifyContent="Center"
+						alignItems="Center">
+						<items>
+						<Label id= "LabelUmcharg" text="Chargées" class="sapUiTinyMarginEnd"  design="Bold" /> 
+						<Text id= "InputUmCharg" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/0/umCharg}"  />
+						<Label id= "LabelUmNb" text="Nb Um" class="sapUiTinyMarginEnd" design="Bold" /> 
+						<Text id= "InputUmNb" text="{chargementModelJson>/results/0/umNb}"  />
+						</items>
+				    </FlexBox>	
+			</l:BlockLayoutCell>
+		</l:BlockLayoutRow>
+	</l:BlockLayout> 
+			
+	<ScrollContainer height='220px' vertical='true'>
+	  <Table id="TablePostesNonCharges_quai08"  class="sapSmallMargin" backgroundDesign = "Solid"  width="auto" headerText="Postes restants" enableBusyIndicator = "true" 
+		items="{
+				path : 'chargementModelJson>/results/0/tPosteNocharge'	  		
+			}">
+	    <columns>
+         	   <Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
+			<Column hAlign="Begin" width="6%"> <Text text="Poste Livr."/> </Column>
+			<Column hAlign="Begin" width="12%"> <Text text="Article" /> </Column>	
+			<Column hAlign="Begin" width="10%"> <Text text="Type UM" /> </Column>
+			<Column hAlign="Begin" width="10%"> <Text text="Commande" /> </Column>	
+			<Column hAlign="Begin" width="25%"> <Text text="Client" /> </Column>	
+			<Column hAlign="Begin" width="7%"> <Text text="UMs chargés" /> </Column>	
+			<Column hAlign="Begin" width="7%"> <Text text="UMs à charger" /></Column>	
+		    <Column hAlign="Begin" width="12%"> <Text text="UMs fauxCam" /></Column>
+			<Column hAlign="Begin" width="1%"> <Text text="" /></Column>	
+		</columns>
+		<items>
+			<ColumnListItem type="Inactive" press=".onPress">
+				<cells>
+				    <ObjectIdentifier  title="{chargementModelJson>numliv}"  />
+				    <ObjectIdentifier title="{chargementModelJson>pstliv}" />
+					<Text text="{chargementModelJson>codart}" />
+					<ObjectIdentifier title="{chargementModelJson>labelTypum}" />
+					<Text text="{chargementModelJson>numcde}" />
+					<Text text="{chargementModelJson>name1}" />
+					<Text text="{chargementModelJson>nbumch}" />
+					<Text text="{chargementModelJson>nbumac}" />
+					<Button text="Ums fauxCam" 	press=".onSelectDialogPress"/>
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>	
+		</ScrollContainer>
+			<ScrollContainer height='270px' vertical='true'>
+	    <Table id="tableChargementUM_quai08" class="sapSmallMargin" width="auto" headerText="UMs Chargés" enableBusyIndicator = "true"
+		items="{
+				path : 'chargementModelJson>/results/0/tChargItem'			
+			}">
+		
+		<columns>
+			<Column hAlign="Begin" width="17%"> <Text text="Um" />          </Column>
+			<Column hAlign="Begin" width="10%">  <Text text="Livraison" />  </Column>
+			<Column hAlign="Begin" width="6%">  <Text text="Poste" />       </Column>
+			<Column hAlign="Begin" width="12%">  <Text text="Article" />    </Column>
+			<Column hAlign="Begin" width="6%">  <Text text="Qtite" />       </Column>
+			<Column hAlign="Begin" width="49%"> <Text text="" />            </Column>
+		</columns>
+		<items>
+			<ColumnListItem type="Inactive" press=".onPress">
+				<cells>
+				   <ObjectIdentifier  title="{chargementModelJson>um}"  />
+				    <ObjectIdentifier title="{chargementModelJson>vbeln}" />
+					<ObjectIdentifier title="{chargementModelJson>poste}" />						
+					<Text text="{chargementModelJson>article}" />
+					<Text text="{chargementModelJson>qtite}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+	</ScrollContainer>
+		<MessageStrip id = "messageStripError"
+				text=""
+				type="Error"
+				showIcon="true"
+				visible = "false"
+				class="sapUiNoMarginBottom">
+			</MessageStrip>
+			<MessageStrip id = "messageStripInformation"
+				text=""
+				type="Success"
+				showIcon="true"
+				visible = "false"
+				class="sapUiNoMarginBottom sapUiNoMarginBegin">
+			</MessageStrip>
+    </mvc:View>

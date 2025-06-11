@@ -1,0 +1,24 @@
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core">
+   <!--<Dialog
+      id="busyDialog"
+      title="Hello">
+	  <beginButton>
+         <Button
+            text = "Fermer"
+            press=".onCloseDialog"/>
+      </beginButton>
+	  
+	   </Dialog> -->
+
+	   <BusyDialog
+	    id="busyDialog"
+		title="Réactualisation des quais"
+		text="... les quais sont en cours de chargement..."
+		showCancelButton="false"
+		close="onDialogClosed" />
+
+       
+      
+</core:FragmentDefinition>

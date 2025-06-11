@@ -1,0 +1,73 @@
+<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.demo.Demoui5chargementjson2"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+
+
+
+      <Table
+		id="chargementTable"
+		class="sapUiResponsiveMargin"
+		width="auto"
+		items="{
+				path : 'chargementModelJsonBas>/results'			
+			}">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Bas JSON" />
+				<ToolbarSpacer />
+				<SearchField
+					width="50%"
+					search=""/>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column
+				hAlign="Begin"
+				minScreenWidth="Small"
+				demandPopin="true"
+				>
+				<Text text="QUAI" />
+			</Column>
+			<Column>
+				<Text text="NUMTRANSPORT" />
+			</Column>
+			<Column
+				minScreenWidth="Small"
+				demandPopin="true">
+				<Text text="TRANSPORTEUR" />
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="false">
+				<Text text="CODE_MATRICULE" />
+			</Column>
+			<Column hAlign="End">
+				<Text text="UM_CHARG" />
+			</Column>
+
+		
+		</columns>
+		<items>
+			<ColumnListItem
+				type="Navigation"
+				press=".onPress">
+				<cells>
+				   <ObjectIdentifier title="{chargementModelJsonBas>quai}" />
+				    <ObjectIdentifier title="{chargementModelJsonBas>FAUXCAMION}" />
+					 <ObjectIdentifier title="{chargementModelJsonBas>NUMTRANSPORT}" />
+					<!--<ObjectNumber
+						number="{invoice>Quantity}"
+						emphasized="false"/>-->
+								
+					<Text text="{chargementModelJsonBas>TRANSPORTEUR}" />
+					<Text text="{chargementModelJsonBas>CODE_MATRICULE }" />
+					<Text text="{chargementModelJsonBas>UM_CHARG }" />
+					<Text text="{chargementModelJsonBas>UM_NB }" />
+								
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+    	
+    </mvc:View>

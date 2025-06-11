@@ -1,0 +1,93 @@
+<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.old.AppChargementQuais"
+displayBlock="true"
+xmlns:core="sap.ui.core"
+xmlns:mvc="sap.ui.core.mvc"
+xmlns:l="sap.ui.layout"
+xmlns="sap.m">
+<l:BlockLayout id="BlockLayout" >
+<l:BlockLayoutRow accentCells="Accent1">
+<l:BlockLayoutCell id="Accent1" backgroundColorSet="ColorSet6" backgroundColorShade="ShadeB" title="" class="sapUiNoContentPadding">
+<VBox height = "50rem" width ="85px" >
+<List headerText="QUAIS" mode="None" items="{path: 'chargementModelJson>/results'}"  >
+		<CustomListItem>
+		<HBox>
+				<!--<core:Icon size="2rem" src="sap-icon://shipping-status" class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" />-->
+				<VBox class=" " >
+						<Button
+						text="{chargementModelJson>quai}" icon="sap-icon://shipping-status" type="Transparent"
+						enabled = "{=%{chargementModelJson>chargementEncours} === true ? true: false }"
+						press=".handleNav">
+						<layoutData>
+						<FlexItemData growFactor="1" />
+						</layoutData>
+						<customData>
+						<core:CustomData
+						key="target"
+						value="{chargementModelJson>quai}" />
+						</customData>
+						</Button>
+				</VBox>
+		</HBox>
+		</CustomListItem>
+</List>
+</VBox>
+</l:BlockLayoutCell>
+<l:BlockLayoutCell title="" width = "13" backgroundColorSet="ColorSet6" backgroundColorShade="ShadeA" class="sapUiNoContentPadding">
+<NavContainer navigationFinished ="navigationFinished"  id="navContainerHeader" width="98%" class="navContainerControl sapUiSmallMarginBottom">
+<Page title="CHARGEMENT EN COURS QUAI 10" titleAlignment="Center" id = "QUAI10" enableScrolling = "false">
+<content>
+<mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.quai10" />
+</content>
+</Page>
+
+<Page title="CHARGEMENT EN COURS QUAI 11" titleAlignment="Center" id = "QUAI11" enableScrolling = "false">
+<content>
+<mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.quai11" />
+</content>
+</Page>
+<Page title="CHARGEMENT EN COURS QUAI 12" titleAlignment="Center" id = "QUAI12" enableScrolling = "false">
+<content>
+<mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.quai12" />
+</content>
+</Page>
+
+<Page title="CHARGEMENT EN COURS QUAI 13" titleAlignment="Center" id = "QUAI13" enableScrolling = "false">
+<content>
+<mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.quai13" />
+</content>
+</Page>
+
+<Page title="CHARGEMENT EN COURS QUAI 14" titleAlignment="Center" id = "QUAI14" enableScrolling = "false">
+<content>
+<mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.quai14" />
+</content>
+</Page>
+
+<Page title="CHARGEMENT EN COURS QUAI 15" titleAlignment="Center" id = "QUAI15" enableScrolling = "false">
+<content>
+<mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.quai15" />
+</content>
+</Page>
+
+
+</NavContainer>
+</l:BlockLayoutCell>
+</l:BlockLayoutRow>
+
+
+
+
+
+
+
+
+
+</l:BlockLayout>
+
+</mvc:View>
+
+
+
+
+
+

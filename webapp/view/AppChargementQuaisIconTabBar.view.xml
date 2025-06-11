@@ -1,0 +1,39 @@
+<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.AppChargementQuaisIconTabBar"
+displayBlock="true"
+xmlns:core="sap.ui.core"
+xmlns:mvc="sap.ui.core.mvc"
+xmlns:l="sap.ui.layout"
+xmlns="sap.m"
+height = "100%">
+	<IconTabBar
+		id="idIconTabBarQuais"
+		expandable = "false"
+		select=".onTabSelect"
+		class="sapUiResponsiveContentPadding"
+		items = "{chargementModelJson>/results}"  >
+		<items>
+			<IconTabFilter
+				icon="sap-icon://inventory"
+				iconColor="{=%{chargementModelJson>chargementEncours} === true ? 'Positive': 'Negative' }"
+				count="{chargementModelJson>numtransport}"
+				text="{chargementModelJson>quai}"
+				design = 'Horizontal'
+				key="{chargementModelJson>quai}"/>
+		</items>
+		<content >  
+	     <!-- Le quai sera chargé par routing<mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.quai12"/>  -->
+		</content>
+	</IconTabBar>
+	<ScrollContainer height='15%' vertical='true'>
+	<Panel  headerText ="Messages" id = "PanelMessageAppChargementQuais" stickyHeader="true"  height="130px">
+		<content>
+		</content>
+	</Panel>
+	</ScrollContainer>
+</mvc:View>
+
+
+
+
+
+

@@ -1,0 +1,22 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="mySelectDialogUMFauCam"
+		noDataText="Pas d'UM"
+		title="UMs faux camion"
+		search=".onSearch"
+		confirm=".onDialogClose"
+		cancel=".onDialogClose"
+		draggable = "true"
+		resizable = "true"
+		items="{
+			path: 'chargementModelJson>tChaFaucam'
+            
+		}">
+		<StandardListItem
+			title="{chargementModelJson>codum}"
+			
+			type="Active" />
+	</SelectDialog>
+</core:FragmentDefinition>

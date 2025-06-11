@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+
+specVersion: "3.1"
+metadata:
+  name: clf.demo.sapui51402.demosapui51402
+type: application
+framework: 
+ name: SAPUI5
+ version : 1.76.0
+ libraries:
+   - name: sap.ui.core
+server:
+  customMiddleware:
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:  
+        ignoreCertError: true # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
+        ui5:
+          path:
+            - /resources
+            - /test-resources
+          url: https://ui5.sap.com        
+    - name: fiori-tools-appreload
+      afterMiddleware: compression
+      configuration:
+        port: 35729
+        path: webapp
+        delay: 300
+    - name: ui5-middleware-simpleproxy
+      afterMiddleware: compression
+      mountPath: /rest_bac
+      configuration:
+       baseUri: "http://sexa-sapoc-s4.exaclair.clairefontaine.local:8001"
+       enableWebSocket: true
+       strictSSL: false
+       httpHeaders:
+         Access-Control-Allow-Origin: '*' 
+       username: env:FIORI_TOOLS_USER
+       password: env:FIORI_TOOLS_PASSWORD   
+    - name: ui5-middleware-simpleproxy
+      afterMiddleware: compression
+      mountPath: /rest_dev
+      configuration:
+       baseUri: "http://shds-sapdev.exaclair.clairefontaine.local:1080"
+       enableWebSocket: true
+       strictSSL: false
+       httpHeaders:
+         Access-Control-Allow-Origin: '*' 
+       username: env:FIORI_TOOLS_USER
+       password: env:FIORI_TOOLS_PASSWORD   
+    - name: ui5-middleware-simpleproxy
+      afterMiddleware: compression
+      mountPath: /rest_qual
+      configuration:
+       baseUri: "http://shds-sapqual.exaclair.clairefontaine.local:1080"
+       enableWebSocket: true
+       strictSSL: false
+       httpHeaders:
+         Access-Control-Allow-Origin: '*' 
+       username: env:FIORI_TOOLS_USER
+       password: env:FIORI_TOOLS_PASSWORD   
+    - name: ui5-middleware-simpleproxy
+      afterMiddleware: compression
+      mountPath: /odata_dev
+      configuration:
+       baseUri: "https://shds-sapdev.exaclair.clairefontaine.local:1080"
+       enableWebSocket: true
+       strictSSL: false
+       httpHeaders:
+         Access-Control-Allow-Origin: '*' 
+       username: env:FIORI_TOOLS_USER
+       password: env:FIORI_TOOLS_PASSWORD    
+    - name : ui5-middleware-simpleproxy
+      afterMiddleware: compression
+      mountPath: /odata_test
+      configuration:
+       baseUri: "https://services.odata.org"
+       strictSSL: false
+       httpHeader:
+        Access-Control-Allow-Origin: '*'  
+    - name: fiori-tools-preview
+      afterMiddleware: fiori-tools-appreload
+      configuration:
+        component: clf.demo.sapui51402.demosapui51402
+        ui5Theme: sap_horizon
+    - name: ui5-tooling-transpile-middleware
+      afterMiddleware: compression
+      configuration:
+        debug: true
+        transformModulesToUI5:
+          overridesToOverride: true
+        excludePatterns:
+          - /Component-preload.js
+builder:
+  customTasks:
+    - name: ui5-tooling-transpile-task
+      afterTask: replaceVersion
+      configuration:
+        debug: true
+        transformModulesToUI5:
+          overridesToOverride: true

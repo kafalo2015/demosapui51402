@@ -1,0 +1,65 @@
+<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.MainSideNavigation"
+    displayBlock="false"
+    xmlns:core="sap.ui.core"
+	height="100%"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:tnt="sap.tnt"
+    xmlns="sap.m">
+  
+
+<HBox  height="100%">
+	<VBox renderType="Bare" alignItems="Start" height="100%"  >
+		<Button
+			text=""
+			icon="sap-icon://menu2"
+			press=".onCollapseExpandPress" />
+			 <!--<Label text="Date Charg." labelFor="DP_DATE_CHARGEMENT" />
+				<DatePicker
+					id="DP_DATE_CHARGEMENT"
+				    value="{
+					      path: 'chargementQuaiSelectionDateModel>/datechargement',		     
+						   formatOption: {
+							
+							style: 'short',
+							strictParsing: 'true'
+						  }
+				     }"	
+					 width = "130px"	
+					change=".handleChange" />-->
+		<tnt:SideNavigation id="sideNavigation" selectedKey="walked" expanded="true" itemSelect= "itemSelect" >
+			<tnt:NavigationList>
+			
+					<tnt:NavigationListItem text="Suivi Chargement" icon="sap-icon://activity-items" id ="item_chargement_list" />
+					<tnt:NavigationListItem text="Chargement des quais" icon="sap-icon://inventory" id ="item_quai_all" >
+					<!--	<tnt:NavigationListItem text="Quai 10" id ="item_quai_10"/>
+						<tnt:NavigationListItem text="Quai 11" id ="item_quai_11"/>
+						<tnt:NavigationListItem text="Quai 12" id ="item_quai_12"/>
+						<tnt:NavigationListItem text="Quai 13" id ="item_quai_13"/>
+						<tnt:NavigationListItem text="Quai 14" id ="item_quai_14"/>
+						<tnt:NavigationListItem text="Quai 15" id ="item_quai_15"/>-->
+					</tnt:NavigationListItem>
+				
+
+				</tnt:NavigationList>
+
+					<tnt:fixedItem>
+				<tnt:NavigationList>
+					<tnt:NavigationListItem text="Statistiques" icon="sap-icon://bar-chart" />
+					<tnt:NavigationListItem  href="https://sap.com" target="_blank" text="Liens externes" icon="sap-icon://attachment" />
+					<tnt:NavigationListItem  text="Comparaison" icon="sap-icon://compare" />
+				</tnt:NavigationList>
+			</tnt:fixedItem>
+		</tnt:SideNavigation>
+	</VBox>
+   
+   		<NavContainer	id="navContainerMain"
+						width="1100px"
+						height="100%"
+						class="navContainerControl sapUiSmallMarginBottom">
+
+		</NavContainer>	
+</HBox>
+
+
+
+</mvc:View>

@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+
+specVersion: "3.1"
+metadata:
+  name: clf.demo.sapui51402.demosapui04042025
+type: application
+builder:
+  customTasks:
+    - name: ui5-tooling-transpile-task
+      afterTask: replaceVersion
+      configuration:
+        debug: true
+        transformModulesToUI5:
+          overridesToOverride: true
+    - name: deploy-to-abap
+      afterTask: generateCachebusterInfo
+      configuration:
+        log: 5
+        ignoreCertError: true
+        strictSsl: false
+        allowSelfSigned: true
+        target:
+          url: https://sapdev.exaclair.eu/
+          client: '010'          
+        app:
+          name: ZSAPUI5_040425
+          description: ZSAPUI5_040425
+          package: Z_CF_DEMO
+          transport: DEVK914167
+      exclude:
+        - /test/
+  resources:
+    excludes:
+      - /test/**
+      - /localService/**

@@ -1,0 +1,84 @@
+<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.demo.Demoui5chargementjson2"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+
+	 <List
+      headerText="Chargement du quai//Version JSON2"
+      class="sapUiResponsiveMargin"
+      width="auto"
+      items="{chargementQuaiMdl>/chargementQuai/chargementUm}" >
+      <items>
+         <ObjectListItem
+            title="UM:{chargementQuaiMdl>um} //Livraison: {chargementQuaiMdl>livraison} //Poste: {chargementQuaiMdl>poste} //Article: {chargementQuaiMdl>article} //Qtite: {chargementQuaiMdl>qtite}"/>
+		
+      </items>
+   </List> 
+
+
+      <Table
+		id="chargementTable"
+		class="sapUiResponsiveMargin"
+		width="auto"
+		items="{
+				path : 'chargementQuaiMdl>/chargementQuai/chargementUm'			
+			}">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Chargement des quais" />
+				<ToolbarSpacer />
+				<SearchField
+					width="50%"
+					search=""/>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column
+				hAlign="End"
+				minScreenWidth="Small"
+				demandPopin="true"
+				width="5em">
+				<Text text="UM" />
+			</Column>
+			<Column>
+				<Text text="LIVRAISON" />
+			</Column>
+			<Column
+				minScreenWidth="Small"
+				demandPopin="true">
+				<Text text="POSTE" />
+			</Column>
+			<Column
+				minScreenWidth="Tablet"
+				demandPopin="false">
+				<Text text="ARTICLE" />
+			</Column>
+			<Column hAlign="End">
+				<Text text="QTITE" />
+			</Column>
+
+		
+		</columns>
+		<items>
+			<ColumnListItem
+				type="Navigation"
+				press=".onPress">
+				<cells>
+				   <ObjectIdentifier title="{chargementQuaiMdl>um}" />
+				    <ObjectIdentifier title="{chargementQuaiMdl>livraison}" />
+					 <ObjectIdentifier title="{chargementQuaiMdl>poste}" />
+					<!--<ObjectNumber
+						number="{invoice>Quantity}"
+						emphasized="false"/>-->
+								
+					<Text text="{chargementQuaiMdl>article}" />
+					<Text text="{chargementQuaiMdl>qtite}" />
+								
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+    	<Button text="Notification UM" press=".onPress" />
+        <Button
+      text="Say Hello"
+      press=".onShowHello"/>
+    </mvc:View>
