@@ -1,11 +1,6 @@
 import Controller from "sap/ui/core/mvc/Controller";
-import Event from "sap/ui/base/Event";
-import JSONModel from "sap/ui/model/json/JSONModel";
 import Table from "sap/m/Table";
 import { Sticky } from "sap/m/library";
-import MessageStrip from "sap/m/MessageStrip";
-import MessageType from "sap/ui/core/message/MessageType";
-import Panel from "sap/m/Panel";
 import Dialog from "sap/m/Dialog";
 import Context from "sap/ui/model/Context";
 import Button, { Button$PressEvent } from "sap/m/Button";
@@ -16,6 +11,7 @@ import Button, { Button$PressEvent } from "sap/m/Button";
 export default class ChargementQuais extends Controller {
 
   private dialog: Dialog;
+  private dialogUmStock: Dialog;
 
     /*eslint-disable @typescript-eslint/no-empty-function*/
     public onInit(): void {         
@@ -55,6 +51,7 @@ export default class ChargementQuais extends Controller {
       if ( lt_ChargementUM_quai15 != undefined ) {      lt_ChargementUM_quai15.setSticky(t_sticky); }
 
      this.onOpenDialog();
+     this.onLoadFragmentUmStock();
       }
 
     public onAfterRendering(): void {
@@ -81,11 +78,24 @@ export default class ChargementQuais extends Controller {
        this.dialog.open();
     }
 
+      public onSelectDialogUmStockPress(event: Button$PressEvent): void {
+          console.log(event.getSource().getParent()?.getBindingContext("chargementModelJson")?.getProperty("codart")  );
+          let lv_material : string = event.getSource().getParent()?.getBindingContext("chargementModelJson")?.getProperty("codart") 
+          let data : {material:String} = { material: lv_material }               
+          this.getOwnerComponent()?.getEventBus().publish("Default", "LoadMaterialUmStockListEvent", data);
+          this.dialogUmStock.open();
+         }
+
      async onOpenDialog(): Promise<void> {
           this.dialog ??= await this.loadFragment({
              name: "clf.demo.sapui51402.demosapui51402.view.fragment.DialogUmFaucam"
           }) as Dialog;
           this.dialog.setModel(this.getOwnerComponent()?.getModel("chargementModelJson"),"chargementModelJson");
-         // this.dialog.open();
+        }  
+      async onLoadFragmentUmStock(): Promise<void> {
+          this.dialogUmStock ??= await this.loadFragment({
+             name: "clf.demo.sapui51402.demosapui51402.view.fragment.DialogUmStock"
+          }) as Dialog;
+          //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
         }  
 }

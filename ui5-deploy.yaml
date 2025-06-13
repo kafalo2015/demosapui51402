@@ -26,7 +26,7 @@ builder:
           name: ZSAPUI5_040425
           description: ZSAPUI5_040425
           package: Z_CF_DEMO
-          transport: DEVK914167
+          transport: DEVK914238
       exclude:
         - /test/
   resources:

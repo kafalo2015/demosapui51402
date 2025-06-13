@@ -80,6 +80,15 @@ export default class Component extends BaseComponent {
         this.get_chargements_prevus();
      } ); 
 
+
+      this.getEventBus().subscribe("Default","LoadMaterialUmStockListEvent",(channel:string,event:string,data: Object) => {           
+            //this.notification_handler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5]);  
+            let lv_material :string = Object.values(data)[0];
+           console.log("SUBSCRIBE LoadMaterialUmStockListEvent:CHANNEL:" + channel + " ---EVENT:" + event + " ---ARTICLE: " + Object.values(data)[0]);
+            this.get_material_umstock_list(lv_material);
+        },this);  
+
+
      this.getEventBus().publish("Default", "chargementListEvent", {});
      this.getEventBus().publish("Default", "chargementEvent", {});
      this.getRouter().initialize();   // Le router ne doit pas être forcément utilisé 
@@ -144,6 +153,46 @@ else
      chargementsPrevusListModel.loadData(lv_chargement_url,"",true,  "GET", false, true, mHeader); 
      //chargementsPrevusListModel.forceNoCache(true);
      //chargementsPrevusListModel.updateBindings(true);
+    }
+
+
+  public get_material_umstock_list(material:string):void {
+ 
+    // Mettre le material en paramètre
+        var mHeader = {
+            "Authorization": "Basic",
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type":"application/json",
+            "material": material                                      
+        }
+
+        let MaterialUmStockListModel: JSONModel;
+        if ( this.getModel("MaterialUmStockListModel") == undefined)
+        {
+            MaterialUmStockListModel = new JSONModel();
+            this.setModel(MaterialUmStockListModel, "MaterialUmStockListModel");
+        }else
+        {  
+            console.log("Relance du chargement list"),
+            MaterialUmStockListModel =   this.getModel( "MaterialUmStockListModel") as JSONModel;
+        }
+     
+     let lv_chargement_url : string;
+     if ( location.hostname === 'localhost' ) // Lancement de l'application en localhost
+     {
+        console.log("Lancement de l'appli en localhost");
+        if (this.environment === "dev") {lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list"; }
+        else {
+                    if (this.environment === "qual") {lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list"; }  //TODO -> Ajouter proxy quaal
+                    else {  lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";   } 
+                }
+     }
+      else // Lancement sur les serveurs SAP
+      { 
+        lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+     }
+    console.log("Chargement de l'API : " + lv_chargement_url);
+    MaterialUmStockListModel.loadData(lv_chargement_url,"",true,  "GET", false, true, mHeader); 
     }
 
     public get_chargement_quais():void {

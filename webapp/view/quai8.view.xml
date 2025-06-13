@@ -63,15 +63,16 @@
 				path : 'chargementModelJson>/results/0/tPosteNocharge'	  		
 			}">
 	    <columns>
-         	   <Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
+            <Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
 			<Column hAlign="Begin" width="6%"> <Text text="Poste Livr."/> </Column>
 			<Column hAlign="Begin" width="12%"> <Text text="Article" /> </Column>	
 			<Column hAlign="Begin" width="10%"> <Text text="Type UM" /> </Column>
 			<Column hAlign="Begin" width="10%"> <Text text="Commande" /> </Column>	
-			<Column hAlign="Begin" width="25%"> <Text text="Client" /> </Column>	
+			<Column hAlign="Begin" width="22%"> <Text text="Client" /> </Column>	
 			<Column hAlign="Begin" width="7%"> <Text text="UMs chargés" /> </Column>	
 			<Column hAlign="Begin" width="7%"> <Text text="UMs à charger" /></Column>	
-		    <Column hAlign="Begin" width="12%"> <Text text="UMs fauxCam" /></Column>
+		    <Column hAlign="Begin" width="9%"> <Text text="FauxCam" /></Column>
+			<Column hAlign="Begin" width="6%"> <Text text="Stock" /></Column>
 			<Column hAlign="Begin" width="1%"> <Text text="" /></Column>	
 		</columns>
 		<items>
@@ -85,7 +86,8 @@
 					<Text text="{chargementModelJson>name1}" />
 					<Text text="{chargementModelJson>nbumch}" />
 					<Text text="{chargementModelJson>nbumac}" />
-					<Button text="Ums fauxCam" 	press=".onSelectDialogPress"/>
+					<Button text="FauxCam" 	press=".onSelectDialogPress"/>
+					<Button text="Stock" 	   press=".onSelectDialogUmStockPress"/>
 				</cells>
 			</ColumnListItem>
 		</items>
