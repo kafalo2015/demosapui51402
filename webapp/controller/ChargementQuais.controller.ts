@@ -58,11 +58,13 @@ export default class ChargementQuais extends Controller {
        
     }
 
-     public onSelectDialogPress(event: Button$PressEvent): void {
+     public onSelectDialogUmFauxCam(event: Button$PressEvent): void {
       console.log("Event press UM postes non chargés :" + event.getSource());
       let lv_quai:string = "01";
+      console.log("event onSelectDialogUmFauxCam .getSource().toString()" + event.getSource().toString());
       // TODO => Créer un loop sur l'ensemble des quais pour remplir les indices de binding 
-      if (event.getSource().toString().includes("quai8") === true )  { lv_quai = '0'};
+      if (event.getSource().toString().includes("quai8") === true )  { lv_quai = '0' ;  
+                                                                       console.log("onSelectDialogUmFauxCam SOURCE BUTTON = QUAI8"); };
       if (event.getSource().toString().includes("quai9") === true )  { lv_quai = '1'};
       if (event.getSource().toString().includes("quai10") === true ) { lv_quai = '2'};
       if (event.getSource().toString().includes("quai11") === true ) { lv_quai = '3'};

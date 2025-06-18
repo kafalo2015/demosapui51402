@@ -89,8 +89,8 @@
 					<Text text="{chargementModelJson>name1}" />
 					<Text text="{chargementModelJson>nbumch}" />
 					<Text text="{chargementModelJson>nbumac}" />
-					<Button text="FauxCam" 	press=".onSelectDialogPress"/>
-					<Button text="Stock" 	   press=".onSelectDialogUmStockPress"/>
+					<Button text="FauxCam" 	press=".onSelectDialogUmFauxCam"/>
+					<Button text="Stock" 	press=".onSelectDialogUmStockPress"/>
 				</cells>
 			</ColumnListItem>
 		</items>

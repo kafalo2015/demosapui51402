@@ -1,22 +1,42 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
-	<SelectDialog
-		id="mySelectDialogUMFauCam"
+	
+	<TableSelectDialog
+		id="UmsFauxCamTableSelectDialog"
 		noDataText="Pas d'UM"
-		title="UMs faux camion"
-		search=".onSearch"
-		confirm=".onDialogClose"
-		cancel=".onDialogClose"
-		draggable = "true"
-		resizable = "true"
+		title="UMs Faux camion"
+		contentWidth = "50%"
+		contentHeight = "30%"
+		draggable ="true"
+		resizable ="true"
+		search=""
+		confirm=""
+		cancel=""
 		items="{
-			path: 'chargementModelJson>tChaFaucam'
-            
+			path : 'chargementModelJson>tChaFaucam',
+			sorter : {
+				path : 'codum',
+				descending : false
+			}
 		}">
-		<StandardListItem
-			title="{chargementModelJson>codum}"
-			
-			type="Active" />
-	</SelectDialog>
+	<columns>
+			<Column  hAlign="Center" width="30%">  <Text text="UM"/>                     </Column>
+			<Column  hAlign="Center" width="15%">  <Text text="Emplacement"/>            </Column>
+			<Column  hAlign="Center" width="15%">  <Text text="Type de magasin"/>        </Column>
+			<Column  hAlign="Center" width="15%">  <Text text="Date arrivée"/>           </Column>
+			<Column  hAlign="Center" width="15%">  <Text text="Heure arrivée"/>          </Column>
+			<Column  hAlign="Center" width="10%">                                       </Column>
+		</columns>
+		<ColumnListItem vAlign="Middle">
+			<cells>
+					<ObjectIdentifier title="{chargementModelJson>codum}" />
+					<ObjectIdentifier title="{chargementModelJson>emplac}" />	
+					<ObjectIdentifier title="{chargementModelJson>typmag}" />	
+					<ObjectIdentifier title="{chargementModelJson>datarr}" />
+					<ObjectIdentifier title="{chargementModelJson>heuarr}" />		
+			</cells>
+		</ColumnListItem>
+	
+	</TableSelectDialog>
 </core:FragmentDefinition>

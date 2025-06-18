@@ -62,7 +62,7 @@
 				path : 'chargementModelJson>/results/3/tPosteNocharge'	  		
 			}">
 		<columns>
-	        s<Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
+	        <Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
 			<Column hAlign="Begin" width="6%"> <Text text="Poste Livr."/> </Column>
 			<Column hAlign="Begin" width="12%"> <Text text="Article" /> </Column>	
 			<Column hAlign="Begin" width="10%"> <Text text="Type UM" /> </Column>
@@ -72,7 +72,7 @@
 			<Column hAlign="Begin" width="7%"> <Text text="UMs à charger" /></Column>	
 		    <Column hAlign="Begin" width="9%"> <Text text="FauxCam" /></Column>
 			<Column hAlign="Begin" width="6%"> <Text text="Stock" /></Column>
-			<Column hAlign="Begin" width="1%"> <Text text="" /></Column>v
+			<Column hAlign="Begin" width="1%"> <Text text="" /></Column>
 		</columns>
 		<items>
 			<ColumnListItem type="Inactive" press=".onPress">
@@ -85,8 +85,8 @@
 					<Text text="{chargementModelJson>name1}" />
 					<Text text="{chargementModelJson>nbumch}" />
 					<Text text="{chargementModelJson>nbumac}" />
-					<Button text="FauxCamv" 	press=".onSelectDialogPress"/>
-					<Button text="Stock" 	   press=".onSelectDialogUmStockPress"/>
+					<Button text="FauxCam"  press=".onSelectDialogUmFauxCam"/>
+					<Button text="Stock" 	press=".onSelectDialogUmStockPress"/>
 				</cells>
 			</ColumnListItem>
 		</items>

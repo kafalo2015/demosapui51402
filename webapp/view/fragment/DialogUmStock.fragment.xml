@@ -6,8 +6,10 @@
 		id="DialogUmStock"
 		noDataText="No um "
 		title="Um en stock"
-		draggable = "true"
-		resizable = "true"
+		contentWidth = "40%"
+		contentHeight = "45%"
+		draggable ="true"
+		resizable ="true"
 		search=""
 		confirm=""
 		cancel=""
@@ -19,20 +21,21 @@
 			}
 		}">
 	<columns>
-		    <Column  hAlign="Center" width="12%">  <Text text="Article"/>                 </Column>
-			<Column  hAlign="Center" width="13%">  <Text text="UM" />                     </Column>
-			<Column  hAlign="Center" width="13%">  <Text text="Emplacement" />            </Column>
-			<Column  hAlign="Center" width="13%">  <Text text="Quantité totale" />        </Column>
-			<Column  hAlign="Center" width="13%">  <Text text="Stock disponible" />       </Column>
-			<Column  hAlign="Center" width="13%">  <Text text="Unité" />                  </Column>
+		    <Column  hAlign="Center" width="19%">  <Text text="Article"/>                </Column>
+			<Column  hAlign="Center" width="30%">  <Text text="UM"/>                     </Column>
+			<Column  hAlign="Center" width="15%">  <Text text="Emplacement"/>            </Column>
+			<Column  hAlign="Center" width="15%">  <Text text="Type de magasin"/>        </Column>
+			<Column  hAlign="Center" width="10%">  <Text text="Stock"/>                  </Column>
+			<Column  hAlign="Center" width="10%">  <Text text="Unité"/>                  </Column>
+			<Column  hAlign="Center" width="1%">                                        </Column>
 		</columns>
 		<ColumnListItem vAlign="Middle">
 			<cells>
 				    <ObjectIdentifier title="{MaterialUmStockListModel>material}" />
 					<ObjectIdentifier title="{MaterialUmStockListModel>storUnit}" />
 					<ObjectIdentifier title="{MaterialUmStockListModel>stgeBin}" />	
+					<ObjectIdentifier title="{MaterialUmStockListModel>stgeType}" />	
 					<ObjectIdentifier title="{MaterialUmStockListModel>stock}" />
-					<ObjectIdentifier title="{MaterialUmStockListModel>availStck}" />
 					<ObjectIdentifier title="{MaterialUmStockListModel>baseUomIso}" />
 			</cells>
 		</ColumnListItem>
