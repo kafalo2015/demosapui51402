@@ -186,6 +186,7 @@
                 "TargetChargementList": {
                     "id": "ChargementList",
                     "name": "ChargementList",
+                    "path": "clf.demo.sapui51402.demosapui51402.view.ChargementsPrevusApp",
                     "level" : 2,
                     "transition": "slide",
                     "clearControlAggregation": true
@@ -194,12 +195,14 @@
                 "TargetChargementQuais": {
                     "id": "AppChargementQuaisIconTabBar",
                     "name": "AppChargementQuaisIconTabBar",
+                    "path": "clf.demo.sapui51402.demosapui51402.view.ChargementsQuaisApp",
                     "level" : 2,
 					"transition": "slide"
                 },
                 "TargetChargementQuai08": {
                     "id": "quai8",
                     "name": "quai8",
+                    "path": "clf.demo.sapui51402.demosapui51402.view.ChargementsQuaisApp.quais",
                     "parent" :  "TargetChargementQuais",
                     "controlId": "idIconTabBarQuais",
                     "controlAggregation": "content",
@@ -211,6 +214,7 @@
                   "TargetChargementQuai09": {
                     "id": "quai9",
                     "name": "quai9",
+                    "path": "clf.demo.sapui51402.demosapui51402.view.ChargementsQuaisApp.quais",
                     "parent" :  "TargetChargementQuais",
                     "controlId": "idIconTabBarQuais",
                     "controlAggregation": "content",
@@ -222,6 +226,7 @@
                 "TargetChargementQuai10": {
                     "id": "quai10",
                     "name": "quai10",
+                    "path": "clf.demo.sapui51402.demosapui51402.view.ChargementsQuaisApp.quais",
                     "parent" :  "TargetChargementQuais",
                     "controlId": "idIconTabBarQuais",
                     "controlAggregation": "content",
@@ -233,6 +238,7 @@
                 "TargetChargementQuai11": {
                     "id": "quai11",
                     "name": "quai11",
+                    "path": "clf.demo.sapui51402.demosapui51402.view.ChargementsQuaisApp.quais",
                     "parent" :  "TargetChargementQuais",
                     "controlId": "idIconTabBarQuais",
                     "controlAggregation": "content",
@@ -244,6 +250,7 @@
                 "TargetChargementQuai12": {
                     "id": "quai12",
                     "name": "quai12",
+                    "path": "clf.demo.sapui51402.demosapui51402.view.ChargementsQuaisApp.quais",
                     "parent" :  "TargetChargementQuais",
                     "controlId": "idIconTabBarQuais",
                     "controlAggregation": "content",
@@ -255,6 +262,7 @@
                 "TargetChargementQuai13": {
                     "id": "quai13",
                     "name": "quai13",
+                    "path": "clf.demo.sapui51402.demosapui51402.view.ChargementsQuaisApp.quais",
                     "parent" :  "TargetChargementQuais",
                     "controlId": "idIconTabBarQuais",
                     "controlAggregation": "content",
@@ -266,6 +274,7 @@
                 "TargetChargementQuai14": {
                     "id": "quai14",
                     "name": "quai14",
+                    "path": "clf.demo.sapui51402.demosapui51402.view.ChargementsQuaisApp.quais",
                     "parent" :  "TargetChargementQuais",
                     "controlId": "idIconTabBarQuais",
                     "controlAggregation": "content",
@@ -277,6 +286,7 @@
                 "TargetChargementQuai15": {
                     "id": "quai15",
                     "name": "quai15",
+                    "path": "clf.demo.sapui51402.demosapui51402.view.ChargementsQuaisApp.quais",
                     "parent" :  "TargetChargementQuais",
                     "controlId": "idIconTabBarQuais",
                     "controlAggregation": "content",
@@ -300,7 +310,7 @@
             }
         },
         "rootView": {
-            "viewName": "clf.demo.sapui51402.demosapui51402.view.MainSideNavigation",       
+            "viewName": "clf.demo.sapui51402.demosapui51402.view.main.MainSideNavigation",       
             "type": "XML",
             "id": "App"
         }

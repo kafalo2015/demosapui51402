@@ -1,14 +1,15 @@
-<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.ChargementQuais"
-    xmlns:mvc="sap.ui.core.mvc"
-	xmlns:l="sap.ui.layout"
+<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.ChargementsQuaisApp.ChargementQuais"
+    xmlns:l="sap.ui.layout"
     xmlns:form="sap.ui.layout.form"
+    xmlns:mvc="sap.ui.core.mvc"
 	xmlns:si="sap.suite.ui.commons.statusindicator"
-    xmlns="sap.m">
+    xmlns="sap.m"
+	height = "100%">
 
-	<l:BlockLayout id="blockLayout" class="sapUiSmallMargin">
+       <l:BlockLayout id="blockLayout" class="sapUiSmallMargin">
 		<l:BlockLayoutRow >
 			<l:BlockLayoutCell
-			   title="Quai: {chargementModelJson>/results/5/quai} Transport: {chargementModelJson>/results/5/numtransport}"
+			   title="Quai: {chargementModelJson>/results/2/quai} Transport: {chargementModelJson>/results/2/numtransport}"
 			   titleAlignment = "Begin"
 			   width = "75"
 			   class="sapUiContentPadding sapUiNoMarginBegin sapUiNoMarginBottom"
@@ -20,11 +21,11 @@
 				     alignItems="Center">
 					 <items>
                         <Label  id= "LabelChargeur" class="sapUiTinyMarginEnd" text="Chargeur"  design="Bold"  />
-						<Text id="Chargeur_txt"  class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/5/zpcfName1}"/>
+						<Text id="Chargeur_txt"  class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/2/zpcfName1}"/>
 						 <Label id= "LabelTransporteur" class="sapUiTinyMarginEnd" text="Transporteur"  design="Bold" />
-				         <Text id= "NumTransporteur_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/5/transporteur}"/>
+				         <Text id= "NumTransporteur_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/2/transporteur}"/>
 				         <Label id= "LabelFauxCam" text="Faux Camion" class="sapUiTinyMarginEnd" design="Bold" /> 
-				        <Text id="faux_camion_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/5/fauxcamion}"/>
+				        <Text id="faux_camion_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/2/fauxcamion}"/>
 						 </items>
 				</FlexBox> 
 			</l:BlockLayoutCell>
@@ -36,8 +37,8 @@
 					 <ProgressIndicator
 						id="LoadingIndicator"
 						class="sapUiSmallMarginBottom"
-						percentValue="{= %{chargementModelJson>/results/5/umCharg} === 0?0:%{chargementModelJson>/results/5/umCharg} / %{chargementModelJson>/results/5/umNb} * 100 }"
-						displayValue="{= %{chargementModelJson>/results/5/umCharg} === 0?0:%{chargementModelJson>/results/5/umCharg} / %{chargementModelJson>/results/5/umNb} * 100 }%"
+						percentValue="{= %{chargementModelJson>/results/2/umCharg} === 0?0:%{chargementModelJson>/results/2/umCharg} / %{chargementModelJson>/results/2/umNb} * 100 }"
+						displayValue="{= %{chargementModelJson>/results/2/umCharg} === 0?0:%{chargementModelJson>/results/2/umCharg} / %{chargementModelJson>/results/2/umNb} * 100 }%"
 						state="Information"
 						displayOnly="true"
 						displayAnimation= "true" />
@@ -47,22 +48,23 @@
 						alignItems="Center">
 						<items>
 						<Label id= "LabelUmcharg" text="Chargées" class="sapUiTinyMarginEnd"  design="Bold" /> 
-						<Text id= "InputUmCharg" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/5/umCharg}"  />
+						<Text id= "InputUmCharg" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/2/umCharg}"  />
 						<Label id= "LabelUmNb" text="Nb Um" class="sapUiTinyMarginEnd" design="Bold" /> 
-						<Text id= "InputUmNb" text="{chargementModelJson>/results/5/umNb}"  />
+						<Text id= "InputUmNb" text="{chargementModelJson>/results/2/umNb}"  />
 						</items>
 				    </FlexBox>	
 			</l:BlockLayoutCell>
 		</l:BlockLayoutRow>
 	</l:BlockLayout> 
 
-<ScrollContainer height='220px' vertical='true'>
-	 <Table id="TablePostesNonCharges_quai13" class="sapSmallMargin"  width="auto"  headerText="Postes restants"
+	<ScrollContainer height='220px' vertical='true'>
+	  <Table id="TablePostesNonCharges_quai10"  class="sapSmallMargin" backgroundDesign = "Solid"  width="auto" headerText="Postes restants" enableBusyIndicator = "true" 
 		items="{
-				path : 'chargementModelJson>/results/5/tPosteNocharge'	  		
+				path : 'chargementModelJson>/results/2/tPosteNocharge'	  		
 			}">
-	     <columns>
-		    <Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
+		
+	    <columns>
+            <Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
 			<Column hAlign="Begin" width="6%"> <Text text="Poste Livr."/> </Column>
 			<Column hAlign="Begin" width="12%"> <Text text="Article" /> </Column>	
 			<Column hAlign="Begin" width="10%"> <Text text="Type UM" /> </Column>
@@ -73,7 +75,8 @@
 		    <Column hAlign="Begin" width="9%"> <Text text="FauxCam" /></Column>
 			<Column hAlign="Begin" width="6%"> <Text text="Stock" /></Column>
 			<Column hAlign="Begin" width="1%"> <Text text="" /></Column>
-		 	
+			
+		
 		</columns>
 		<items>
 			<ColumnListItem type="Inactive" press=".onPress">
@@ -86,18 +89,19 @@
 					<Text text="{chargementModelJson>name1}" />
 					<Text text="{chargementModelJson>nbumch}" />
 					<Text text="{chargementModelJson>nbumac}" />
-					<Button text="FauxCam" 	press=".onSelectDialogUmFauxCam"/>
+				    <Button text="FauxCam" 	press=".onSelectDialogUmFauxCam"/>
 					<Button text="Stock" 	press=".onSelectDialogUmStockPress"/>
 				</cells>
 			</ColumnListItem>
 		</items>
-	</Table>
-</ScrollContainer>
-<ScrollContainer height='270px' vertical='true'>
-	 <Table id="tableChargementUM_quai13" class="sapSmallMargin" width="auto" headerText="UMs Chargés"
+	</Table>	
+		</ScrollContainer>
+			<ScrollContainer height='270px' vertical='true'>
+	    <Table id="tableChargementUM_quai10" class="sapSmallMargin" width="auto" headerText="UMs Chargés" enableBusyIndicator = "true"
 		items="{
-				path : 'chargementModelJson>/results/5/tChargItem'			
+				path : 'chargementModelJson>/results/2/tChargItem'			
 			}">
+		
 		<columns>
 		   <Column hAlign="Begin" width="17%"> <Text text="Um" />          </Column>
 			<Column hAlign="Begin" width="10%">  <Text text="Livraison" />  </Column>
@@ -107,13 +111,11 @@
 			<Column hAlign="Begin" width="49%"> <Text text="" />            </Column>
 		</columns>
 		<items>
-			<ColumnListItem
-				type="Inactive"
-				press=".onPress">
+			<ColumnListItem type="Inactive" press=".onPress">
 				<cells>
-				    <ObjectIdentifier title="{chargementModelJson>um}" />
+				   <ObjectIdentifier  title="{chargementModelJson>um}"  />
 				    <ObjectIdentifier title="{chargementModelJson>vbeln}" />
-					<ObjectIdentifier title="{chargementModelJson>poste}" />
+					<ObjectIdentifier title="{chargementModelJson>poste}" />						
 					<Text text="{chargementModelJson>article}" />
 					<Text text="{chargementModelJson>qtite}" />
 				</cells>

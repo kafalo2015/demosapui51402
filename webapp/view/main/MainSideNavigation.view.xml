@@ -1,4 +1,4 @@
-<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.MainSideNavigation"
+<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.main.MainSideNavigation"
     displayBlock="false"
     xmlns:core="sap.ui.core"
 	height="100%"

@@ -1,4 +1,4 @@
-<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.ChargementQuais"
+<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.ChargementsQuaisApp.ChargementQuais"
     xmlns:l="sap.ui.layout"
     xmlns:form="sap.ui.layout.form"
     xmlns:mvc="sap.ui.core.mvc"

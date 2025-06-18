@@ -1,4 +1,4 @@
-<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.AppChargementQuaisIconTabBar"
+<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.ChargementsQuaisApp.AppChargementQuaisIconTabBar"
 displayBlock="true"
 xmlns:core="sap.ui.core"
 xmlns:mvc="sap.ui.core.mvc"
