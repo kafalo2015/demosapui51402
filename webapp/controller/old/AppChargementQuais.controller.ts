@@ -9,7 +9,7 @@ import UI5Element from "sap/ui/core/Element";
 
 
 /**
- * @namespace clf.demo.sapui51402.demosapui51402.controller
+ * @namespace clf.logistique.chargementquais.controller
  */
 export default class AppChargementQuais extends Controller {
 

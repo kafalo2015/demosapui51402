@@ -12,7 +12,7 @@ import SideNavigation from "sap/tnt/SideNavigation";
 
 
 /**
- * @namespace clf.demo.sapui51402.demosapui51402.controller
+ * @namespace clf.logistique.chargementquais.controller
  */
 export default class Main extends Controller {
 

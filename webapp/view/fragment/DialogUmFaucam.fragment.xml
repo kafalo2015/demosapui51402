@@ -26,7 +26,7 @@
 			<Column  hAlign="Center" width="15%">  <Text text="Type de magasin"/>        </Column>
 			<Column  hAlign="Center" width="15%">  <Text text="Date arrivée"/>           </Column>
 			<Column  hAlign="Center" width="15%">  <Text text="Heure arrivée"/>          </Column>
-			<Column  hAlign="Center" width="10%">                                       </Column>
+			<Column  hAlign="Center" width="10%">                                        </Column>
 		</columns>
 		<ColumnListItem vAlign="Middle">
 			<cells>
@@ -37,6 +37,5 @@
 					<ObjectIdentifier title="{chargementModelJson>heuarr}" />		
 			</cells>
 		</ColumnListItem>
-	
 	</TableSelectDialog>
 </core:FragmentDefinition>

@@ -1,8 +1,6 @@
-<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.ChargementsQuaisApp.AppChargementQuaisIconTabBar"
+<mvc:View controllerName="clf.logistique.chargementquais.controller.ChargementsQuaisApp.AppChargementQuaisIconTabBar"
 displayBlock="true"
-xmlns:core="sap.ui.core"
 xmlns:mvc="sap.ui.core.mvc"
-xmlns:l="sap.ui.layout"
 xmlns="sap.m"
 height = "100%">
 	<IconTabBar
@@ -21,14 +19,14 @@ height = "100%">
 				key="{chargementModelJson>quai}"/>
 		</items>
 		<content >  
-	     <!-- Le quai sera chargé par routing<mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.quai12"/>  -->
+	             <!-- Le quai sera chargé pr routing  -->
 		</content>
 	</IconTabBar>
-	<ScrollContainer height='15%' vertical='true'>
-	<Panel  headerText ="Messages" id = "PanelMessageAppChargementQuais" stickyHeader="true"  height="130px">
-		<content>
-		</content>
-	</Panel>
+	<ScrollContainer vertical='true'>
+		<Panel  headerText ="Messages" id = "PanelMessageAppChargementQuais" stickyHeader="true" height="120px" >
+			<content>
+			</content>
+		</Panel>
 	</ScrollContainer>
 </mvc:View>
 

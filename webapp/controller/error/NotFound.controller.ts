@@ -4,7 +4,7 @@ import JSONModel from "sap/ui/model/json/JSONModel";
 
 
 /**
- * @namespace clf.demo.sapui51402.demosapui51402.controller.error
+ * @namespace clf.logistique.chargementquais.controller.error
  */
 export default class NotFound extends Controller {
 

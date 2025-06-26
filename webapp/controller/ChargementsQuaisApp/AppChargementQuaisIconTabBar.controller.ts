@@ -8,7 +8,7 @@ import View from "sap/ui/core/mvc/View";
 import Panel from "sap/m/Panel";
 
 /**
- * @namespace clf.demo.sapui51402.demosapui51402.controller
+ * @namespace clf.logistique.chargementquais.controller
  */
 export default class AppChargementQuaisIconTabBar extends Controller {
 
@@ -47,7 +47,7 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                tcontent_views = content.getContent() as Control[];
                 tcontent_views.forEach((control) => {
                 // code pour remplir le  messageStrip d'erreur et le messageStrip d'information du quai 
-                  if ( control.getId() == "container-clf.demo.sapui51402.demosapui51402---" + current_quai.toLowerCase() + "--messageStripError" )
+                  if ( control.getId() == "container-clf.logistique.chargementquais---" + current_quai.toLowerCase() + "--messageStripError" )
                   {
                     messageStripErrorQuai = control as MessageStrip;
                     if ( type_msg == 'error' ){
@@ -57,7 +57,7 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                     if  ( type_msg == 'information' ) {messageStripErrorQuai.setVisible(false);     }
                   }  
                   
-                    if (  control.getId() == "container-clf.demo.sapui51402.demosapui51402---" + current_quai.toLowerCase() + "--messageStripInformation" )
+                    if (  control.getId() == "container-clf.logistique.chargementquais---" + current_quai.toLowerCase() + "--messageStripInformation" )
                     {
                       messageStripInformationQuai = control as MessageStrip;
                       if ( type_msg == 'information' )

@@ -1,4 +1,4 @@
-<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.demo.Demoui5chargementjson2"
+<mvc:View controllerName="clf.logistique.chargementquais.controller.demo.Demoui5chargementjson2"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">
 

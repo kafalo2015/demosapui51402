@@ -6,7 +6,7 @@ import Dialog from "sap/m/Dialog";
 import SideNavigation, { SideNavigation$ItemSelectEvent } from "sap/tnt/SideNavigation";
 
 /**
- * @namespace clf.demo.sapui51402.demosapui51402.controller
+ * @namespace clf.logistique.chargementquais.controller
  */
 export default class MainSidePanel extends Controller {
 
@@ -65,7 +65,7 @@ export default class MainSidePanel extends Controller {
     public itemSelect(event:SideNavigation$ItemSelectEvent)  {
      console.log("SideNavigation$ItemSelectEvent: " +  event.getParameter("item")?.getText() );
      const router = UIComponent.getRouterFor(this);
-  if ( event.getParameter("item")?.getText() == "Chargement des quais" ){  console.log("Chargement du quai 08  ")   ; router.getTargets()?.display("TargetChargementQuai08");  }   // Ajout Quai08,09++ 
+  if ( event.getParameter("item")?.getText() == "Chargements par quais" ){  console.log("Chargement du quai 08  ")   ; router.getTargets()?.display("TargetChargementQuai08");  }   // Ajout Quai08,09++ 
   if (  event.getParameter("item")?.getText() == "Suivi Chargement" ) { console.log("Rechargement de la list ")   ;router.getTargets()?.display("TargetChargementList");}
  // if ( event.getParameter("item")?.getText() == "Quai 10" ){ console.log("Chargement du quai 10  ")   ; router.getTargets()?.display("TargetChargementQuai10"); }
  // if ( event.getParameter("item")?.getText() == "Quai 11" ){ router.getTargets()?.display("TargetChargementQuai11"); }

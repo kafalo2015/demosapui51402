@@ -1,74 +1,27 @@
-<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.ChargementsPrevusApp.ChargementList"
-    xmlns:l="sap.ui.layout"
+<mvc:View controllerName="clf.logistique.chargementquais.controller.ChargementsPrevusApp.ChargementList"
     xmlns:f="sap.ui.layout.form"
     xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns:f2="sap.f"
 	xmlns:card="sap.f.cards"	
-	xmlns:si="sap.suite.ui.commons.statusindicator"
-	
     xmlns="sap.m">
-     	<f2:Card class="sapUiMediumMargin" width="800px" core:require="{
+     	
+		<f2:Card class="sapUiMediumMargin" width="800px" core:require="{
                     Unit: 'sap/ui/model/type/Unit'
                 }">
 		<f2:header>
 			<card:Header title="Indicateurs" subtitle="" />
 		</f2:header>
 		<f2:content>
-<!--
-        		<f:Form id="Statistiqueschargements"
-        			editable="false">
-        			
-        			<f:layout>
-        					<f:ResponsiveGridLayout
-					labelSpanXL="4"
-					labelSpanL="3"
-					labelSpanM="4"
-					labelSpanS="12"
-					adjustLabelSpan="false"
-					emptySpanXL="0"
-					emptySpanL="4"
-					emptySpanM="0"
-					emptySpanS="0"
-					columnsXL="2"
-					columnsL="1"
-					columnsM="1"
-					singleContainerFullSize="false" />
-        			</f:layout>
-        			<f:formContainers>
-        				<f:FormContainer>
-        					<f:formElements>
-        						<f:FormElement label="PREVU">
-        							<f:fields>
-        								<Text text="{chargementsPrevusListModel>/results/poidsprevucumul}" id="StatText1"  />
-        							</f:fields>
-        						</f:FormElement>
-        						<f:FormElement label="CHARGE">
-        							<f:fields>
-        								<Text text="{chargementsPrevusListModel>/results/poidschargcumul}" id="StatText2" />
-        							</f:fields>
-        						</f:FormElement>
-								<f:FormElement label="RESTANT">
-        							<f:fields>
-        								<Text text="{chargementsPrevusListModel>/results/poidsrestantcumul}" id="StatText3" />
-        							</f:fields>
-        								</f:FormElement>
-        						
-        					</f:formElements>
-        				</f:FormContainer>
-        			</f:formContainers>
-        		</f:Form>-->
         	<FlexBox
 				direction="Row"
 				justifyContent="SpaceBetween"
 				alignItems="Center"		
 				>
-
-			   <ObjectAttribute text="Tonnage Prévu" 
-			   class="sapUiTinyMarginEnd sapUiTinyMarginBegin"/>
+			   <ObjectAttribute text="Tonnage Prévu"  class="sapUiTinyMarginEnd sapUiTinyMarginBegin"/>
 				<ObjectNumber
 				class="sapUiTinyMarginEnd"
-				number="{chargementsPrevusListModel>/results/poidsprevucumul}"
+				number="{= Math.round(%{chargementsPrevusListModel>/results/poidsprevucumul})}"
 				inverted="true"
 				unit="TONNE"
 				state="Information" />
@@ -76,14 +29,14 @@
 				<ObjectAttribute text="Tonnage Chargé"  class="sapUiTinyMarginEnd"/>                            
 				<ObjectNumber
 				class="sapUiTinyMarginEnd"
-				number="{chargementsPrevusListModel>/results/poidschargcumul}"
+				number="{= Math.round(%{chargementsPrevusListModel>/results/poidschargcumul})}"
 				inverted="true"
 				unit="TONNE"
 				state="Success" />
                 <ObjectAttribute text=" Tonnage à Charger"  class="sapUiTinyMarginEnd"/>
-						<ObjectNumber
+				<ObjectNumber
 				class="sapUiTinyMarginEnd"
-				number="{chargementsPrevusListModel>/results/poidsrestantcumul}"
+				number="{= Math.round(%{chargementsPrevusListModel>/results/poidsrestantcumul})}"
 				inverted="true"
 				unit="TONNE"
 				state="Error" />
@@ -100,7 +53,6 @@
 		items="{
 				path : 'chargementsPrevusListModel>/results/chargementlist'			
 			}">
-	
 		<columns>
 			<Column  hAlign="Begin" width="12%">  <Text text="TRANSPORT"/>                 </Column>
 			<Column  hAlign="Begin" width="13%">  <Text text="TRANSPORTEUR" />             </Column>
@@ -109,30 +61,28 @@
 			<Column  hAlign="Begin" width="13%">  <Text text="HEURE DEBUT CHARGEMENT" />   </Column>
 			<Column  hAlign="Begin" width="8%">   <Text text="FAUX CAMION" />              </Column>
 			<Column  hAlign="Begin" width="8%">   <Text text="UM CHARGE" />                </Column>
-			<Column  hAlign="Begin" width="8%">   <Text text="TONNAGE PREVU" />            </Column>
+			<!--<Column  hAlign="Begin" width="8%">   <Text text="TONNAGE PREVU" />            </Column>-->
 			<Column  hAlign="Begin" width="7%">   <Text text="QUAI" />                     </Column>
 			<Column  hAlign="Begin" width="1%">   <Text text="" />                         </Column>
 		</columns>
 		<items>
 			<ColumnListItem
 				type="Inactive"
+				highlight="{= %{chargementsPrevusListModel>retard} === 'X' ? 'Error' : 'None' }"
 				press=".onPress">
 				<cells>
 				    <ObjectIdentifier title="{chargementsPrevusListModel>numtra}" />
 					<ObjectIdentifier title="{chargementsPrevusListModel>nomtra}" />			
-					<Text text="{chargementsPrevusListModel>heupre}" />
-		            <Text text="{chargementsPrevusListModel>heuarr}" />	
-					<Text text="{chargementsPrevusListModel>heudch}" />	
-					<Text text="{chargementsPrevusListModel>fcam1}" />	
+					<Text text="{= 	%{chargementsPrevusListModel>heupre}.substring(0,5)}" />
+					<Text text="{= 	%{chargementsPrevusListModel>heuarr}.substring(0,5)}" />
+					<Text text="{= 	%{chargementsPrevusListModel>heudch}.substring(0,5)}" />
+					<Text text="{chargementsPrevusListModel>fcam1}	" />	
 					<Text text="{chargementsPrevusListModel>nbumch}/{chargementsPrevusListModel>nbumac}" />	
-					<Text text="{chargementsPrevusListModel>poidsprevu}" />	
+					<!--<Text text="{chargementsPrevusListModel>poidsprevu}" />	-->
 					<Link text="{chargementsPrevusListModel>quai}"  press="handleLinkPress" />				
 				</cells>
 			</ColumnListItem>
 		</items>
 	</Table>
-
 	</ScrollContainer>
-    	
-      
     </mvc:View>

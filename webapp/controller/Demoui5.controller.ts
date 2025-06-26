@@ -2,7 +2,7 @@ import Controller from "sap/ui/core/mvc/Controller";
 import MessageToast from "sap/m/MessageToast";
 
 /**
- * @namespace clf.demo.sapui51402.demosapui51402.controller
+ * @namespace clf.logistique.chargementquais.controller
  */
 export default class TestRestChargementList extends Controller {
 

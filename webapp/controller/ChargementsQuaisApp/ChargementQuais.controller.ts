@@ -6,7 +6,7 @@ import Context from "sap/ui/model/Context";
 import Button, { Button$PressEvent } from "sap/m/Button";
 
 /**
- * @namespace clf.demo.sapui51402.demosapui51402.controller
+ * @namespace clf.logistique.chargementquais.controller
  */
 export default class ChargementQuais extends Controller {
 
@@ -90,13 +90,13 @@ export default class ChargementQuais extends Controller {
 
      async onOpenDialog(): Promise<void> {
           this.dialog ??= await this.loadFragment({
-             name: "clf.demo.sapui51402.demosapui51402.view.fragment.DialogUmFaucam"
+             name: "clf.logistique.chargementquais.view.fragment.DialogUmFaucam"
           }) as Dialog;
           this.dialog.setModel(this.getOwnerComponent()?.getModel("chargementModelJson"),"chargementModelJson");
         }  
       async onLoadFragmentUmStock(): Promise<void> {
           this.dialogUmStock ??= await this.loadFragment({
-             name: "clf.demo.sapui51402.demosapui51402.view.fragment.DialogUmStock"
+             name: "clf.logistique.chargementquais.view.fragment.DialogUmStock"
           }) as Dialog;
           //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
         }  

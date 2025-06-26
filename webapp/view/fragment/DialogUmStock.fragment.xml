@@ -27,7 +27,7 @@
 			<Column  hAlign="Center" width="15%">  <Text text="Type de magasin"/>        </Column>
 			<Column  hAlign="Center" width="10%">  <Text text="Stock"/>                  </Column>
 			<Column  hAlign="Center" width="10%">  <Text text="Unité"/>                  </Column>
-			<Column  hAlign="Center" width="1%">                                        </Column>
+			<Column  hAlign="Center" width="1%">                                         </Column>
 		</columns>
 		<ColumnListItem vAlign="Middle">
 			<cells>
@@ -39,6 +39,5 @@
 					<ObjectIdentifier title="{MaterialUmStockListModel>baseUomIso}" />
 			</cells>
 		</ColumnListItem>
-	
 	</TableSelectDialog>
 </core:FragmentDefinition>

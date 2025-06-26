@@ -1,4 +1,4 @@
-<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.ChargementsQuaisApp.ChargementQuais"
+<mvc:View controllerName="clf.logistique.chargementquais.controller.ChargementsQuaisApp.ChargementQuais"
     xmlns:l="sap.ui.layout"
     xmlns:form="sap.ui.layout.form"
     xmlns:mvc="sap.ui.core.mvc"
@@ -27,6 +27,15 @@
 				        <Text id="faux_camion_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/3/fauxcamion}"/>
 						 </items>
 				</FlexBox> 
+				 	<FlexBox
+				     direction="Row"
+				     justifyContent="Start"
+				     alignItems="Center">
+					 <items>
+						<Label id= "LabelConsignes" text="Consignes chargement" class="sapUiTinyMarginEnd" design="Bold" /> 
+				        <Text id="consignes_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/3/text1} {chargementModelJson>/results/3/text2} {chargementModelJson>/results/3/text3} {chargementModelJson>/results/3/text4}"/>
+					</items>
+				</FlexBox>
 			</l:BlockLayoutCell>
 			<l:BlockLayoutCell
 			   title=""
@@ -37,7 +46,7 @@
 						id="LoadingIndicator"
 						class="sapUiSmallMarginBottom"
 						percentValue="{= %{chargementModelJson>/results/3/umCharg} === 0?0:%{chargementModelJson>/results/3/umCharg} / %{chargementModelJson>/results/3/umNb} * 100 }"
-						displayValue="{= %{chargementModelJson>/results/3/umCharg} === 0?0:%{chargementModelJson>/results/3/umCharg} / %{chargementModelJson>/results/3/umNb} * 100 }%"
+						displayValue="{= %{chargementModelJson>/results/3/umCharg} === 0?0:Math.round(%{chargementModelJson>/results/3/umCharg} / %{chargementModelJson>/results/3/umNb} * 100 )}%"
 						state="Information"
 						displayOnly="true"
 						displayAnimation= "true" />
@@ -56,7 +65,7 @@
 		</l:BlockLayoutRow>
 	</l:BlockLayout> 
 
-<ScrollContainer height='220px' vertical='true'>
+<ScrollContainer height='250px' vertical='true'>
 	<Table	id="TablePostesNonCharges_quai11" class="sapSmallMargin" width="auto"  headerText="Postes restants" enableBusyIndicator = "true"
 		items="{
 				path : 'chargementModelJson>/results/3/tPosteNocharge'	  		
@@ -69,7 +78,8 @@
 			<Column hAlign="Begin" width="10%"> <Text text="Commande" /> </Column>	
 			<Column hAlign="Begin" width="22%"> <Text text="Client" /> </Column>	
 			<Column hAlign="Begin" width="7%"> <Text text="UMs chargés" /> </Column>	
-			<Column hAlign="Begin" width="7%"> <Text text="UMs à charger" /></Column>	
+			<Column hAlign="Begin" width="7%"> <Text text="UMs à charger" /></Column>
+			<Column hAlign="Begin" width="7%"> <Text text="Statut faux camion" /></Column>	
 		    <Column hAlign="Begin" width="9%"> <Text text="FauxCam" /></Column>
 			<Column hAlign="Begin" width="6%"> <Text text="Stock" /></Column>
 			<Column hAlign="Begin" width="1%"> <Text text="" /></Column>
@@ -85,6 +95,7 @@
 					<Text text="{chargementModelJson>name1}" />
 					<Text text="{chargementModelJson>nbumch}" />
 					<Text text="{chargementModelJson>nbumac}" />
+					<Text text="{chargementModelJson>nbUmFaucam}" />
 					<Button text="FauxCam"  press=".onSelectDialogUmFauxCam"/>
 					<Button text="Stock" 	press=".onSelectDialogUmStockPress"/>
 				</cells>
@@ -92,8 +103,8 @@
 		</items>
 	</Table>
 	</ScrollContainer>
-   <ScrollContainer height='270px' vertical='true'> 	  
-    <Table id="tableChargementUM_quai11" class="sapSmallMargin" width="auto"  headerText="UMs Chargés" enableBusyIndicator = "true"
+   <ScrollContainer height='250px' vertical='true'> 	  
+    <Table id="tableChargementUM_quai11" class="sapSmallMargin" width="auto"  headerText="UMs Chargées" enableBusyIndicator = "true"
 		items="{
 				path : 'chargementModelJson>/results/3/tChargItem'			
 			}">

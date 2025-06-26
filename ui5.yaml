@@ -2,7 +2,7 @@
 
 specVersion: "3.1"
 metadata:
-  name: clf.demo.sapui51402.demosapui51402
+  name: clf.logistique.chargementquais
 type: application
 framework: 
  name: SAPUI5
@@ -81,7 +81,7 @@ server:
     - name: fiori-tools-preview
       afterMiddleware: fiori-tools-appreload
       configuration:
-        component: clf.demo.sapui51402.demosapui51402
+        component: clf.logistique.chargementquais
         ui5Theme: sap_horizon
     - name: ui5-tooling-transpile-middleware
       afterMiddleware: compression

@@ -3,9 +3,11 @@ import WebSocket, { WebSocket$MessageEvent } from "sap/ui/core/ws/WebSocket";
 import { createDeviceModel } from "./model/models";
 import DateFormat from "sap/ui/core/format/DateFormat";
 import JSONModel from "sap/ui/model/json/JSONModel";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
  
 /**
- * @namespace clf.demo.sapui51402.demosapui51402
+ * @namespace clf.logistique.chargementquais
  */
 export default class Component extends BaseComponent {
 	public static metadata = {
@@ -37,10 +39,10 @@ export default class Component extends BaseComponent {
         // set the device model
         this.setModel(createDeviceModel(), "device");
          // set i18n model
-        /* const i18nModel = new ResourceModel({
-            bundleName: "clf.demo.sapui51402.demosapui51402"
-        });
-        this.setModel(i18nModel, "i18n"); */
+         //const i18nModel = new ResourceModel({
+         //   bundleName: "clf.logistique.chargementquais.i18n.i18n"
+        //});
+        //this.setModel(i18nModel, "i18n"); 
         //Définition d'un view Model pour le busy
         let ChargementViewModel = new JSONModel();    
         this.setModel(ChargementViewModel, "chargementViewModel");

@@ -1,4 +1,4 @@
-<mvc:View controllerName="clf.demo.sapui51402.demosapui51402.controller.old.Main"
+<mvc:View controllerName="clf.logistique.chargementquais.controller.old.Main"
     displayBlock="true"
     xmlns:core="sap.ui.core"
     xmlns:mvc="sap.ui.core.mvc"

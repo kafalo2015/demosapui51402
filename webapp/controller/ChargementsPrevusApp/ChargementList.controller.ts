@@ -5,7 +5,7 @@ import Table from "sap/m/Table";
 import { Sticky } from "sap/m/library";
 
 /**
- * @namespace clf.demo.sapui51402.demosapui51402.controller
+ * @namespace clf.logistique.chargementquais.controller
  */
 export default class ChargementList extends Controller {
 
