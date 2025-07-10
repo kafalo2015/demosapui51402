@@ -36,6 +36,7 @@ export default class AppChargementQuaisIconTabBar extends Controller {
           // Message Strip au niveau des vues de quai
           let messageStrip_ref : MessageStrip;
           let messageStripErrorQuai : MessageStrip;
+          let messageStripWarningQuai : MessageStrip;
           let messageStripInformationQuai : MessageStrip;
           
           console.log("Quai de la nofication : " +  current_quai + " Quai affiché dans l'IconTabBar: " + IconTabBarControl.getSelectedKey());
@@ -50,12 +51,28 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                   if ( control.getId() == "container-clf.logistique.chargementquais---" + current_quai.toLowerCase() + "--messageStripError" )
                   {
                     messageStripErrorQuai = control as MessageStrip;
-                    if ( type_msg == 'error' ){
+                   // if ( type_msg == 'error' ){
+
+                   if ( type_msg == 'E' ){
                     messageStripErrorQuai.setText(msg_txt); 
                     messageStripErrorQuai.setVisible(true); 
                     } 
-                    if  ( type_msg == 'information' ) {messageStripErrorQuai.setVisible(false);     }
+                  if  ( type_msg == 'W' ) {messageStripErrorQuai.setVisible(false);     }
+                  if  ( type_msg == 'information' ) {messageStripErrorQuai.setVisible(false);     }
                   }  
+                  if ( control.getId() == "container-clf.logistique.chargementquais---" + current_quai.toLowerCase() + "--messageStripWarning" )
+                  {
+                    messageStripWarningQuai = control as MessageStrip;
+                   // if ( type_msg == 'error' ){
+
+                   if ( type_msg == 'W' ){
+                     messageStripWarningQuai.setText(msg_txt); 
+                     messageStripWarningQuai.setVisible(true); 
+                    } 
+                  if  ( type_msg == 'E' ) { messageStripWarningQuai.setVisible(false);     }
+                  if  ( type_msg == 'information' ) { messageStripWarningQuai.setVisible(false);     }
+                  }  
+
                   
                     if (  control.getId() == "container-clf.logistique.chargementquais---" + current_quai.toLowerCase() + "--messageStripInformation" )
                     {
@@ -65,7 +82,8 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                       messageStripInformationQuai.setText(msg_txt); 
                       messageStripInformationQuai.setVisible(true); 
                       }
-                      if ( type_msg == 'error' ){  messageStripInformationQuai.setVisible(false);     }
+                      if ( type_msg == 'E' ){  messageStripInformationQuai.setVisible(false);     }
+                      if ( type_msg == 'W' ){  messageStripInformationQuai.setVisible(false);  
                     }
                 })
               })

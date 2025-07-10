@@ -135,6 +135,14 @@
 				visible = "false"
 				class="sapUiNoMarginBottom">
 			</MessageStrip>
+           <MessageStrip id = "messageStripWarning"
+				text=""
+				type="Warning"
+				showIcon="true"
+				visible = "false"
+				class="sapUiNoMarginBottom">
+			</MessageStrip>
+
 			<MessageStrip id = "messageStripInformation"
 				text=""
 				type="Success"
