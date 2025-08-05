@@ -59,7 +59,8 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                     } 
                   if  ( type_msg == 'W' ) {messageStripErrorQuai.setVisible(false);     }
                   if  ( type_msg == 'information' ) {messageStripErrorQuai.setVisible(false);     }
-                  }  
+                  } 
+
                   if ( control.getId() == "container-clf.logistique.chargementquais---" + current_quai.toLowerCase() + "--messageStripWarning" )
                   {
                     messageStripWarningQuai = control as MessageStrip;
@@ -83,7 +84,7 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                       messageStripInformationQuai.setVisible(true); 
                       }
                       if ( type_msg == 'E' ){  messageStripInformationQuai.setVisible(false);     }
-                      if ( type_msg == 'W' ){  messageStripInformationQuai.setVisible(false);  
+                      if ( type_msg == 'W' ){  messageStripInformationQuai.setVisible(false);   }
                     }
                 })
               })
