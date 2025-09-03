@@ -17,7 +17,7 @@ export default class AppChargementQuaisIconTabBar extends Controller {
   // METHODE : On s'abonne à un évènement déclenché par le event handler du Socket dans le componnet controller       
         this.getOwnerComponent()?.getEventBus().subscribe("Default","notificationUMEvent",(channel:string,event:string,data: Object) => {           
             // EVOL : Notification en fin de chargementTODO ajout de l'action en paramètre
-            this.notification_handler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5]);  
+            this.notification_handler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5], Object.values(data)[6]);  
             },this);   
 
   // Enregistrement d'un handler pour le click sur quai dans Chargement List   
@@ -26,7 +26,7 @@ export default class AppChargementQuaisIconTabBar extends Controller {
     },this); 
         }
 
-    public notification_handler(type_msg:string, msg_txt: string,transport:string, um: String, current_quai: string, action :string ) : void{ 
+    public notification_handler(type_msg:string, msg_txt: string,transport:string, um: String, current_quai: string, action :string, user:string ) : void{ 
           let IconTabBarControl : IconTabBar = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
           let message_chargementum_ok :string;
 
@@ -39,9 +39,11 @@ export default class AppChargementQuaisIconTabBar extends Controller {
           let messageStripWarningQuai : MessageStrip;
           let messageStripInformationQuai : MessageStrip;
           
-          console.log("Quai de la nofication : " +  current_quai + " Quai affiché dans l'IconTabBar: " + IconTabBarControl.getSelectedKey());
+          console.log("Quai de la notification : " +  current_quai + " Quai affiché dans l'IconTabBar: " + IconTabBarControl.getSelectedKey());
         // Si la page courante correspond au quai de la notification alors on recharge (on teste le quai 10 dans un premier temps)
-         if ( IconTabBarControl.getSelectedKey() == current_quai){ 
+         if ( IconTabBarControl.getSelectedKey() == current_quai){                 //TODO=>Evol LOT 4 : Ce test n''est pas nécessaire les messages strip
+                                                                                   // doivent se mettre à jour meême si on ne se trouve pas sur le quai concerné
+                                                                                   // par la notificaiotn
                let tcontent : View[] = IconTabBarControl.getContent() as View[];
                let tcontent_views : Control[]
                tcontent.forEach((content) => {
@@ -97,8 +99,11 @@ export default class AppChargementQuaisIconTabBar extends Controller {
         }
                // Affichage de tous les messages (Information et Erreur) relatifs à l'ensemble des quais
                 messageStrip_ref = new MessageStrip();
-                if ( type_msg == 'error' ) { messageStrip_ref.setText(current_quai+ ": " + msg_txt); }
-                if ( type_msg == 'information' ) {messageStrip_ref.setText(msg_txt); }
+                //if ( type_msg == 'error' ) { messageStrip_ref.setText(current_quai+ ": " + msg_txt); }      // Correctif-- 14/08/2025 Correctifs notifications
+                //if ( type_msg == 'information' ) {messageStrip_ref.setText(msg_txt); }                      // Correctif-- 14/08/2025 Correctifs notifications
+
+                messageStrip_ref.setText(msg_txt);       // Correctif++ 14/08/2025 Correctifs notifications
+                                                         // Toujours afficher le message dans  la zone Messages quel que soit le type de message (E, W ou S)
                 //   msgStrip.setType(MessageType.Error);
                  messageStrip_ref.setShowIcon(true);
                  messageStrip_ref.setShowCloseButton(true);  
@@ -106,9 +111,12 @@ export default class AppChargementQuaisIconTabBar extends Controller {
 
                  // TODO Notification fin de chargement 
                  //Si l'action est fin de chargement alors il faut recharger le chargement des quais quel que soit le quai affiché
-                 if ( action = 'finchargement' )
+                 // Modification LOT 4 'Lancement début de chargementnt'
+                 //if ( action = 'finchargement' )
+                 if ( action == 'finchargement'  ||  action == 'startchargement')
                  {
                  console.log("Notification de fin de chargement");
+                 MessageToast.show(msg_txt);
                  this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {});  "Notification fin de chargement"
                  this.getOwnerComponent()?.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
                  }

@@ -308,17 +308,18 @@ else
             let params = e.getParameters();
             console.log("e.getParameters() " + e.getParameters() );  
             let content : any = params.data;
-            let content_json : {type_msg:String, msg_txt:String,quai:String,um:string,action:string,statut: string,transport:string} = JSON.parse(content);   
-             let data : {type_msg:String, msg_txt:String,transport:String, um:String, quai:String,action:String} = {
+            let content_json : {type_msg:String, msg_txt:String,quai:String,um:string,action:string,statut: string,transport:string,user:string} = JSON.parse(content);   
+             let data : {type_msg:String, msg_txt:String,transport:String, um:String, quai:String,action:String,user:string} = {
                 type_msg: content_json.type_msg,
                 msg_txt: content_json.msg_txt,
                 transport: content_json.um,
                 um: content_json.um, 
                 quai: content_json.quai,
-                action: content_json.action               
+                action: content_json.action,
+                user: content_json.user                 
               };
              // On envoie une notification UM qui sera gérée dans la vue de Chargement
-             that.getEventBus().publish("Default", "notificationUMEvent",  data);     
+             that.getEventBus().publish("Default", "notificationUMEvent",  data);   // Il est possible d'essayer avec    that.getEventBus().publish("Default", "notificationUMEvent",  content_json)
          }); 
     }
 

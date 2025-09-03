@@ -23,10 +23,10 @@ builder:
           url: https://sapdev.exaclair.eu/
           client: '010'          
         app:
-          name: ZUI5_CHARGQUAIS
+          name: ZUI5_CHARGQUAIS  
           description: Application UI5 chargement des quais
           package: Z_CF_DEMO
-          transport: DEVK914732
+          transport: DEVK915229
       exclude:
         - /test/
   resources:
