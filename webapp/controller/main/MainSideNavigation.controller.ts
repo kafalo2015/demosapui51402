@@ -63,10 +63,11 @@ export default class MainSidePanel extends Controller {
     }
 
     public itemSelect(event:SideNavigation$ItemSelectEvent)  {
-     console.log("SideNavigation$ItemSelectEvent: " +  event.getParameter("item")?.getText() );
+     console.log("SideNavigation$ItemSelectEvent: " +  event.getParameter("item")?.getId() );
      const router = UIComponent.getRouterFor(this);
   if ( event.getParameter("item")?.getText() == "Chargements par quais" ){  console.log("Chargement du quai 08  ")   ; router.getTargets()?.display("TargetChargementQuai08");  }   // Ajout Quai08,09++ 
   if (  event.getParameter("item")?.getText() == "Suivi Chargement" ) { console.log("Rechargement de la list ")   ;router.getTargets()?.display("TargetChargementList");}
+  if (  event.getParameter("item")?.getId() == "container-clf.logistique.chargementquais---App--item_startchargement" ) { console.log("Démarrage Chargement ")   ;router.getTargets()?.display("TargetChargementStart");}
  // if ( event.getParameter("item")?.getText() == "Quai 10" ){ console.log("Chargement du quai 10  ")   ; router.getTargets()?.display("TargetChargementQuai10"); }
  // if ( event.getParameter("item")?.getText() == "Quai 11" ){ router.getTargets()?.display("TargetChargementQuai11"); }
  // if ( event.getParameter("item")?.getText() == "Quai 12" ){ router.getTargets()?.display("TargetChargementQuai12"); }

@@ -112,6 +112,13 @@
                     ]
                 },
                 {
+                    "name": "RouteChargementStart",
+                    "pattern": "chargementstart",
+                    "target": [
+                        "TargetChargementStart"
+                    ]
+                },
+                {
                     "name": "RouteChargementList",
                     "pattern": "chargementprevu",
                     "target": [
@@ -183,6 +190,16 @@
                 }                     
             ],
             "targets": {
+                "TargetChargementStart": {
+                    "id": "ChargementStart",
+                    "name": "ChargementStart",
+                    "path": "clf.logistique.chargementquais.view.ChargementStartApp",
+                    "level" : 2,
+                    "transition": "slide",
+                    "clearControlAggregation": true
+                    
+                    
+                },
                 "TargetChargementList": {
                     "id": "ChargementList",
                     "name": "ChargementList",

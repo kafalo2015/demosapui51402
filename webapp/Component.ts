@@ -5,6 +5,9 @@ import DateFormat from "sap/ui/core/format/DateFormat";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import ResourceModel from "sap/ui/model/resource/ResourceModel";
 import ResourceBundle from "sap/base/i18n/ResourceBundle";
+import DataAnalyzer from "sap/sac/df/DataAnalyzer";
+import Model$RequestCompletedEvent from "sap/ui/model/Model";
+import UIComponent from "sap/ui/core/UIComponent";
  
 /**
  * @namespace clf.logistique.chargementquais
@@ -25,6 +28,7 @@ export default class Component extends BaseComponent {
         this._wsNotificationUm = value;
     }
     public _environment :String = "dev";
+    public gv_chargement_url : string;
     public get environment(): String {
         return this._environment;
     }
@@ -36,6 +40,7 @@ export default class Component extends BaseComponent {
 		super.init();
         // Changemment de variable environnement (dev ou qual) pour appeler les API de la qual ou de la dev
         this.environment = 'dev';
+        //this.initchargementquaiModel();                                 //LOT 4 Lancement chargement des quais
         // set the device model
         this.setModel(createDeviceModel(), "device");
          // set i18n model
@@ -80,6 +85,19 @@ export default class Component extends BaseComponent {
      // Ano lancement de l'application via URl  -> je vais faire un handler pour le chargement_list séparé   
      this.getEventBus().subscribe("Default","chargementListEvent",() => {       
         this.get_chargements_prevus();
+     } ); 
+
+     // LOT4 => Démarrage du Chargement   
+     this.getEventBus().subscribe("Default","chargementStartEvent",() => { 
+        console.log("chargementStartEvent"); 
+       this.startchargementquai();
+       
+       //let lv_quai : string;
+       //lv_quai = "QUAI8";
+       //const router = this.getRouter();
+        //if ( lv_quai == "QUAI8" )  {  router.getTargets()?.display("TargetChargementQuai08");
+
+
      } ); 
 
 
@@ -232,7 +250,8 @@ else
             "Authorization": auth,
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",
-            "datechargementquai": date_sapformat                                      // oDateFormat.format(new Date(date_tsformat))
+            "datechargementquai": date_sapformat ,                                     // oDateFormat.format(new Date(date_tsformat))
+            "X-CSRF-Token" :  "Fetch"                                                                   //LOOT4
         }
 // On instancie le modèle que s'il n'est pas déja défini au niveau du composant (premier chargement/rechargement)
      let  chargementQuaiModel: JSONModel;
@@ -269,9 +288,84 @@ else
                     console.log("URL Chargement de quais:" +  lv_chargement_url);
          }       
      console.log("Début Chargement de l'API : " + lv_chargement_url);
-     chargementQuaiModel.loadData(lv_chargement_url,"",true,  "GET", false, true, mHeader)?.then(() => {   this.getEventBus().publish("Default", "chargementFinishedEvent", {}); });
+     this.gv_chargement_url = lv_chargement_url // Lot4 Démarrage chargement des quais
+     // TODO LOT4 => RECUPERER LE TOKEN CSRF du GET
+     //var token = XMLHttpRequest.getResponseHeader('X-CSRF-Token'); 
+     chargementQuaiModel.loadData(lv_chargement_url,"",true,  "GET", false, true, mHeader)?.then((data) => {   this.getEventBus().publish("Default", "chargementFinishedEvent", {});
+                             console.log("DATA DANS LE PROMISE DU GET" + data)       });
+     
+      //chargementQuaiModel.attachRequestCompleted(function (evt) { console.log("PARAMETRES RESPONSE HEADER:" +evt.getParameter('infoObject')); });
+            chargementQuaiModel.attachRequestCompleted(function (evt) { console.log("PARAMETRES RESPONSE HEADER:" +evt); });
      console.log("Fin Chargement de l'API : " + lv_chargement_url); 
     }
+
+
+    public initchargementquaiModel():void{
+
+        //let ChargementStartModel :JSONModel = new JSONModel();
+        //this.setModel(ChargementStartModel, "ChargementStartModel");
+        //ChargementStartModel.setDefaultBindingMode("TwoWay");
+        //ChargementStartModel.setData( {"tknum":"0030002505","quai1":"QUAI11"} );
+    }
+
+    public startchargementquai():void{
+        let ChargementStartModel: JSONModel;
+        let lv_chargement_url : string;
+        if ( this.getModel("ChargementStartModel") == undefined)
+        {
+            ChargementStartModel = new JSONModel();
+            this.setModel(ChargementStartModel, "ChargementStartModel");
+        }else
+        {  
+            ChargementStartModel =   this.getModel( "ChargementStartModel") as JSONModel;
+        }
+     
+ //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//   
+        if ( location.hostname === 'localhost' ) {          
+          if (this.environment === "dev") {
+                lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement";          
+           }
+          else {
+                    if (this.environment === "qual") {                 
+                             lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement"; }                 
+                    else {   lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement";  } 
+                         }
+             }
+        else { 
+                    lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";            
+            }
+ //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//           
+  
+/* EXEMPLE DE POST
+       loadData("https://your url",  // sURL
+{}, //oParameters
+true, // bASync
+"POST", // sType
+true/false, // bMerge
+true/false, // BCache?
+{ // mHeaders
+			         "X-Requested-With": "XMLHttpRequest",
+			         "Content-Type": "application/json",
+			         "DataServiceVersion": "2.0",
+			         "Accept": "application/atom+xml,application/atomsvc+xml,application/xml",
+			         "X-CSRF-Token": "0e855895-5023-4350-bd3e-5651beaadeae"
+} )*/                                                            
+        let input_data:any = ChargementStartModel.getData();  
+        console.log("Appel  de Start Chargment Valeur de quai et transport:" + input_data);
+       
+       let mHeader = {
+            "Authorization": "Basic",                    
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type":"application/json",  
+            "X-Requested-With":"X",
+            "tknum": input_data.tknum,    // Object.values(input_data)[0]  
+            "quai1": input_data.quai1 
+        }
+       ChargementStartModel.loadData(this.gv_chargement_url,"",true,  "POST", false, true, mHeader)?.then(result=>{ let lv_quai : string; lv_quai = input_data.quai1; const router = this.getRouter();
+       if ( lv_quai == "QUAI8" )  {  router.getTargets()?.display("TargetChargementQuai08");  }   
+                                                                                                                      }); 
+    }
+    
         
         public open_websocket_NotificationUM():void {
           //Ouverture des Web Sockets  
