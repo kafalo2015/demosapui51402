@@ -1,0 +1,63 @@
+<mvc:View controllerName="clf.logistique.chargementquais.controller.ChargementStartApp.ChargementStart"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:l="sap.ui.layout"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+
+   	
+		
+	 <l:BlockLayout id="blockLayout" class="sapUiSmallMargin">
+		<l:BlockLayoutRow >
+			<l:BlockLayoutCell
+			   title=""
+			   titleAlignment = "Begin"
+			   width = "75"
+			   class="sapUiContentPadding sapUiNoMarginBegin sapUiNoMarginBottom"
+			   backgroundColorSet="ColorSet1"
+			   backgroundColorShade="ShadeA">
+					<FlexBox
+				     direction="Row"
+				     justifyContent="Start"
+				     alignItems="Center">
+					 <items>
+                        <Label  id= "LabelChargeur" class="sapUiTinyMarginEnd" text="QUAI"  design="Bold"  />
+							<Input
+			id="QuaiInput"
+              value=   "{ChargementStartModel>/quai1}" >                    
+			
+		             </Input>  
+						 <Label id= "LabelTransporteur" class="sapUiTinyMarginEnd" text="TRANSPORT"  design="Bold" />
+				         <!--<Text id= "NumTransporteur_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/0/transporteur}"/>-->
+
+                         	<Input
+			id="TknumInput"
+              value=   "{ChargementStartModel>/tknum}" >   
+               </Input>
+						 <Button text="CHARGEMENT QUAI" 	press="onClickChargementQuai"/>
+                         </items>
+						
+				</FlexBox> 
+
+				 	
+			</l:BlockLayoutCell>
+			
+		</l:BlockLayoutRow>
+	</l:BlockLayout>
+
+     <Label  id= "LabelChargeur2" class="sapUiTinyMarginEnd" text="QUAI"  design="Bold"  />
+							<Input
+			id="QuaiInput2"
+              value=   "{ChargementStartModel>/quai1}" >                    
+			
+		             </Input>  
+						 <Label id= "LabelTransporteur2" class="sapUiTinyMarginEnd" text="TRANSPORT"  design="Bold" />
+				         <!--<Text id= "NumTransporteur_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/0/transporteur}"/>-->
+
+                         	<Input
+			id="TknumInput2"
+              value=   "{ChargementStartModel>/tknum}" >   
+               </Input>
+						 <Button text="CHARGEMENT QUAI" 	press="onClickChargementQuai"/>
+
+    </mvc:View>
