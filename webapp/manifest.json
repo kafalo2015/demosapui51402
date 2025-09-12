@@ -191,8 +191,8 @@
             ],
             "targets": {
                 "TargetChargementStart": {
-                    "id": "ChargementStart",
-                    "name": "ChargementStart",
+                    "id": "ChargementStart2",
+                    "name": "ChargementStart2",
                     "path": "clf.logistique.chargementquais.view.ChargementStartApp",
                     "level" : 2,
                     "transition": "slide",

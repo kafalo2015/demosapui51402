@@ -6,6 +6,7 @@ import Control from "sap/ui/core/Control";
 import MessageStrip from "sap/m/MessageStrip";
 import View from "sap/ui/core/mvc/View";
 import Panel from "sap/m/Panel";
+import SideNavigation, { SideNavigation$ItemSelectEvent } from "sap/tnt/SideNavigation";
 
 /**
  * @namespace clf.logistique.chargementquais.controller
@@ -39,9 +40,9 @@ export default class AppChargementQuaisIconTabBar extends Controller {
           let messageStripWarningQuai : MessageStrip;
           let messageStripInformationQuai : MessageStrip;
           
-          console.log("Quai de la notification : " +  current_quai + " Quai affiché dans l'IconTabBar: " + IconTabBarControl.getSelectedKey());
+          console.log("P1 Quai de la notification : " +  current_quai + " Quai affiché dans l'IconTabBar: " + IconTabBarControl.getSelectedKey());
         // Si la page courante correspond au quai de la notification alors on recharge (on teste le quai 10 dans un premier temps)
-         if ( IconTabBarControl.getSelectedKey() == current_quai){                 //TODO=>Evol LOT 4 : Ce test n''est pas nécessaire les messages strip
+        // if ( IconTabBarControl.getSelectedKey() == current_quai){                 //TODO=>Evol LOT 4 : Ce test n''est pas nécessaire les messages strip
                                                                                    // doivent se mettre à jour meême si on ne se trouve pas sur le quai concerné
                                                                                    // par la notificaiotn
                let tcontent : View[] = IconTabBarControl.getContent() as View[];
@@ -90,13 +91,28 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                     }
                 })
               })
+
+              // LOT 4 : Chargement des quais  => Code erroné à changer
               // Si le quai affiché est concerné par la notification et le message est de type information alors on affiche un Toast et on rafraichit le quai 
-              if ( type_msg == 'information' )
+              //if ( type_msg == 'information' )  //if ( IconTabBarControl.getSelectedKey() == current_quai){
+               // {
+                //  MessageToast.show(msg_txt);
+                 // this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {}); 
+               // }
+               // LOT 4 : Chargement des quais  => Code erroné à changer
+        //}
+
+                // LOT 4 : Chargement des quais 
+              // Si le quai affiché est concerné par la notification et le message est de type information alors on affiche un Toast et on rafraichit le quai 
+              if ((action == 'chargement') && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
                 {
                   MessageToast.show(msg_txt);
                   this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {}); 
+                  this.getOwnerComponent()?.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
                 }
-        }
+               // LOT 4 : Chargement des quais  =  
+
+
                // Affichage de tous les messages (Information et Erreur) relatifs à l'ensemble des quais
                 messageStrip_ref = new MessageStrip();
                 //if ( type_msg == 'error' ) { messageStrip_ref.setText(current_quai+ ": " + msg_txt); }      // Correctif-- 14/08/2025 Correctifs notifications
@@ -107,6 +123,7 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                 //   msgStrip.setType(MessageType.Error);
                  messageStrip_ref.setShowIcon(true);
                  messageStrip_ref.setShowCloseButton(true);  
+                 console.log("P1 AJOUT d'un message dans la zone MEssages multi quai");
                  panelMessage.addAggregation("content",messageStrip_ref);
 
                  // TODO Notification fin de chargement 
@@ -148,6 +165,8 @@ export default class AppChargementQuaisIconTabBar extends Controller {
      console.log("IcontabBar content_string" + content_string_table[1]);
      console.log("IconTabBar Selected Key" + IconTabBarControl.getSelectedKey());
      IconTabBarControl.setSelectedKey(content_string_table[1].toUpperCase());
+
+
      }
         
     public onTabSelect(event: IconTabBar$SelectEvent): void {

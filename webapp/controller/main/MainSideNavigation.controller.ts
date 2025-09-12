@@ -8,7 +8,7 @@ import SideNavigation, { SideNavigation$ItemSelectEvent } from "sap/tnt/SideNavi
 /**
  * @namespace clf.logistique.chargementquais.controller
  */
-export default class MainSidePanel extends Controller {
+export default class MainSideNavigation extends Controller {
 
   private dialog: Dialog;
 
@@ -17,17 +17,26 @@ export default class MainSidePanel extends Controller {
     /* Code pour ouvrir une boîte de Dialogue de Chargement au moment de la sélection d'une Date dans le Date Picker (OBSOLETE) 
     // Ce type de code sera peut être à remettre en place au moment du rafraichissement de la liste des quais si l'appli mets du temps
     //  à retourner des résultats 
-       this.onOpenDialog();
+       this.onOpenDialog();*/
 
   // Enregistrement d'un handler pour la fin d'un chargeemnt
-  this.getOwnerComponent()?.getEventBus().subscribe("Default","chargementFinishedEvent",(channel:string,event:string,data: Object) => {           
+  this.getOwnerComponent()?.getEventBus().subscribe("Default","SidenavigationsetSelectedItemEvent",(channel:string,event:string,data: Object) => {           
+   
+           let SideNavigationControl : SideNavigation = this.getView()?.byId("sideNavigation") as SideNavigation;
+           //let content_string : any  = this.byId("sideNavigation")?.getAggregation("item")?.;
+           //let content_string_table : string[] = content_string.split("---",2 );
+           //console.log("sideNavigation content_string  " + content_string);
+           //console.log("sideNavigation content_string table " + content_string_table[1]);
+           console.log("sideNavigation Selected Key" + SideNavigationControl.getSelectedItem());
+          SideNavigationControl.setSelectedItem("container-clf.logistique.chargementquais---App--item_quai_all");
 
-    this.dialog.close();
-    console.log("Fermeture du Busy Dialog de chargement")
-    },this);  */
+
+    },this);  
 
     }
-    public onAfterRendering(): void {
+    public onAfterRendering(): void {     
+    
+         
        
      }
 
@@ -67,7 +76,10 @@ export default class MainSidePanel extends Controller {
      const router = UIComponent.getRouterFor(this);
   if ( event.getParameter("item")?.getText() == "Chargements par quais" ){  console.log("Chargement du quai 08  ")   ; router.getTargets()?.display("TargetChargementQuai08");  }   // Ajout Quai08,09++ 
   if (  event.getParameter("item")?.getText() == "Suivi Chargement" ) { console.log("Rechargement de la list ")   ;router.getTargets()?.display("TargetChargementList");}
-  if (  event.getParameter("item")?.getId() == "container-clf.logistique.chargementquais---App--item_startchargement" ) { console.log("Démarrage Chargement ")   ;router.getTargets()?.display("TargetChargementStart");}
+  if (  event.getParameter("item")?.getId() == "container-clf.logistique.chargementquais---App--item_startchargement" ) { console.log("Démarrage Chargement ")   ;
+                                                                                                                           this.getOwnerComponent()?.getEventBus().publish("Default", "chargementStartModelGetEvent", {}); //LOT4 => Rajouter un Get sur StartChargmentModel
+    
+                                                                                                                         router.getTargets()?.display("TargetChargementStart");}
  // if ( event.getParameter("item")?.getText() == "Quai 10" ){ console.log("Chargement du quai 10  ")   ; router.getTargets()?.display("TargetChargementQuai10"); }
  // if ( event.getParameter("item")?.getText() == "Quai 11" ){ router.getTargets()?.display("TargetChargementQuai11"); }
  // if ( event.getParameter("item")?.getText() == "Quai 12" ){ router.getTargets()?.display("TargetChargementQuai12"); }

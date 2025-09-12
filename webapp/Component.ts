@@ -8,6 +8,7 @@ import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import DataAnalyzer from "sap/sac/df/DataAnalyzer";
 import Model$RequestCompletedEvent from "sap/ui/model/Model";
 import UIComponent from "sap/ui/core/UIComponent";
+ import MessageToast from "sap/m/MessageToast"; 
  
 /**
  * @namespace clf.logistique.chargementquais
@@ -92,12 +93,15 @@ export default class Component extends BaseComponent {
         console.log("chargementStartEvent"); 
        this.startchargementquai();
        
-       //let lv_quai : string;
-       //lv_quai = "QUAI8";
-       //const router = this.getRouter();
-        //if ( lv_quai == "QUAI8" )  {  router.getTargets()?.display("TargetChargementQuai08");
+   
 
+     } ); 
 
+     this.getEventBus().subscribe("Default","chargementStartModelGetEvent",() => { 
+        //------ Envoi d'une notification à la vue ChargementStart pour rendre invisible les messagesStrip----
+        this.getEventBus().publish("Default", "InitializeChargementStartMessageStripEvent", {});    
+        //------ Récupération des matchcodes du formulaire de saisie de démarrge d'un nouveau Chargement------
+        this.ChargementStartModel_Get();     // Démarrage du chargment
      } ); 
 
 
@@ -111,6 +115,8 @@ export default class Component extends BaseComponent {
 
      this.getEventBus().publish("Default", "chargementListEvent", {});
      this.getEventBus().publish("Default", "chargementEvent", {});
+     this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});
+   
      this.getRouter().initialize();   // Le router ne doit pas être forcément utilisé 
 	};
 
@@ -308,13 +314,17 @@ else
         //ChargementStartModel.setData( {"tknum":"0030002505","quai1":"QUAI11"} );
     }
 
-    public startchargementquai():void{
+
+      public ChargementStartModel_Get():void{
+
         let ChargementStartModel: JSONModel;
         let lv_chargement_url : string;
         if ( this.getModel("ChargementStartModel") == undefined)
         {
             ChargementStartModel = new JSONModel();
             this.setModel(ChargementStartModel, "ChargementStartModel");
+            ChargementStartModel.setDefaultBindingMode("TwoWay");   // TODO => vérifier si c'est nécessaire d'activer  le two way binding
+            //ChargementStartModel.set
         }else
         {  
             ChargementStartModel =   this.getModel( "ChargementStartModel") as JSONModel;
@@ -323,16 +333,74 @@ else
  //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//   
         if ( location.hostname === 'localhost' ) {          
           if (this.environment === "dev") {
-                lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement";          
+                lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";          
            }
           else {
                     if (this.environment === "qual") {                 
-                             lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement"; }                 
-                    else {   lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement";  } 
+                             lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; }                 
+                    else {   lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";  } 
                          }
              }
         else { 
-                    lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";            
+                    lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";            
+            }
+ //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//           
+  
+/* EXEMPLE DE POST
+       loadData("https://your url",  // sURL
+{}, //oParameters
+true, // bASync
+"POST", // sType
+true/false, // bMerge
+true/false, // BCache?
+{ // mHeaders
+			         "X-Requested-With": "XMLHttpRequest",
+			         "Content-Type": "application/json",
+			         "DataServiceVersion": "2.0",
+			         "Accept": "application/atom+xml,application/atomsvc+xml,application/xml",
+			         "X-CSRF-Token": "0e855895-5023-4350-bd3e-5651beaadeae"
+} )*/                                                            
+      
+       
+       let mHeader = {
+            "Authorization": "Basic",                    
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type":"application/json",  
+            "X-Requested-With":"X"
+            
+        }
+       ChargementStartModel.loadData(lv_chargement_url,"",true,  "GET", false, true, mHeader);
+
+  
+    }
+
+    public startchargementquai():void{
+        let ChargementStartModel: JSONModel;
+        let lv_chargement_url : string;
+        if ( this.getModel("ChargementStartModel") == undefined)
+        {
+            ChargementStartModel = new JSONModel();
+            this.setModel(ChargementStartModel, "ChargementStartModel");
+            ChargementStartModel.setDefaultBindingMode("TwoWay");   // TODO => vérifier si c'est nécessaire d'activer  le two way binding
+            //ChargementStartModel.set
+        }else
+        {  
+            ChargementStartModel =   this.getModel( "ChargementStartModel") as JSONModel;
+        }
+     
+ //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//   
+        if ( location.hostname === 'localhost' ) {          
+          if (this.environment === "dev") {
+                lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";          
+           }
+          else {
+                    if (this.environment === "qual") {                 
+                             lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; }                 
+                    else {   lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";  } 
+                         }
+             }
+        else { 
+                    lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";            
             }
  //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//           
   
@@ -351,18 +419,31 @@ true/false, // BCache?
 			         "X-CSRF-Token": "0e855895-5023-4350-bd3e-5651beaadeae"
 } )*/                                                            
         let input_data:any = ChargementStartModel.getData();  
-        console.log("Appel  de Start Chargment Valeur de quai et transport:" + input_data);
+        console.log("Appel  de Start Chargement Valeur de quai et transport:" + input_data);
        
        let mHeader = {
             "Authorization": "Basic",                    
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",  
             "X-Requested-With":"X",
-            "tknum": input_data.tknum,    // Object.values(input_data)[0]  
-            "quai1": input_data.quai1 
+            "tknum": input_data.results.tknum,    // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
+            "quai1": input_data.results.quai1 
         }
-       ChargementStartModel.loadData(this.gv_chargement_url,"",true,  "POST", false, true, mHeader)?.then(result=>{ let lv_quai : string; lv_quai = input_data.quai1; const router = this.getRouter();
-       if ( lv_quai == "QUAI8" )  {  router.getTargets()?.display("TargetChargementQuai08");  }   
+        ChargementStartModel.loadData(lv_chargement_url,"",true,  "POST", false, true, mHeader)?.then(result=>{ let lv_target : string; 
+        console.log("Navigation vers le quai " + input_data.results.quai1  + "pour démarrage du chargement"); 
+        MessageToast.show("Chargement démarré sur le quai : " + input_data.results.quai1,{ duration: 3000, width : '50%' })
+        lv_target = "TargetChargement" + input_data.results.quai1; const router = this.getRouter();
+        console.log("Navigation vers le quai avec target " + lv_target); 
+       // input_data = ChargementStartModel.getData(); 
+        //console.log("Valeur du matchcodde tSuggestedQuai1 après le POST" + input_data.results.tSuggestedQuai1);
+        router.getTargets()?.display(lv_target);  
+  
+       this.getEventBus().publish("Default", "chargementEvent", {});  // Ce serait mieux de relancer le chargment dans le handler de la Navigation 
+       
+        this.getEventBus().publish("Default", "SidenavigationsetSelectedItemEvent", {});
+      // this.getEventBus().publish("Default", "chargementStartModelGetEvent", {}); //LOT4-> Démarrage du chargment => A priori il est nécessaire de refaire un Get après le POST
+                                                                                                                      },reason=>{  console.log("P1 REJECTED PROMISE POST StartChargment" + ChargementStartModel.getJSON.toString());
+
                                                                                                                       }); 
     }
     
