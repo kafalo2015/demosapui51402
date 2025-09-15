@@ -29,14 +29,10 @@ export default class MainSideNavigation extends Controller {
            //console.log("sideNavigation content_string table " + content_string_table[1]);
            console.log("sideNavigation Selected Key" + SideNavigationControl.getSelectedItem());
           SideNavigationControl.setSelectedItem("container-clf.logistique.chargementquais---App--item_quai_all");
-
-
     },this);  
 
     }
     public onAfterRendering(): void {     
-    
-         
        
      }
 
@@ -54,11 +50,6 @@ export default class MainSideNavigation extends Controller {
   }    
 
   public handleChange(event: DatePicker$ChangeEvent): void {
-  /* Code pour rafraîchir les données lorsqu'on change de date (OBSOLETE)  
-  console.log("Date Sélection dans handleChange :" + this.getOwnerComponent()?.getModel("chargementQuaiSelectionDateModel")?.getProperty("/datechargement"))
-  this.dialog.open();
-  this.getOwnerComponent()?.getEventBus().publish("Default", "chargementListEvent", {});
-  this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {}); */
     }     
     
      public onselectionChange(event:Table$RowSelectionChangeEvent)
@@ -80,12 +71,6 @@ export default class MainSideNavigation extends Controller {
                                                                                                                            this.getOwnerComponent()?.getEventBus().publish("Default", "chargementStartModelGetEvent", {}); //LOT4 => Rajouter un Get sur StartChargmentModel
     
                                                                                                                          router.getTargets()?.display("TargetChargementStart");}
- // if ( event.getParameter("item")?.getText() == "Quai 10" ){ console.log("Chargement du quai 10  ")   ; router.getTargets()?.display("TargetChargementQuai10"); }
- // if ( event.getParameter("item")?.getText() == "Quai 11" ){ router.getTargets()?.display("TargetChargementQuai11"); }
- // if ( event.getParameter("item")?.getText() == "Quai 12" ){ router.getTargets()?.display("TargetChargementQuai12"); }
- // if ( event.getParameter("item")?.getText() == "Quai 13" ){ router.getTargets()?.display("TargetChargementQuai13"); }
- // if ( event.getParameter("item")?.getText() == "Quai 14" ){ router.getTargets()?.display("TargetChargementQuai14"); }
- // if ( event.getParameter("item")?.getText() == "Quai 15" ){ router.getTargets()?.display("TargetChargementQuai15"); }
     }
 
   

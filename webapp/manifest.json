@@ -217,8 +217,8 @@
 					"transition": "slide"
                 },
                 "TargetChargementQuai08": {
-                    "id": "quai8",
-                    "name": "quai8",
+                    "id": "quai08",
+                    "name": "quai08",
                     "path": "clf.logistique.chargementquais.view.ChargementsQuaisApp.quais",
                     "parent" :  "TargetChargementQuais",
                     "controlId": "idIconTabBarQuais",
@@ -229,8 +229,8 @@
                     
                 },
                   "TargetChargementQuai09": {
-                    "id": "quai9",
-                    "name": "quai9",
+                    "id": "quai09",
+                    "name": "quai09",
                     "path": "clf.logistique.chargementquais.view.ChargementsQuaisApp.quais",
                     "parent" :  "TargetChargementQuais",
                     "controlId": "idIconTabBarQuais",

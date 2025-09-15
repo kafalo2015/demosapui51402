@@ -21,16 +21,17 @@ export default class AppChargementQuaisIconTabBar extends Controller {
             this.notification_handler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5], Object.values(data)[6]);  
             },this);   
 
-  // Enregistrement d'un handler pour le click sur quai dans Chargement List   
- this.getOwnerComponent()?.getEventBus().subscribe("Default","chargementQuaiButtonEvent",(channel:string,event:string,data: Object) => {           
-      this.button_chargementquai_handler();  
-    },this); 
+          // Enregistrement d'un handler pour le click sur quai dans Chargement List   
+        this.getOwnerComponent()?.getEventBus().subscribe("Default","chargementQuaiButtonEvent",(channel:string,event:string,data: Object) => {           
+              this.button_chargementquai_handler();  
+            },this); 
         }
-
+     //----------------------------------------------------------------------------------------------------------------------------//
+     //               Affichage des notifications d'Erreur/Warning ou Succes dans les messages Strip du quaui                                                                                     //  
+     //----------------------------------------------------------------------------------------------------------------------------// 
     public notification_handler(type_msg:string, msg_txt: string,transport:string, um: String, current_quai: string, action :string, user:string ) : void{ 
           let IconTabBarControl : IconTabBar = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
           let message_chargementum_ok :string;
-
           // Panel d'affichage des messages  
           let panelMessage : Panel = this.byId("PanelMessageAppChargementQuais") as Panel;   // TODO=>Mettre le numéro de quai en dynamique
           //let panelMessageQuai : Panel;
@@ -54,7 +55,6 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                   if ( control.getId() == "container-clf.logistique.chargementquais---" + current_quai.toLowerCase() + "--messageStripError" )
                   {
                     messageStripErrorQuai = control as MessageStrip;
-                   // if ( type_msg == 'error' ){
 
                    if ( type_msg == 'E' ){
                     messageStripErrorQuai.setText(msg_txt); 
@@ -77,7 +77,6 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                   if  ( type_msg == 'information' ) { messageStripWarningQuai.setVisible(false);     }
                   }  
 
-                  
                     if (  control.getId() == "container-clf.logistique.chargementquais---" + current_quai.toLowerCase() + "--messageStripInformation" )
                     {
                       messageStripInformationQuai = control as MessageStrip;
@@ -91,7 +90,6 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                     }
                 })
               })
-
               // LOT 4 : Chargement des quais  => Code erroné à changer
               // Si le quai affiché est concerné par la notification et le message est de type information alors on affiche un Toast et on rafraichit le quai 
               //if ( type_msg == 'information' )  //if ( IconTabBarControl.getSelectedKey() == current_quai){
@@ -101,7 +99,6 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                // }
                // LOT 4 : Chargement des quais  => Code erroné à changer
         //}
-
                 // LOT 4 : Chargement des quais 
               // Si le quai affiché est concerné par la notification et le message est de type information alors on affiche un Toast et on rafraichit le quai 
               if ((action == 'chargement') && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
@@ -112,12 +109,8 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                 }
                // LOT 4 : Chargement des quais  =  
 
-
                // Affichage de tous les messages (Information et Erreur) relatifs à l'ensemble des quais
                 messageStrip_ref = new MessageStrip();
-                //if ( type_msg == 'error' ) { messageStrip_ref.setText(current_quai+ ": " + msg_txt); }      // Correctif-- 14/08/2025 Correctifs notifications
-                //if ( type_msg == 'information' ) {messageStrip_ref.setText(msg_txt); }                      // Correctif-- 14/08/2025 Correctifs notifications
-
                 messageStrip_ref.setText(msg_txt);       // Correctif++ 14/08/2025 Correctifs notifications
                                                          // Toujours afficher le message dans  la zone Messages quel que soit le type de message (E, W ou S)
                 //   msgStrip.setType(MessageType.Error);
@@ -138,7 +131,9 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                  this.getOwnerComponent()?.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
                  }
     }
-  
+      //----------------------------------------------------------------------------------------------------------------------------//
+     //               Handler clic sur le quai                                                                                     //  
+     //----------------------------------------------------------------------------------------------------------------------------//
     public button_chargementquai_handler() : void{ 
         let IconTabBarControl : IconTabBar;
         IconTabBarControl = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
@@ -146,8 +141,8 @@ export default class AppChargementQuaisIconTabBar extends Controller {
        console.log(" button_chargementquai_handler() : " + selectedKeyQuaiNumber);
          const router = UIComponent.getRouterFor(this);
            if ( selectedKeyQuaiNumber == "" )        {  router.getTargets()?.display("TargetChargementQuai08");  }   // Evolution quai 8 et 09
-           if ( selectedKeyQuaiNumber == "QUAI8" )  {  router.getTargets()?.display("TargetChargementQuai08");  }   // Evolution quai 8 et 09s
-           if ( selectedKeyQuaiNumber == "QUAI9" )  {  router.getTargets()?.display("TargetChargementQuai09");  }
+           if ( selectedKeyQuaiNumber == "QUAI08" )  {  router.getTargets()?.display("TargetChargementQuai08");  }   // Evolution quai 8 et 09s
+           if ( selectedKeyQuaiNumber == "QUAI09" )  {  router.getTargets()?.display("TargetChargementQuai09");  }
            if ( selectedKeyQuaiNumber == "QUAI10" )  {  router.getTargets()?.display("TargetChargementQuai10");  }
            if ( selectedKeyQuaiNumber == "QUAI11" )  {  router.getTargets()?.display("TargetChargementQuai11");  }
            if ( selectedKeyQuaiNumber == "QUAI12" )  {  router.getTargets()?.display("TargetChargementQuai12");  }
@@ -156,6 +151,9 @@ export default class AppChargementQuaisIconTabBar extends Controller {
            if ( selectedKeyQuaiNumber == "QUAI15" )  {  router.getTargets()?.display("TargetChargementQuai15");  }
         }
 
+     //----------------------------------------------------------------------------------------------------------------------------//
+     //               Handler clic sur le quai  (Pour synchroniser le routing avec le quai sélectionné)                                                                                   //  
+     //----------------------------------------------------------------------------------------------------------------------------//
     public onAfterRendering(): void {
       let IconTabBarControl : IconTabBar;
       IconTabBarControl = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
@@ -165,16 +163,16 @@ export default class AppChargementQuaisIconTabBar extends Controller {
      console.log("IcontabBar content_string" + content_string_table[1]);
      console.log("IconTabBar Selected Key" + IconTabBarControl.getSelectedKey());
      IconTabBarControl.setSelectedKey(content_string_table[1].toUpperCase());
-
-
      }
-        
+//----------------------------------------------------------------------------------------------------------------------------//
+//               Handler de sélection d'un d'un onglet de l'IConTabBar                                                       //  
+//----------------------------------------------------------------------------------------------------------------------------//
     public onTabSelect(event: IconTabBar$SelectEvent): void {
         let key = event.getParameter("key");
         const router = UIComponent.getRouterFor(this);
         console.log("Key of IconTabBar selected item = " + key );
-            if ( key == "QUAI8" )   {  router.getTargets()?.display("TargetChargementQuai08");  }   // Evolution quai 8 et 09
-            if ( key == "QUAI9" )   {  router.getTargets()?.display("TargetChargementQuai09");  }   // Evolution quai 8 et 09
+            if ( key == "QUAI08" )   {  router.getTargets()?.display("TargetChargementQuai08");  }   // Evolution quai 8 et 09
+            if ( key == "QUAI09" )   {  router.getTargets()?.display("TargetChargementQuai09");  }   // Evolution quai 8 et 09
             if ( key == "QUAI10" )  {  router.getTargets()?.display("TargetChargementQuai10");  }
             if ( key == "QUAI10" )  {  router.getTargets()?.display("TargetChargementQuai10");  }
             if ( key == "QUAI11" )  {  router.getTargets()?.display("TargetChargementQuai11");  }
