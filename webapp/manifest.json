@@ -252,6 +252,18 @@
                     "transition": "slide"
                     
                 },
+                  "TargetStartChargement": {
+                    "id": "ChargementStart",
+                    "name": "ChargementStart",
+                    "path": "clf.logistique.chargementquais.view.ChargementsQuaisApp.startchargement",
+                    "parent" :  "TargetChargementQuais",
+                    "controlId": "idIconTabBarQuais",
+                    "controlAggregation": "content",
+                    "clearControlAggregation": true,
+                    "level" : 2,
+                    "transition": "slide"
+                    
+                },
                 "TargetChargementQuai11": {
                     "id": "quai11",
                     "name": "quai11",

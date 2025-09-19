@@ -7,6 +7,7 @@ import MessageStrip from "sap/m/MessageStrip";
 import View from "sap/ui/core/mvc/View";
 import Panel from "sap/m/Panel";
 import SideNavigation, { SideNavigation$ItemSelectEvent } from "sap/tnt/SideNavigation";
+import JSONModel from "sap/ui/model/json/JSONModel";
 
 /**
  * @namespace clf.logistique.chargementquais.controller
@@ -41,7 +42,8 @@ export default class AppChargementQuaisIconTabBar extends Controller {
           let messageStripWarningQuai : MessageStrip;
           let messageStripInformationQuai : MessageStrip;
           
-          console.log("P1 Quai de la notification : " +  current_quai + " Quai affiché dans l'IconTabBar: " + IconTabBarControl.getSelectedKey());
+          console.log("------------------ AppChargementQuaisIconTabBar.controller/NOTIFICATION HANDLER -----------------------------------------------------------------------------------------------------");
+          console.log("P1 Quai de la notification : " +  current_quai.toLowerCase() + " Quai affiché dans l'IconTabBar: " + IconTabBarControl.getSelectedKey());
         // Si la page courante correspond au quai de la notification alors on recharge (on teste le quai 10 dans un premier temps)
         // if ( IconTabBarControl.getSelectedKey() == current_quai){                 //TODO=>Evol LOT 4 : Ce test n''est pas nécessaire les messages strip
                                                                                    // doivent se mettre à jour meême si on ne se trouve pas sur le quai concerné
@@ -52,10 +54,11 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                tcontent_views = content.getContent() as Control[];
                 tcontent_views.forEach((control) => {
                 // code pour remplir le  messageStrip d'erreur et le messageStrip d'information du quai 
+                    console.log(control.getId());
                   if ( control.getId() == "container-clf.logistique.chargementquais---" + current_quai.toLowerCase() + "--messageStripError" )
                   {
                     messageStripErrorQuai = control as MessageStrip;
-
+              
                    if ( type_msg == 'E' ){
                     messageStripErrorQuai.setText(msg_txt); 
                     messageStripErrorQuai.setVisible(true); 
@@ -127,8 +130,7 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                  {
                  console.log("Notification de fin de chargement");
                  MessageToast.show(msg_txt);
-                 this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {});  "Notification fin de chargement"
-                 this.getOwnerComponent()?.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
+                 this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {});  //Notification fin de chargement"
                  }
     }
       //----------------------------------------------------------------------------------------------------------------------------//
@@ -170,16 +172,41 @@ export default class AppChargementQuaisIconTabBar extends Controller {
     public onTabSelect(event: IconTabBar$SelectEvent): void {
         let key = event.getParameter("key");
         const router = UIComponent.getRouterFor(this);
+
+       //LOT 6 : Démarrage du chargement à partir du quai
+       
+              let ChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
+              let indice_quai : number;
+              let indice_json : number;
+
+               indice_quai = Number( key?.slice(4,6));
+               indice_json = indice_quai - 8;
+
+            //TargetStartChargementQuai10
+
+        console.log("P1 Indice JSON du quai:  " + indice_quai);      
+        console.log("P1 valeur du modèle du chargement  " + ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours"));
+         let encours : boolean = ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours");
         console.log("Key of IconTabBar selected item = " + key );
+
+         // if ( encours == true ) A remettre Après dev Modèle de Notifications
+          {
             if ( key == "QUAI08" )   {  router.getTargets()?.display("TargetChargementQuai08");  }   // Evolution quai 8 et 09
             if ( key == "QUAI09" )   {  router.getTargets()?.display("TargetChargementQuai09");  }   // Evolution quai 8 et 09
-            if ( key == "QUAI10" )  {  router.getTargets()?.display("TargetChargementQuai10");  }
             if ( key == "QUAI10" )  {  router.getTargets()?.display("TargetChargementQuai10");  }
             if ( key == "QUAI11" )  {  router.getTargets()?.display("TargetChargementQuai11");  }
             if ( key == "QUAI12" )  {  router.getTargets()?.display("TargetChargementQuai12");  }
             if ( key == "QUAI13" )  {  router.getTargets()?.display("TargetChargementQuai13");  }
             if ( key == "QUAI14" )  {  router.getTargets()?.display("TargetChargementQuai14");  }
             if ( key == "QUAI15" )  {  router.getTargets()?.display("TargetChargementQuai15");  }
+          }
+              // else
+              // {
+
+              //     router.getTargets()?.display("TargetStartChargement");
+
+              // }
+
     } 
 
 }

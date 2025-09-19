@@ -131,6 +131,30 @@
 		</items>
 	</Table>
 	</ScrollContainer>
+         <MessageStrip id = "messageStripErrorV2"
+				text="{notificationsQuaisModel>/quais/0/notiferror/msg_text}"
+				type="Error"
+				showIcon="true"
+				visible = "{notificationsQuaisModel>/quais/0/notiferror/visible}"
+				class="sapUiNoMarginBottom">
+			</MessageStrip>
+
+		    <MessageStrip id = "messageStripWarningV2"
+				text="{notificationsQuaisModel>/quais/0/notifwarning/msg_text}"
+				type="Warning"
+				showIcon="true"
+				visible = "{notificationsQuaisModel>/quais/0/notifwarning/visible}"
+				class="sapUiNoMarginBottom">
+			</MessageStrip>
+			<MessageStrip id = "messageStripInformationV2"
+				text="{notificationsQuaisModel>/quais/0/notifsuccess/msg_text}"
+				type="Success"
+				showIcon="true"
+				visible = "{notificationsQuaisModel>/quais/0/notifsuccess/visible}"
+				class="sapUiNoMarginBottom sapUiNoMarginBegin">
+			</MessageStrip>
+
+
 		<MessageStrip id = "messageStripError"
 				text=""
 				type="Error"

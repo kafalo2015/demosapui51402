@@ -1,0 +1,177 @@
+<mvc:View controllerName="clf.logistique.chargementquais.controller.ChargementsQuaisApp.QuaiChargementStart"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:l="sap.ui.layout"
+    xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+
+   	
+		
+	 <l:BlockLayout id="blockLayout" class="sapUiSmallMargin">
+		<l:BlockLayoutRow >
+			<l:BlockLayoutCell
+			   title=""
+			   titleAlignment = "Begin"
+			   width = "75"
+			   class="sapUiContentPadding sapUiNoMarginBegin sapUiNoMarginBottom"
+			   backgroundColorSet="ColorSet1"
+			   backgroundColorShade="ShadeA">
+					<FlexBox
+				     direction="Row"
+				     justifyContent="Start"
+				     alignItems="Center">
+					 <items>
+                        <!--<Label  id= "LabelChargeur" class="sapUiTinyMarginEnd" text="QUAI"  design="Bold"  />
+							<Input id="QuaiInput" value=   "{ChargementStartModel>/results/quai1}"
+							    placeholder="Saisir le quai"
+			                    autocomplete="true"
+								showSuggestion="true"
+								suggestionItems="{ChargementStartModel>/results/tSuggestedQuai1}" 
+							
+							 >   
+
+							 <suggestionItems>
+				             <core:Item text="{ChargementStartModel>quai1}" />
+							 </suggestionItems>                 
+			
+		             </Input> --> 
+						 <Label id= "LabelMatricule" class="sapUiTinyMarginEnd" text="MATRICULE"  design="Bold" />
+				         <!--<Text id= "NumTransporteur_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/0/transporteur}"/>-->
+
+                         	<!--<Input id="TknumInput" value=   "{ChargementStartModel>/results/tknum}" 
+							    placeholder="Saisir le numéro de transport"
+			                    autocomplete="true"
+								showSuggestion="true"
+								suggestionItems="{ChargementStartModel>/results/tSuggestedTknum}" 
+							> 
+								<suggestionItems>
+				             <core:Item text="{ChargementStartModel>tknum}" />
+							 </suggestionItems>
+							
+							  </Input> -->
+
+
+							  
+							  <Input
+							id="MatriculeTabular"
+							value=   "{ChargementStartModel>/results/matri}" 
+							textFormatMode="ValueKey"
+							placeholder="Saisir le matricule..."
+							showSuggestion="true"
+							showTableSuggestionValueHelp="false"
+							suggestionRows="{ChargementStartModel>/results/tSuggestedMatricule}"
+							suggestionItemSelected=".onSuggestionItemSelected">
+						<suggestionColumns>
+							<Column
+								popinDisplay="Inline"
+								demandPopin="true">
+								<Label text="Matricule" />
+							</Column>
+							<Column
+								popinDisplay="Inline"
+								demandPopin="true">
+								<Label text="Nom" />
+							</Column>
+
+							
+
+							
+						</suggestionColumns>
+
+						<suggestionRows>
+							<ColumnListItem>
+								<Label text="{ChargementStartModel>zpcfMatri}" />
+								<Label text="{ChargementStartModel>zpcfName1}" />
+							    
+						     </ColumnListItem>
+			           </suggestionRows>
+			      </Input>
+ <Label id= "LabelTransport" class="sapUiTinyMarginEnd" text="TRANSPORT"  design="Bold" />
+							  <Input
+							id="TknumInputTabular"
+							value="{ChargementStartModel>/results/tknum}" 
+							textFormatMode="ValueKey"
+							placeholder="Saisir le numéro de transport "
+							showSuggestion="true"
+							showTableSuggestionValueHelp="false"
+							suggestionRows="{ChargementStartModel>/results/tSuggestedTknum}"
+							suggestionItemSelected=".onSuggestionItemSelected">
+						<suggestionColumns>
+							<Column
+								popinDisplay="Inline"
+								demandPopin="true">
+								<Label text="Transport" />
+							</Column>
+							<Column
+								popinDisplay="Inline"
+								demandPopin="true">
+								<Label text="Date Chargement planifié" />
+							</Column>
+
+							<Column
+								popinDisplay="Inline"
+								demandPopin="true">
+								<Label text="Heure Chargement planifié" />
+							</Column>
+
+							<Column
+								popinDisplay="Inline"
+								demandPopin="true">
+								<Label text="Date Transport planifié" />
+							</Column>
+
+							<Column
+								popinDisplay="Inline"
+								demandPopin="true">
+								<Label text="Heure Transport planifié" />
+							</Column>
+						</suggestionColumns>
+
+						<suggestionRows>
+							<ColumnListItem>
+								<Label text="{ChargementStartModel>tknum}" />
+								<Label text="{ChargementStartModel>dplbg}" />
+							    <Label text="{ChargementStartModel>uplbg}" />
+							    <Label text="{ChargementStartModel>dptbg}" />
+								<Label text="{ChargementStartModel>uptbg}" />
+						     </ColumnListItem>
+			           </suggestionRows>
+			      </Input>
+						 <Button text="DEMARRER CHARGEMENT" press="onClickChargementQuai"/>
+                         </items>					
+				</FlexBox> 
+				 	
+			</l:BlockLayoutCell>
+</l:BlockLayoutRow>
+<l:BlockLayoutRow>
+	<l:BlockLayoutCell  backgroundColorSet="ColorSet1"
+			   backgroundColorShade="ShadeA">
+			<MessageStrip id = "messageStripError_ViewChargementStart2"
+				text=""
+				type="Error"
+				showIcon="true"
+				visible = "false"
+				class="sapUiNoMarginBottom">
+			</MessageStrip>
+			 <MessageStrip id = "messageStripWarning_ViewChargementStart2"
+				text=""
+				type="Warning"
+				showIcon="true"
+				visible = "false"
+				class="sapUiNoMarginBottom">
+			</MessageStrip>
+			<MessageStrip id = "messageStripInformation_ViewChargementStart2"
+				text=""
+				type="Success"
+				showIcon="true"
+				visible = "false"
+				class="sapUiNoMarginBottom sapUiNoMarginBegin">
+			</MessageStrip>
+				</l:BlockLayoutCell>
+			
+		</l:BlockLayoutRow>
+	</l:BlockLayout>
+
+
+
+    </mvc:View>

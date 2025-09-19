@@ -4,6 +4,7 @@ import UIComponent from "sap/ui/core/UIComponent";
 import { Table$RowSelectionChangeEvent } from "sap/ui/table/Table";
 import Dialog from "sap/m/Dialog";
 import SideNavigation, { SideNavigation$ItemSelectEvent } from "sap/tnt/SideNavigation";
+import JSONModel from "sap/ui/model/json/JSONModel";
 
 /**
  * @namespace clf.logistique.chargementquais.controller
@@ -65,7 +66,26 @@ export default class MainSideNavigation extends Controller {
     public itemSelect(event:SideNavigation$ItemSelectEvent)  {
      console.log("SideNavigation$ItemSelectEvent: " +  event.getParameter("item")?.getId() );
      const router = UIComponent.getRouterFor(this);
-  if ( event.getParameter("item")?.getText() == "Chargements par quais" ){  console.log("Chargement du quai 08  ")   ; router.getTargets()?.display("TargetChargementQuai08");  }   // Ajout Quai08,09++ 
+
+             let ChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
+             // let indice_quai : number;
+              let indice_json : number;
+  if ( event.getParameter("item")?.getText() == "Chargements par quais" )
+    {  console.log("P1 CLIC CHARGEMENT  QUAIS Chargement du quai 08 dans side Navigation Controller ")   ; 
+      indice_json = 0;
+     
+      ChargementQuaiModel  = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
+      console.log("P1 valeur de Encours dans  modèle du chargement QUAI08 dans Main Side Navigation Controller  " + ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours"));
+      let encours : boolean = ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours");
+      // TODO tester si on doit afficher le formulaire de début de chargement (quai 8 inactif) ou le quai 8 (quai8 actif ) 
+       if (encours == true)
+      {router.getTargets()?.display("TargetChargementQuai08");  }   // Ajout Quai08,09++ }
+      else
+      {
+       router.getTargets()?.display("TargetStartChargement");
+      }
+    }
+      
   if (  event.getParameter("item")?.getText() == "Suivi Chargement" ) { console.log("Rechargement de la list ")   ;router.getTargets()?.display("TargetChargementList");}
   if (  event.getParameter("item")?.getId() == "container-clf.logistique.chargementquais---App--item_startchargement" ) { console.log("Démarrage Chargement ")   ;
                                                                                                                            this.getOwnerComponent()?.getEventBus().publish("Default", "chargementStartModelGetEvent", {}); //LOT4 => Rajouter un Get sur StartChargmentModel

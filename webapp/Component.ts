@@ -10,6 +10,10 @@ import Model$RequestCompletedEvent from "sap/ui/model/Model";
 import UIComponent from "sap/ui/core/UIComponent";
  import MessageToast from "sap/m/MessageToast"; 
  
+
+// LOT 6 => Lancement du démarrage du chargemnet à partir du quai
+// 18/09/2025 LOT 7 => Modèle de Notifications au niveau du component 
+
 /**
  * @namespace clf.logistique.chargementquais
  */
@@ -69,15 +73,148 @@ export default class Component extends BaseComponent {
        //       datechargement:  oDateFormat.format(new Date()),                 // On initialise à la date du jour pour les tests en DEV
        // });    
 
+            let notificationsQuaisModel = new JSONModel();
+            let json_object : object = 
+    
+
+              {
+    "quais": [
+        {
+            "quai": "quai08",
+            "notifsuccess": {
+                "msg_text": "TEST Notif success QUAI08",
+                "visible": "true"
+            },
+            "notifwarning": {
+                "msg_text": "TEST Notif warning QUAI08",
+                "visible": "true"
+            },
+            "notiferror": {
+                "msg_text": "TEST Notif error QUAI08",
+                "visible": "true"
+            }
+        },
+        {
+            "quai": "quai09",
+            "notifsuccess": {
+                "msg_text": "TEST Notif success QUAI09",
+                "visible": "true"
+            },
+            "notifwarning": {
+                "msg_text": "TEST Notif warning QUAI09",
+                "visible": "true"
+            },
+            "notiferror": {
+                "msg_text": "TEST Notif error QUAI089",
+                "visible": "true"
+            }
+        },
+        {
+            "quai": "quai10",
+            "notifsuccess": {
+                "msg_text": "TEST Notif success QUAI10",
+                "visible": "true"
+            },
+            "notifwarning": {
+                "msg_text": "TEST Notif warning QUAI10",
+                "visible": "true"
+            },
+            "notiferror": {
+                "msg_text": "TEST Notif error QUAI10",
+                "visible": "true"
+            }
+        },
+        {
+            "quai": "quai11",
+            "notifsuccess": {
+                "msg_text": "TEST Notif success QUAI11",
+                "visible": "true"
+            },
+            "notifwarning": {
+                "msg_text": "TEST Notif warning QUAI11",
+                "visible": "true"
+            },
+            "notiferror": {
+                "msg_text": "TEST Notif error QUAI11",
+                "visible": "true"
+            }
+        },
+        {
+            "quai": "quai12",
+            "notifsuccess": {
+                "msg_text": "TEST Notif success QUAI12",
+                "visible": "true"
+            },
+            "notifwarning": {
+                "msg_text": "TEST Notif warning QUAI12",
+                "visible": "true"
+            },
+            "notiferror": {
+                "msg_text": "TEST Notif error QUAI12",
+                "visible": "true"
+            }
+        },
+        {
+            "quai": "quai13",
+            "notifsuccess": {
+                "msg_text": "TEST Notif success QUAI13",
+                "visible": "true"
+            },
+            "notifwarning": {
+                "msg_text": "TEST Notif warning QUAI13",
+                "visible": "true"
+            },
+            "notiferror": {
+                "msg_text": "TEST Notif error QUAI13",
+                "visible": "true"
+            }
+        },
+        {
+            "quai": "quai14",
+            "notifsuccess": {
+                "msg_text": "TEST Notif success QUAI14",
+                "visible": "false"
+            },
+            "notifwarning": {
+                "msg_text": "TEST Notif warning QUAI14",
+                "visible": "false"
+            },
+            "notiferror": {
+                "msg_text": "TEST Notif error QUAI14",
+                "visible": "false"
+            }
+        },
+        {
+            "quai": "quai15",
+            "notifsuccess": {
+                "msg_text": "TEST Notif success QUAI15",
+                "visible": "false"
+            },
+            "notifwarning": {
+                "msg_text": "TEST Notif warning QUAI15",
+                "visible": "false"
+            },
+            "notiferror": {
+                "msg_text": "TEST Notif error QUAI15",
+                "visible": "false"
+            }
+        }
+    ],
+    "msg_txt_all": [{}]
+};
+              
+            notificationsQuaisModel.setData(json_object);
+            this.setModel(notificationsQuaisModel, "notificationsQuaisModel");
+
      this.open_websocket_NotificationUM();
      // Abonnement à l'eventing
      this.getEventBus().subscribe("Default","chargementEvent",() => { 
         console.log("ChargementEvent");
-        //let chargementViewModel: JSONModel;                                                TODELETE 15/09/2025
+        //let chargementViewModel: JSONModel;                                                 TODELETE 15/09/2025
        // chargementViewModel =  this.getModel("chargementViewModel") as JSONModel;           TODELETE 15/09/2025
        // chargementViewModel.setData({                                                       TODELETE 15/09/2025
        //     busy :  true                                                                    TODELETE 15/09/2025
-       // });                                                                                  TODELETE 15/09/2025
+       // });                                                                                 TODELETE 15/09/2025
         this.get_chargement_quais();
         //chargementViewModel.setData({                                                      TODELETE 15/09/2025
         //    busy :  false                                                                  TODELETE 15/09/2025
@@ -92,10 +229,11 @@ export default class Component extends BaseComponent {
      //----------------------------------------------------------------------------------------------------------------//
      //               HANDLER pour Appel de l'API REST de récupération des chargements prévus                          //  
      //----------------------------------------------------------------------------------------------------------------//
-     this.getEventBus().subscribe("Default","chargementStartEvent",() => { 
+     this.getEventBus().subscribe("Default","chargementStartEvent", (channel:string,event:string,data: Object) => { 
         console.log("chargementStartEvent"); 
-       this.startchargementquai();
-     } ); 
+       let quai :string = Object.values(data)[0];  
+       this.startchargementquai(quai);
+     }, this ); 
      //----------------------------------------------------------------------------------------------------------------        //
      //               HANDLER pour Appel de l'API REST de lAPI REST Chargement Start Model (Matchcodes du formulaire de saisie)//  
      //----------------------------------------------------------------------------------------------------------------        //
@@ -108,7 +246,10 @@ export default class Component extends BaseComponent {
 
          this.getEventBus().subscribe("Default","notificationWebSocketEvent",(channel:string,event:string,data: Object) => {           
             // EVOL : Notification en fin de chargementTODO ajout de l'action en paramètre
-            this.getEventBus().publish("Default", "notificationUMEvent",  data);    
+            //this.getEventBus().publish("Default", "notificationUMEvent",  data);      //=> LOT 7 Les notifications seront affichées par binding du component controlleur au vues
+             this.notificationWebSocketHandler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5], Object.values(data)[6]);  
+          
+
         },this); 
 
      //----------------------------------------------------------------------------------------------------------------------------//
@@ -131,10 +272,91 @@ export default class Component extends BaseComponent {
      this.getRouter().initialize();   // Le router ne doit pas être forcément utilisé 
 	};
 
+ //----------------------------------------------------------------------------------------------------------------------------//
+     //                                                                                         //  
+     //----------------------------------------------------------------------------------------------------------------------------// 
+    public notificationWebSocketHandler(type_msg:string, msg_txt: string,transport:string, um: String, current_quai: string, action :string, user:string ) : void{ 
+          
+            let current_quai_index_json:number;
+            let notificationsQuaisModel : JSONModel  = this.getModel("notificationsQuaisModel") as JSONModel;
+            let input_data:any = notificationsQuaisModel.getData(); 
+            // 1 TODO Récupération de l'indice ou de l'ID du quai concerné par modification => Récupérer l'indice du quai à partir du current_quai
+            console.log("------------------------------------COMPONENT CONTROLLER/Méthode notificationWebSocketHandler-----------------------------------------------");  
+            current_quai_index_json = Number(current_quai.slice(4,6));
+            current_quai_index_json =   current_quai_index_json - 8 ;
+            console.log("QUAI = " + current_quai + "/Valeur de l'indice json  du quai: " +  current_quai_index_json + "/Type de Message:" + type_msg)
+          console.log("------------------------------------MAJ des notififications dans le modèle de notification-----------------------------------------------");  
+            if ( type_msg == 'information' )
+            {
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notifsuccess/msg_text",msg_txt);
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notifsuccess/visible",true);
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notifwarning/msg_text","");
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notifwarning/visible",false);
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notiferror/msg_text","");
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notiferror/visible",false);
+            }
+              if ( type_msg == 'W' )
+            {
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notifwarning/msg_text",msg_txt);
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notifwarning/visible",true);
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notiferror/msg_text","");
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notiferror/visible",false);
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notifsuccess/msg_text","");
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notifsuccess/visible",false);
+            }
+            if ( type_msg == 'E' )
+            {
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notiferror/msg_text",msg_txt);
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notiferror/visible",true);
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notifsuccess/msg_text","");
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notifsuccess/visible",false);
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notifwarning/msg_text","");
+              notificationsQuaisModel.setProperty("/quais/"+ current_quai_index_json +"/notifwarning/visible",false);
+            }
 
-     public notification_handler(type_msg:string, msg_txt: string,transport:string, um: String, current_quai: string, action :string, user:string ) : void{
+             // Enregistrement dans la zone message_all
+            let msg_text_all_object : object = notificationsQuaisModel.getProperty("/quais/msg_txt_all");
+            console.log("P1 Affichage de l'ensemble des messages de notifications" + msg_text_all_object);
+            //msg_text_all_object.
+           // Object.create( msg_text_all_object);
+             notificationsQuaisModel.setProperty("/quais/msg_txt_all",msg_text_all_object);
 
-             }
+             // 2 MAJ du Modèle de notifications (par indice dans le tableau json ou mieux pas id de quai)
+
+            // MAJ de la valeur des notifications en dur pour des tests
+            // notificationsQuaisModel.setProperty("/quais/0/notifsuccess","Modification de la valeur de la Success Notification");
+            // notificationsQuaisModel.setProperty("/quais/0/notifwarning","Modification de la valeur de la Warning Notification");
+            // notificationsQuaisModel.setProperty("/quais/0/notiferror","Modification de la valeur de la Erreur Notification");
+
+            // notificationsQuaisModel.setProperty("/quais/1/notifsuccess","Modification de la valeur de la Success Notification");
+            // notificationsQuaisModel.setProperty("/quais/1/notifwarning","Modification de la valeur de la Warning Notification");
+            // notificationsQuaisModel.setProperty("/quais/1/notiferror","Modification de la valeur de la Erreur Notification");
+            
+            // notificationsQuaisModel.setProperty("/quais/2/notifsuccess","Modification de la valeur de la Success Notification");
+            // notificationsQuaisModel.setProperty("/quais/2/notifwarning","Modification de la valeur de la Warning Notification");
+            // notificationsQuaisModel.setProperty("/quais/2/notiferror","Modification de la valeur de la Erreur Notification");
+
+            // notificationsQuaisModel.setProperty("/quais/3/notifsuccess","Modification de la valeur de la Success Notification");
+            // notificationsQuaisModel.setProperty("/quais/3/notifwarning","Modification de la valeur de la Warning Notification");
+            // notificationsQuaisModel.setProperty("/quais/3/notiferror","Modification de la valeur de la Erreur Notification");
+
+            // notificationsQuaisModel.setProperty("/quais/4/notifsuccess","Modification de la valeur de la Success Notification");
+            // notificationsQuaisModel.setProperty("/quais/4/notifwarning","Modification de la valeur de la Warning Notification");
+            // notificationsQuaisModel.setProperty("/quais/4/notiferror","Modification de la valeur de la Erreur Notification");
+
+            // notificationsQuaisModel.setProperty("/quais/5/notifsuccess","Modification de la valeur de la Success Notification");
+            // notificationsQuaisModel.setProperty("/quais/5/notifwarning","Modification de la valeur de la Warning Notification");
+            // notificationsQuaisModel.setProperty("/quais/5/notiferror","Modification de la valeur de la Erreur Notification");
+
+            // notificationsQuaisModel.setProperty("/quais/6/notifsuccess","Modification de la valeur de la Success Notification");
+            // notificationsQuaisModel.setProperty("/quais/6/notifwarning","Modification de la valeur de la Warning Notification");
+            // notificationsQuaisModel.setProperty("/quais/6/notiferror","Modification de la valeur de la Erreur Notification");
+
+            // notificationsQuaisModel.setProperty("/quais/7/notifsuccess","Modification de la valeur de la Success Notification");
+            // notificationsQuaisModel.setProperty("/quais/7/notifwarning","Modification de la valeur de la Warning Notification");
+            // notificationsQuaisModel.setProperty("/quais/7/notiferror","Modification de la valeur de la Erreur Notification");
+    }
+     
 
     public get_chargements_prevus():void {
 //     BEGIN DELETE SPTEMBER 2025
@@ -390,9 +612,11 @@ true/false, // BCache?
      //---------------------------------------------------------------------------------------------------------------------------------//
      //               Méthode d'appel à l'API  REST de lancement du chargeemnt d'un quai  [ZCL_PCF_START_CHARG_RESOURCE/Méthode POST ]                                       //  
      //---------------------------------------------------------------------------------------------------------------------------------//
-    public startchargementquai():void{
+    public startchargementquai(i_quai:string):void{
         let ChargementStartModel: JSONModel;
         let lv_chargement_url : string;
+
+        console.log("-------------------------------METHODE  STARTCHARGEMENTQUAI------------------------------ "); 
         if ( this.getModel("ChargementStartModel") == undefined)
         {
             ChargementStartModel = new JSONModel();
@@ -434,7 +658,7 @@ true/false, // BCache?
 			         "X-CSRF-Token": "0e855895-5023-4350-bd3e-5651beaadeae"
 } )*/                                                            
         let input_data:any = ChargementStartModel.getData();  
-        console.log("Appel  de Start Chargement Valeur de quai et transport:" + input_data);
+        console.log("P1 Appel  de Start Chargement Valeur de quai:" + i_quai  + "// transport: " + input_data.results.tknum);
        
        let mHeader = {
             "Authorization": "Basic",                    
@@ -442,32 +666,35 @@ true/false, // BCache?
             "Content-Type":"application/json",  
             "X-Requested-With":"X",
             "tknum": input_data.results.tknum,    // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
-            "quai1": input_data.results.quai1 
+            "quai1":  i_quai,                       //input_data.results.quai1 
+            "matri": input_data.results.matri,
+            "name1": input_data.results.name1,
         }
-        ChargementStartModel.loadData(lv_chargement_url,"",true,  "POST", false, true, mHeader)?.then(result=>{ let lv_target_quai : string; 
-        console.log("Navigation vers le quai " + input_data.results.quai1  + "pour démarrage du chargement"); 
-        MessageToast.show("Chargement démarré sur le quai : " + input_data.results.quai1,{ duration: 3000, width : '50%' })
-        lv_target_quai = "TargetChargement" + input_data.results.quai1; const router = this.getRouter();
-        console.log("Navigation vers le quai avec target " + lv_target_quai); 
-       // input_data = ChargementStartModel.getData(); 
-        //console.log("Valeur du matchcodde tSuggestedQuai1 après le POST" + input_data.results.tSuggestedQuai1);
-        router.getTargets()?.display(lv_target_quai); 
-        
-          let data : {type_msg:String, msg_txt:String,transport:String, um:String, quai:String,action:String,user:string} = {
-                type_msg: 'information',
-                msg_txt: 'Chargement démarré sur le quai:' + input_data.results.quai1.toLowerCase() ,
-                transport: input_data.results.tknum,
-                um: '', 
-                quai: input_data.results.quai1.toLowerCase(),
-                action: 'startchargement',
-                user: ''                 
-              };
+        ChargementStartModel.loadData(lv_chargement_url,"",true,  "POST", false, true, mHeader)?.then(result=>{
+        let lv_target_quai : string; 
+       
+       // MessageToast.show("Chargement démarré sur le quai : " + i_quai ,{ duration: 3000, width : '50%' })
+         i_quai = i_quai.toLowerCase();
+         i_quai = i_quai.replace(/^\w/, (c) => c.toUpperCase());
+        lv_target_quai = "TargetChargement" + i_quai; 
+        const router = this.getRouter();
+         console.log("P1 Navigation vers le quai: " + i_quai  + " pour démarrage du chargement"); 
+         console.log("P1 Navigation vers le quai avec target " + lv_target_quai); 
+          
+        //  let data : {type_msg:String, msg_txt:String,transport:String, um:String, current_quai:String,action:String,user:string} = {
+        //         type_msg: 'information',
+        //         msg_txt: 'Chargement démarré sur le quai:' + i_quai.toLowerCase() ,
+        //         transport: input_data.results.tknum,
+        //         um: '', 
+        //         current_quai: i_quai.toLowerCase(),
+        //         action: 'startchargement',
+        //         user: input_data.results.matri                 
+        //       };
              // On envoie une notification UM qui sera gérée dans la vue de Chargement
              // LOT Démarrage Chargement quai -> On va définir un handler notificationWebSocketEvent qui va redispatcher vers notificationUMEvent
-             this.getEventBus().publish("Default", "notificationUMEvent",  data);   // Il est possible d'essayer avec    that.getEventBus().publish("Default", "notificationUMEvent",  content_json)
-            this.getEventBus().publish("Default", "chargementEvent", {});  // Ce serait mieux de relancer le chargment dans le handler de la Navigation 
-            this.getEventBus().publish("Default", "SidenavigationsetSelectedItemEvent", {});
-      // this.getEventBus().publish("Default", "chargementStartModelGetEvent", {}); //LOT4-> Démarrage du chargment => A priori il est nécessaire de refaire un Get après le POST
+            //this.getEventBus().publish("Default", "notificationUMEvent",  data);   // Il est possible d'essayer avec    that.getEventBus().publish("Default", "notificationUMEvent",  content_json)
+            //this.getEventBus().publish("Default", "chargementEvent", {});  // Ce serait mieux de relancer le chargment dans le handler de la Navigation 
+            //LOT4-> Démarrage du chargment => A priori il est nécessaire de refaire un Get après le POST
                                                                                                                       },reason=>{  console.log("P1 REJECTED PROMISE POST StartChargment" + ChargementStartModel.getJSON.toString());
                                                                                                                       }); 
     }
