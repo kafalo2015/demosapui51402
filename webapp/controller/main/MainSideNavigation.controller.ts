@@ -74,9 +74,11 @@ export default class MainSideNavigation extends Controller {
     {  console.log("P1 CLIC CHARGEMENT  QUAIS Chargement du quai 08 dans side Navigation Controller ")   ; 
       indice_json = 0;
      
+      //-------------------- BEGIN On récupère dans le modèle si le quai 8 est cours de chargement -----------------------------------------------------------------------------------------------------------------------------//
       ChargementQuaiModel  = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
       console.log("P1 valeur de Encours dans  modèle du chargement QUAI08 dans Main Side Navigation Controller  " + ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours"));
       let encours : boolean = ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours");
+       //-------------------- END On récupère dans le modèle si le quai 8 est cours de chargement -----------------------------------------------------------------------------------------------------------------------------//
       // TODO tester si on doit afficher le formulaire de début de chargement (quai 8 inactif) ou le quai 8 (quai8 actif ) 
        if (encours == true)
       {router.getTargets()?.display("TargetChargementQuai08");  }   // Ajout Quai08,09++ }
@@ -87,10 +89,10 @@ export default class MainSideNavigation extends Controller {
     }
       
   if (  event.getParameter("item")?.getText() == "Suivi Chargement" ) { console.log("Rechargement de la list ")   ;router.getTargets()?.display("TargetChargementList");}
-  if (  event.getParameter("item")?.getId() == "container-clf.logistique.chargementquais---App--item_startchargement" ) { console.log("Démarrage Chargement ")   ;
-                                                                                                                           this.getOwnerComponent()?.getEventBus().publish("Default", "chargementStartModelGetEvent", {}); //LOT4 => Rajouter un Get sur StartChargmentModel
+  // if (  event.getParameter("item")?.getId() == "container-clf.logistique.chargementquais---App--item_startchargement" ) { console.log("Démarrage Chargement ")   ;
+  //                                                                                                                          this.getOwnerComponent()?.getEventBus().publish("Default", "chargementStartModelGetEvent", {}); //LOT4 => Rajouter un Get sur StartChargmentModel
     
-                                                                                                                         router.getTargets()?.display("TargetChargementStart");}
+  //                                                                                                                        router.getTargets()?.display("TargetChargementStart");}
     }
 
   

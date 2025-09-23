@@ -5,7 +5,7 @@
 	xmlns:si="sap.suite.ui.commons.statusindicator"
     xmlns="sap.m">
 
-    <l:BlockLayout id="blockLayout" class="sapUiSmallMargin">
+     <l:BlockLayout id="blockLayout" class="sapUiSmallMargin">
 		<l:BlockLayoutRow >
 			<l:BlockLayoutCell
 			   title="Quai: {chargementModelJson>/results/3/quai} Transport: {chargementModelJson>/results/3/numtransport}"
@@ -33,13 +33,13 @@
 				     alignItems="Center">
 					 <items>
 						<Label id= "LabelConsignes" text="Consignes chargement" class="sapUiTinyMarginEnd" design="Bold" /> 
-				        <Text id="consignes_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/3/text1} {chargementModelJson>/results/3/text3} {chargementModelJson>/results/3/text3} {chargementModelJson>/results/3/text4}"/>
+				        <Text id="consignes_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>/results/3/text1} {chargementModelJson>/results/3/text2} {chargementModelJson>/results/3/text3} {chargementModelJson>/results/3/text4}"/>
 					</items>
 				</FlexBox>
 			</l:BlockLayoutCell>
 			<l:BlockLayoutCell
 			   title=""
-			   width = "35"
+			   width = "25"
 			   backgroundColorSet="ColorSet9"
 			   backgroundColorShade="ShadeD">
 					 <ProgressIndicator
@@ -65,24 +65,27 @@
 		</l:BlockLayoutRow>
 	</l:BlockLayout> 
 
-<ScrollContainer height='350px' vertical='true'>
-	<Table	id="TablePostesNonCharges_quai11" class="sapSmallMargin" width="auto"  headerText="Postes restants" enableBusyIndicator = "true"
+	<ScrollContainer height='250px' vertical='true'>
+	  <Table id="TablePostesNonCharges_quai10"  class="sapSmallMargin" backgroundDesign = "Solid"  width="auto" headerText="Postes restants" enableBusyIndicator = "true" 
 		items="{
 				path : 'chargementModelJson>/results/3/tPosteNocharge'	  		
 			}">
-		<columns>
-	        <Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
+		
+	    <columns>
+            <Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
 			<Column hAlign="Begin" width="6%"> <Text text="Poste Livr."/> </Column>
-			<Column hAlign="Begin" width="13%"> <Text text="Article" /> </Column>	
+			<Column hAlign="Begin" width="12%"> <Text text="Article" /> </Column>	
 			<Column hAlign="Begin" width="10%"> <Text text="Type UM" /> </Column>
 			<Column hAlign="Begin" width="10%"> <Text text="Commande" /> </Column>	
-			<Column hAlign="Begin" width="3%"> <Text text="Client" /> </Column>	
+			<Column hAlign="Begin" width="22%"> <Text text="Client" /> </Column>	
 			<Column hAlign="Begin" width="7%"> <Text text="UMs chargés" /> </Column>	
 			<Column hAlign="Begin" width="7%"> <Text text="UMs à charger" /></Column>
 			<Column hAlign="Begin" width="7%"> <Text text="Statut faux camion" /></Column>	
 		    <Column hAlign="Begin" width="9%"> <Text text="FauxCam" /></Column>
 			<Column hAlign="Begin" width="6%"> <Text text="Stock" /></Column>
 			<Column hAlign="Begin" width="1%"> <Text text="" /></Column>
+			
+		
 		</columns>
 		<items>
 			<ColumnListItem type="Inactive" press=".onPress">
@@ -96,32 +99,33 @@
 					<Text text="{chargementModelJson>nbumch}" />
 					<Text text="{chargementModelJson>nbumac}" />
 					<Text text="{chargementModelJson>nbUmFaucam}" />
-					<Button text="FauxCam"  press=".onSelectDialogUmFauxCam"/>
+				    <Button text="FauxCam" 	press=".onSelectDialogUmFauxCam"/>
 					<Button text="Stock" 	press=".onSelectDialogUmStockPress"/>
 				</cells>
 			</ColumnListItem>
 		</items>
-	</Table>
-	</ScrollContainer>
-   <ScrollContainer height='350px' vertical='true'> 	  
-    <Table id="tableChargementUM_quai11" class="sapSmallMargin" width="auto"  headerText="UMs Chargées" enableBusyIndicator = "true"
+	</Table>	
+		</ScrollContainer>
+			<ScrollContainer height='250px' vertical='true'>
+	    <Table id="tableChargementUM_quai10" class="sapSmallMargin" width="auto" headerText="UMs Chargées" enableBusyIndicator = "true"
 		items="{
 				path : 'chargementModelJson>/results/3/tChargItem'			
 			}">
+		
 		<columns>
-		  	<Column hAlign="Begin" width="17%"> <Text text="Um" />          </Column>
+		   <Column hAlign="Begin" width="17%"> <Text text="Um" />          </Column>
 			<Column hAlign="Begin" width="10%">  <Text text="Livraison" />  </Column>
 			<Column hAlign="Begin" width="6%">  <Text text="Poste" />       </Column>
-			<Column hAlign="Begin" width="13%">  <Text text="Article" />    </Column>
+			<Column hAlign="Begin" width="12%">  <Text text="Article" />    </Column>
 			<Column hAlign="Begin" width="6%">  <Text text="Qtite" />       </Column>
 			<Column hAlign="Begin" width="49%"> <Text text="" />            </Column>
 		</columns>
 		<items>
 			<ColumnListItem type="Inactive" press=".onPress">
 				<cells>
-				    <ObjectIdentifier title="{chargementModelJson>um}" />
+				   <ObjectIdentifier  title="{chargementModelJson>um}"  />
 				    <ObjectIdentifier title="{chargementModelJson>vbeln}" />
-					<ObjectIdentifier title="{chargementModelJson>poste}" />
+					<ObjectIdentifier title="{chargementModelJson>poste}" />						
 					<Text text="{chargementModelJson>article}" />
 					<Text text="{chargementModelJson>qtite}" />
 				</cells>
@@ -129,49 +133,30 @@
 		</items>
 	</Table>
 	</ScrollContainer>
-
-       	    <MessageStrip id = "messageStripErrorV2"
-				text="{notificationsQuaisModel>/quais/3/notiferror/msg_text}"
+    <MessageStrip id = "messageStripErrorV2"
+				text="{notificationsQuaisModel>/quais/3/notifs/notiferror/msg_txt}"
 				type="Error"
 				showIcon="true"
-				visible = "{notificationsQuaisModel>/quais/3/notiferror/visible}"
+				visible = "{notificationsQuaisModel>/quais/3/notifs/notiferror/visible}"
 				class="sapUiNoMarginBottom">
 			</MessageStrip>
-
-		    <MessageStrip id = "messageStripWarningV3"
-				text="{notificationsQuaisModel>/quais/3/notifwarning/msg_text}"
+  <MessageStrip id = "messageStripWarningV2"
+				text="{notificationsQuaisModel>/quais/3/notifs/notifwarning/msg_txt}"
 				type="Warning"
 				showIcon="true"
-				visible = "{notificationsQuaisModel>/quais/3/notifwarning/visible}"
+				visible = "{notificationsQuaisModel>/quais/3/notifs/notifwarning/visible}"
 				class="sapUiNoMarginBottom">
 			</MessageStrip>
-			<MessageStrip id = "messageStripInformationV3"
-				text="{notificationsQuaisModel>/quais/3/notifsuccess/msg_text}"
+		
+			<MessageStrip id = "messageStripInformationV2"
+				text="{notificationsQuaisModel>/quais/3/notifs/notifsuccess/msg_txt}"
 				type="Success"
 				showIcon="true"
-				visible = "{notificationsQuaisModel>/quais/3/notifsuccess/visible}"
+				visible = "{notificationsQuaisModel>/quais/3/notifs/notifsuccess/visible}"
 				class="sapUiNoMarginBottom sapUiNoMarginBegin">
 			</MessageStrip>
 
-		<MessageStrip id = "messageStripError"
-				text=""
-				type="Error"
-				showIcon="true"
-				visible = "false"
-				class="sapUiNoMarginBottom">
-			</MessageStrip>
-			 <MessageStrip id = "messageStripWarning"
-				text=""
-				type="Warning"
-				showIcon="true"
-				visible = "false"
-				class="sapUiNoMarginBottom">
-			</MessageStrip>
-			<MessageStrip id = "messageStripInformation"
-				text=""
-				type="Success"
-				showIcon="true"
-				visible = "false"
-				class="sapUiNoMarginBottom sapUiNoMarginBegin">
-			</MessageStrip>
+
+		
     </mvc:View>
+

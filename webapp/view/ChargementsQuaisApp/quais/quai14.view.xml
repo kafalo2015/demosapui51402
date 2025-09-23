@@ -129,50 +129,29 @@
 	</Table>
 	</ScrollContainer>
 
-   <MessageStrip id = "messageStripErrorV2"
-				text="{notificationsQuaisModel>/quais/6/notiferror/msg_text}"
+      <MessageStrip id = "messageStripErrorV2"
+				text="{notificationsQuaisModel>/quais/6/notifs/notiferror/msg_txt}"
 				type="Error"
 				showIcon="true"
-				visible = "{notificationsQuaisModel>/quais/6/notiferror/visible}"
+				visible = "{notificationsQuaisModel>/quais/6/notifs/notiferror/visible}"
 				class="sapUiNoMarginBottom">
 			</MessageStrip>
-
-		    <MessageStrip id = "messageStripWarningV2"
-				text="{notificationsQuaisModel>/quais/6/notifwarning/msg_text}"
+  <MessageStrip id = "messageStripWarningV2"
+				text="{notificationsQuaisModel>/quais/6/notifs/notifwarning/msg_txt}"
 				type="Warning"
 				showIcon="true"
-				visible = "{notificationsQuaisModel>/quais/6/notifwarning/visible}"
+				visible = "{notificationsQuaisModel>/quais/6/notifs/notifwarning/visible}"
 				class="sapUiNoMarginBottom">
 			</MessageStrip>
+		
 			<MessageStrip id = "messageStripInformationV2"
-				text="{notificationsQuaisModel>/quais/6/notifsuccess/msg_text}"
+				text="{notificationsQuaisModel>/quais/6/notifs/notifsuccess/msg_txt}"
 				type="Success"
 				showIcon="true"
-				visible = "{notificationsQuaisModel>/quais/6/notifsuccess/visible}"
+				visible = "{notificationsQuaisModel>/quais/6/notifs/notifsuccess/visible}"
 				class="sapUiNoMarginBottom sapUiNoMarginBegin">
 			</MessageStrip>
 
 
-		<MessageStrip id = "messageStripError"
-				text=""
-				type="Error"
-				showIcon="true"
-				visible = "false"
-				class="sapUiNoMarginBottom">
-			</MessageStrip>
-           <MessageStrip id = "messageStripWarning"
-				text=""
-				type="Warning"
-				showIcon="true"
-				visible = "false"
-				class="sapUiNoMarginBottom">
-			</MessageStrip>
-
-			<MessageStrip id = "messageStripInformation"
-				text=""
-				type="Success"
-				showIcon="true"
-				visible = "false"
-				class="sapUiNoMarginBottom sapUiNoMarginBegin">
-			</MessageStrip>
+		
     </mvc:View>

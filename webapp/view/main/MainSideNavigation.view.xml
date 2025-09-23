@@ -14,7 +14,8 @@
 			<tnt:NavigationList>
 					<tnt:NavigationListItem text="Suivi Chargement" icon="sap-icon://activity-items" id ="item_chargement_list" />
 					<tnt:NavigationListItem text="Chargements par quais" icon="sap-icon://inventory" id ="item_quai_all" />
-				    <tnt:NavigationListItem text="Démarrer Chargement" icon="sap-icon://begin" id ="item_startchargement" />
+				    <!--<tnt:NavigationListItem text="Démarrer Chargement" icon="sap-icon://begin" id ="item_startchargement" />-->
+
 			</tnt:NavigationList>
 
 			<tnt:fixedItem>

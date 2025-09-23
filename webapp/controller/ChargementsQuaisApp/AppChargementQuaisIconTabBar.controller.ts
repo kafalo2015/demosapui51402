@@ -16,11 +16,17 @@ export default class AppChargementQuaisIconTabBar extends Controller {
 
     /*eslint-disable @typescript-eslint/no-empty-function*/
     public onInit(): void {
+
+  let panelMessage : Panel = this.byId("PanelMessageAppChargementQuais") as Panel;   // TODO=>Mettre le numéro de quai en dynamique
+      
+
+
+  //panelMessage.bindAggregation()
   // METHODE : On s'abonne à un évènement déclenché par le event handler du Socket dans le componnet controller       
-        this.getOwnerComponent()?.getEventBus().subscribe("Default","notificationUMEvent",(channel:string,event:string,data: Object) => {           
-            // EVOL : Notification en fin de chargementTODO ajout de l'action en paramètre
-            this.notification_handler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5], Object.values(data)[6]);  
-            },this);   
+        // this.getOwnerComponent()?.getEventBus().subscribe("Default","notificationUMEvent",(channel:string,event:string,data: Object) => {           
+        //     // EVOL : Notification en fin de chargementTODO ajout de l'action en paramètre
+        //     this.notification_handler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5], Object.values(data)[6]);  
+        //     },this);   
 
           // Enregistrement d'un handler pour le click sur quai dans Chargement List   
         this.getOwnerComponent()?.getEventBus().subscribe("Default","chargementQuaiButtonEvent",(channel:string,event:string,data: Object) => {           
@@ -116,7 +122,7 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                 messageStrip_ref = new MessageStrip();
                 messageStrip_ref.setText(msg_txt);       // Correctif++ 14/08/2025 Correctifs notifications
                                                          // Toujours afficher le message dans  la zone Messages quel que soit le type de message (E, W ou S)
-                //   msgStrip.setType(MessageType.Error);
+                 // msgStrip.setType(MessageType.Error);
                  messageStrip_ref.setShowIcon(true);
                  messageStrip_ref.setShowCloseButton(true);  
                  console.log("P1 AJOUT d'un message dans la zone MEssages multi quai");
@@ -183,15 +189,20 @@ export default class AppChargementQuaisIconTabBar extends Controller {
                indice_json = indice_quai - 8;
 
             //TargetStartChargementQuai10
-
+        
+        //----------------------------- Détection de s'il s'agit de si le quai est en cours de chargement ou non ----------------------------------------------                
         console.log("P1 Indice JSON du quai:  " + indice_quai);      
         console.log("P1 valeur du modèle du chargement  " + ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours"));
          let encours : boolean = ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours");
-        console.log("Key of IconTabBar selected item = " + key );
+        //----------------------------- Détection de s'il s'agit de si le quai est en cours de chargement ou non -----------------------------------------------
+       
+         console.log("Key of IconTabBar selected item = " + key );
 
-         // if ( encours == true ) A remettre Après dev Modèle de Notifications
+          if ( encours == true ) 
           {
-            if ( key == "QUAI08" )   {  router.getTargets()?.display("TargetChargementQuai08");  }   // Evolution quai 8 et 09
+            // Relance de la récupération des données de chargement avant la navigation sur le quai
+            this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {}); 
+            if ( key == "QUAI08" )   {  router.getTargets()?.display("TargetChargementQuai08");   }   // Evolution quai 8 et 09
             if ( key == "QUAI09" )   {  router.getTargets()?.display("TargetChargementQuai09");  }   // Evolution quai 8 et 09
             if ( key == "QUAI10" )  {  router.getTargets()?.display("TargetChargementQuai10");  }
             if ( key == "QUAI11" )  {  router.getTargets()?.display("TargetChargementQuai11");  }
@@ -199,13 +210,15 @@ export default class AppChargementQuaisIconTabBar extends Controller {
             if ( key == "QUAI13" )  {  router.getTargets()?.display("TargetChargementQuai13");  }
             if ( key == "QUAI14" )  {  router.getTargets()?.display("TargetChargementQuai14");  }
             if ( key == "QUAI15" )  {  router.getTargets()?.display("TargetChargementQuai15");  }
+
+             
           }
-              // else
-              // {
+               else
+               {
 
-              //     router.getTargets()?.display("TargetStartChargement");
+                   router.getTargets()?.display("TargetStartChargement");
 
-              // }
+               }
 
     } 
 

@@ -23,10 +23,28 @@ height = "100%">
 		</content>
 	</IconTabBar>
 	<ScrollContainer vertical='true'>
-		<Panel  headerText ="Messages" id = "PanelMessageAppChargementQuais" stickyHeader="true" height="120px" >
+	     
+	 <Panel  headerText ="Messages" id = "PanelMessageAppChargementQuais" stickyHeader="true" height="120px" >
 			<content>
+
+				<List   headerText="" mode="" items="{notificationsQuaisModel>/notif_txt_all}"
+						growing="false"
+						growingThreshold="1"
+						growingScrollToLoad="false">
+					<CustomListItem>
+						<MessageStrip 
+							text="{notificationsQuaisModel>msg_txt}"
+							type="{notificationsQuaisModel>type_msg}"
+							showIcon="true"
+							visible = "true"
+							class="sapUiNoMarginBottom sapUiNoMarginBegin">
+						</MessageStrip>
+						
+					</CustomListItem>
+	            </List>
 			</content>
 		</Panel>
+
 	</ScrollContainer>
 </mvc:View>
 
