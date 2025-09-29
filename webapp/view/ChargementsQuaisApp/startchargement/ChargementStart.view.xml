@@ -17,9 +17,9 @@
 			   backgroundColorSet="ColorSet1"
 			   backgroundColorShade="ShadeA">
 					<FlexBox
-				     direction="Row"
+				     direction="Column"
 				     justifyContent="Start"
-				     alignItems="Center">
+				     alignItems="Left">
 					 <items>
                         <!--<Label  id= "LabelChargeur" class="sapUiTinyMarginEnd" text="QUAI"  design="Bold"  />
 							<Input id="QuaiInput" value=   "{ChargementStartModel>/results/quai1}"
@@ -146,27 +146,29 @@
 <l:BlockLayoutRow>
 	<l:BlockLayoutCell  backgroundColorSet="ColorSet1"
 			   backgroundColorShade="ShadeA">
-			<MessageStrip id = "messageStripError_ViewChargementStart2"
-				text=""
+		      <MessageStrip id = "ChargementStartmessageStripError"
+				text="{notificationsQuaisModel>/chargementstartnotifs/notiferror/msg_txt}"
 				type="Error"
 				showIcon="true"
-				visible = "false"
+				visible = "{notificationsQuaisModel>/chargementstartnotifs/notiferror/visible}"
 				class="sapUiNoMarginBottom">
 			</MessageStrip>
-			 <MessageStrip id = "messageStripWarning_ViewChargementStart2"
-				text=""
+           <MessageStrip id = "ChargementStartmessageStripWarning"
+				text="{notificationsQuaisModel>/chargementstartnotifs/notifwarning/msg_txt}"
 				type="Warning"
 				showIcon="true"
-				visible = "false"
+				visible = "{notificationsQuaisModel>/chargementstartnotifs/notifwarning/visible}"
 				class="sapUiNoMarginBottom">
 			</MessageStrip>
-			<MessageStrip id = "messageStripInformation_ViewChargementStart2"
-				text=""
+		
+			<!--  NE PAS METTRE MESSAGE STRIP SUCCESS cela ne sert à rien
+			 <MessageStrip id = "ChargementStartmessageStripInformation"
+				text="{notificationsQuaisModel>/chargementstartnotifs/notifsuccess/msg_txt}"
 				type="Success"
 				showIcon="true"
-				visible = "false"
+				visible = "{notificationsQuaisModel>/chargementstartnotifs/notifsuccess/visible}"
 				class="sapUiNoMarginBottom sapUiNoMarginBegin">
-			</MessageStrip>
+			</MessageStrip>-->
 				</l:BlockLayoutCell>
 			
 		</l:BlockLayoutRow>

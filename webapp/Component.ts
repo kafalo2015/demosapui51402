@@ -34,6 +34,10 @@ export default class Component extends BaseComponent {
    // }                                                                 //TODO -> Delete 
     public _environment :String = "dev";
     public gv_chargement_url : string;
+    public gv_startchargement_api_url: string;          // URL API startchargement
+    public gv_chargementquais_api_url: string;          // URL API chargement des quais
+    public gv_chargementprevus_api_url: string;         // URL API Chargement prévus
+    public gv_material_umstock_api_url: string;         // URL material_umstock_list
     public get environment(): String {
         return this._environment;
     }
@@ -85,6 +89,11 @@ export default class Component extends BaseComponent {
 		          Error : "Error",
 		          None : "None",
 		          Success : "Success"   */ 
+
+
+     //----------------------------------------------------------------------------------------------------------------------------//
+     //               TODO -> Faire une méthode séparée pour enregistrement du modèle de notifications                              //  
+     //----------------------------------------------------------------------------------------------------------------------------//
             let notificationsQuaisModel = new JSONModel();
             let json_object : object = 
 
@@ -157,14 +166,28 @@ export default class Component extends BaseComponent {
     ],
     "notif_txt_all": [
                            
-    ]                      
+    ],
+     "chargementstartnotifs": {
+              
+                "notifwarning" : {"msg_txt": "","visible": false    },
+                "notiferror" :   {"msg_txt": "","visible": false    },
+            },                      
 
 };
             notificationsQuaisModel.setData(json_object);
             this.setModel(notificationsQuaisModel, "notificationsQuaisModel");
 
+
+      //----------------------------------------------------------------------------------------------------------------------------//
+     //               Détermination des URL des API                                                                                //  
+     //----------------------------------------------------------------------------------------------------------------------------//
+      this.getApiUrl();
+
      this.open_websocket_NotificationUM();
      // Abonnement à l'eventing
+     //----------------------------------------------------------------------------------------------------------------------------//
+     //               TODO -> Mettre tous les listeners dans une  méthode                                                            //  
+     //----------------------------------------------------------------------------------------------------------------------------//
      this.getEventBus().subscribe("Default","chargementEvent",() => { 
         console.log("ChargementEvent");
         //let chargementViewModel: JSONModel;                                                 TODELETE 15/09/2025
@@ -189,7 +212,7 @@ export default class Component extends BaseComponent {
      this.getEventBus().subscribe("Default","chargementStartEvent", (channel:string,event:string,data: Object) => { 
         console.log("chargementStartEvent"); 
        let quai :string = Object.values(data)[0];  
-       this.startchargementquai(quai);
+       this.startchargementquai_post(quai);
      }, this ); 
      //----------------------------------------------------------------------------------------------------------------        //
      //               HANDLER pour Appel de l'API REST de lAPI REST Chargement Start Model (Matchcodes du formulaire de saisie)//  
@@ -203,8 +226,11 @@ export default class Component extends BaseComponent {
 
          this.getEventBus().subscribe("Default","notificationWebSocketEvent",(channel:string,event:string,data: Object) => {           
             // EVOL : Notification en fin de chargementTODO ajout de l'action en paramètre
+            console.log("-----------------------------------notificationWebSocketEvent Event----------------------------------------------");
+            console.log("P1 LOT 7 Valeur du paramètre de notification time: " + Object.values(data)[7]);
+
             //this.getEventBus().publish("Default", "notificationUMEvent",  data);      //=> LOT 7 Les notifications seront affichées par binding du component controlleur au vues
-             this.notificationWebSocketHandler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5], Object.values(data)[6]);  
+             this.notificationWebSocketHandler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5], Object.values(data)[6], Object.values(data)[7]);  
           
 
         },this); 
@@ -230,132 +256,132 @@ export default class Component extends BaseComponent {
 	};
 
 //---------------------------------------------------------------------------------------------------------------------------------//
+//     Méthode de récupération des URLS des API                                                                                    //  
+//---------------------------------------------------------------------------------------------------------------------------------//
+  public getApiUrl() : void{
+    if ( location.hostname === 'localhost' ) {          
+        if (this.environment === "dev") {
+                this.gv_chargementquais_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement";    
+                this.gv_chargementprevus_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
+                this.gv_startchargement_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
+                this.gv_material_umstock_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+        }
+        if (this.environment === "qual") {      
+                    this.gv_chargementquais_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
+                    this.gv_chargementprevus_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";            
+                    this.gv_startchargement_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; 
+                    this.gv_material_umstock_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+        }
+    }
+    else {           this.gv_chargementquais_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";   
+                     this.gv_chargementprevus_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
+                     this.gv_startchargement_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";   
+                     this.gv_material_umstock_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";            
+    }         
+}
+//---------------------------------------------------------------------------------------------------------------------------------//
 //                                                                                                                                 //  
 //---------------------------------------------------------------------------------------------------------------------------------// 
-    public notificationWebSocketHandler(type_msg:string, msg_txt: string,transport:string, um: String, current_quai: string, action :string, user:string ) : void{ 
+    public notificationWebSocketHandler(type_msg:string, msg_txt: string,transport:string, um: String, current_quai: string, action :string, user:string, time:any ) : void{ 
           
-            let current_quai_index_json:number;
-            let type_msg_strip : string;
-            let notificationsQuaisModel : JSONModel  = this.getModel("notificationsQuaisModel") as JSONModel;
-          //  let input_data:any = notificationsQuaisModel.getData(); 
-            // 1 TODO Récupération de l'indice ou de l'ID du quai concerné par modification => Récupérer l'indice du quai à partir du current_quai
-            console.log("------------------------------------COMPONENT CONTROLLER/Méthode notificationWebSocketHandler-----------------------------------------------");  
-            current_quai_index_json = Number(current_quai.slice(4,6));
-            current_quai_index_json =   current_quai_index_json - 8 ;
-            console.log("QUAI = " + current_quai + "/Valeur de l'indice json  du quai: " +  current_quai_index_json + "/Type de Message:" + type_msg)
-            console.log("------------------------------------MAJ des notififications dans le modèle de notification-----------------------------------------------");  
-             type_msg_strip = "None";
-            if ( type_msg == 'information' )
-            {
-              type_msg_strip = "Success";
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notifsuccess/msg_txt",msg_txt);
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notifsuccess/visible",true);
+      let current_quai_index_json:number;
+      let type_msg_strip : string;
+      let model_root_path: string;
+      let notificationsQuaisModel : JSONModel  = this.getModel("notificationsQuaisModel") as JSONModel;
+    //  let input_data:any = notificationsQuaisModel.getData(); 
+      // 1 TODO Récupération de l'indice ou de l'ID du quai concerné par modification => Récupérer l'indice du quai à partir du current_quai
+      console.log("------------------------------------COMPONENT CONTROLLER/Méthode notificationWebSocketHandler-----------------------------------------------");  
+      current_quai_index_json = Number(current_quai.slice(4,6));
+      current_quai_index_json =   current_quai_index_json - 8 ;
+      console.log("QUAI = " + current_quai + " /Valeur de l'indice json  du quai: " +  current_quai_index_json + "/Type de Message:" + type_msg)
+      console.log("------------------------------------MAJ des notififications dans le modèle de notification-----------------------------------------------");  
 
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notifwarning/msg_txt","");
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notifwarning/visible",false);
-
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notiferror/msg_txt","");
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notiferror/visible",false);
-            }
-              if ( type_msg == 'W' )
-            {
-              type_msg_strip = "Warning";
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notifwarning/msg_txt",msg_txt);
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notifwarning/visible",true);
-
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notifsuccess/msg_txt","");
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notifsuccess/visible",false);
-
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notiferror/msg_txt","");
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notiferror/visible",false);
-            }
-            if ( type_msg == 'E' )
-            {
-                type_msg_strip = "Error";
-              console.log("--- P1 Type de messsage = 'E '---------------" + "MGT_TXT :" + msg_txt);  
-              let lv_modified_property= notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notiferror/msg_txt",msg_txt);
-             
-            if( lv_modified_property == true )
-             {
-
-              console.log("Valeur du modèle de notifications modifiée");
-             }
-             
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notiferror/visible",true);
-
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notifsuccess/msg_txt","");
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notifsuccess/visible",false);
-
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notifwarning/msg_txt","");
-              notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json +"/notifs/notifwarning/visible",false);
-            }
-          
-          //  notificationsQuaisModel.updateBindings(true);
-             // Enregistrement dans la zone message_all
-                 console.log("------------------------------------MAJ des notififications ALL QUAIS dans le modèle de notification-----------------------------------------------"); 
-            let msg_text_all_object : Object[] = notificationsQuaisModel.getProperty("/notif_txt_all") ;
-            console.log("P1----- Affichage de l'ensemble des messages de notifications---------------------" + msg_text_all_object);
-             msg_text_all_object.push({msg_txt: msg_txt, type_msg : type_msg_strip})
-            //msg_text_all_object.
-           // Object.create( msg_text_all_object);
-            notificationsQuaisModel.setProperty("/notif_txt_all",msg_text_all_object);
-
-             // 2 MAJ du Modèle de notifications (par indice dans le tableau json ou mieux pas id de quai)
-
-            // MAJ de la valeur des notifications en dur pour des tests
-            // notificationsQuaisModel.setProperty("/quais/0/notifsuccess","Modification de la valeur de la Success Notification");
-            // notificationsQuaisModel.setProperty("/quais/0/notifwarning","Modification de la valeur de la Warning Notification");
-            // notificationsQuaisModel.setProperty("/quais/0/notiferror","Modification de la valeur de la Erreur Notification");
-
-            // notificationsQuaisModel.setProperty("/quais/1/notifsuccess","Modification de la valeur de la Success Notification");
-            // notificationsQuaisModel.setProperty("/quais/1/notifwarning","Modification de la valeur de la Warning Notification");
-            // notificationsQuaisModel.setProperty("/quais/1/notiferror","Modification de la valeur de la Erreur Notification");
-            
-            // notificationsQuaisModel.setProperty("/quais/2/notifsuccess","Modification de la valeur de la Success Notification");
-            // notificationsQuaisModel.setProperty("/quais/2/notifwarning","Modification de la valeur de la Warning Notification");
-            // notificationsQuaisModel.setProperty("/quais/2/notiferror","Modification de la valeur de la Erreur Notification");
-
-            // notificationsQuaisModel.setProperty("/quais/3/notifsuccess","Modification de la valeur de la Success Notification");
-            // notificationsQuaisModel.setProperty("/quais/3/notifwarning","Modification de la valeur de la Warning Notification");
-            // notificationsQuaisModel.setProperty("/quais/3/notiferror","Modification de la valeur de la Erreur Notification");
-
-            // notificationsQuaisModel.setProperty("/quais/4/notifsuccess","Modification de la valeur de la Success Notification");
-            // notificationsQuaisModel.setProperty("/quais/4/notifwarning","Modification de la valeur de la Warning Notification");
-            // notificationsQuaisModel.setProperty("/quais/4/notiferror","Modification de la valeur de la Erreur Notification");
-
-            // notificationsQuaisModel.setProperty("/quais/5/notifsuccess","Modification de la valeur de la Success Notification");
-            // notificationsQuaisModel.setProperty("/quais/5/notifwarning","Modification de la valeur de la Warning Notification");
-            // notificationsQuaisModel.setProperty("/quais/5/notiferror","Modification de la valeur de la Erreur Notification");
-
-            // notificationsQuaisModel.setProperty("/quais/6/notifsuccess","Modification de la valeur de la Success Notification");
-            // notificationsQuaisModel.setProperty("/quais/6/notifwarning","Modification de la valeur de la Warning Notification");
-            // notificationsQuaisModel.setProperty("/quais/6/notiferror","Modification de la valeur de la Erreur Notification");
-
-            // notificationsQuaisModel.setProperty("/quais/7/notifsuccess","Modification de la valeur de la Success Notification");
-            // notificationsQuaisModel.setProperty("/quais/7/notifwarning","Modification de la valeur de la Warning Notification");
-            // notificationsQuaisModel.setProperty("/quais/7/notiferror","Modification de la valeur de la Erreur Notification");
-
-
-
-            //-------------------------------- Reprise de la logique de l'ancien handler-----------------------------------------------------------------------//
-            // TODO -> Vérifier que la relance des API ne fait pas trop souvent- > Peut être relancer uniquement si l'utilisaeur se trouve sur le quai concerné
-            // Si le quai affiché est concerné par la notification et le message est de type information alors on affiche un Toast et on rafraichit le quai 
-              if ((action == 'chargement') && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
-                {
-                  MessageToast.show(msg_txt);
-                  this.getEventBus().publish("Default", "chargementEvent", {}); 
-                  this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
-                }
-
-             if ( action == 'finchargement'  ||  action == 'startchargement')
-              {
-              console.log("-----P1-----------------------Notification de fin de chargement ou de début de chargement// Rafraichissement des chargements-------------------------------------------");
-              MessageToast.show(msg_txt);
-              this.getEventBus().publish("Default", "chargementEvent", {});  //Notification fin de chargement"
-              this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
-              }
+      // TODO  LOT7  A changer c'est plus subtil que cela si startchargement et Succes alors il faut pointer sur le root path des quais  (Path /chargementstartnotifs)
+      //------------------En fonction du type d'action et du du type de message on enregistre la notification dans le modèle de notifications des quais  /quais/{indice_quai}/notifs
+      //----------------- dans le  modèle de notifications le démarrage du chargement (Path /chargementstartnotifs)
+    switch (action) {
+        case 'chargement':
+            model_root_path = "/quais/" + current_quai_index_json + "/notifs";
+            break;
+        case 'startchargement':
+          if ( ( type_msg == 'W' )  || ( type_msg == 'E' ) )
+          {
+              model_root_path = "/chargementstartnotifs";
+                break;
+          }
+          else
+          {      if    ( type_msg == 'information' ) {    model_root_path = "/quais/" + current_quai_index_json + "/notifs";    break; }      
+          }
+        default:
+            model_root_path = "/quais/" + current_quai_index_json + "/notifs";
+            break;
+    }
+      console.log("-----P1--------- LOT 7 Modèle root path :" + model_root_path  );
+     if ( notificationsQuaisModel.setProperty(model_root_path +"/notifsuccess/msg_txt",type_msg == 'information' ? msg_txt : "") == true)
+{
+    console.log(" P1 LOT 7  MAJ de du message Strip de succès" +  msg_txt  );
 }
-     
+      notificationsQuaisModel.setProperty(model_root_path +"/notifsuccess/visible",type_msg == 'information' ? true : false);
+
+      notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/msg_txt",type_msg == 'W' ? msg_txt : "");
+      notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/visible",type_msg == 'W' ? true : false);
+
+      notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt",type_msg == 'E' ? msg_txt : "");
+      notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",type_msg == 'E' ? true : false);
+    
+    console.log("Strip Error Text : "+ notificationsQuaisModel.getProperty(model_root_path + "/notiferror/msg_txt"));
+    console.log("Strip success Text : "+ notificationsQuaisModel.getProperty(model_root_path + "/notifsuccess/msg_txt"));
+    console.log("Strip Warning Text : "+ notificationsQuaisModel.getProperty(model_root_path + "/notifwarning/msg_txt"));
+
+  
+    //  notificationsQuaisModel.updateBindings(true);
+    // Enregistrement dans la zone message_all
+            
+      console.log("------------------------------------MAJ des notififications ALL QUAIS dans le modèle de notification-----------------------------------------------"); 
+                switch (type_msg) {
+            case 'information':
+            type_msg_strip = "Success";
+            break;
+            case 'W':
+            type_msg_strip = "Warning";
+            break;
+            case 'E':
+            type_msg_strip = "Error";
+            break;
+            default:
+            type_msg_strip = "Success";
+            break;
+        }
+      let msg_text_all_object : Object[] = notificationsQuaisModel.getProperty("/notif_txt_all") ;
+      console.log("P1----- Affichage de l'ensemble des messages de notifications---------------------" + msg_text_all_object);
+      msg_text_all_object.push({msg_txt: msg_txt, type_msg : type_msg_strip, time: time})
+      notificationsQuaisModel.setProperty("/notif_txt_all",msg_text_all_object);
+
+      //-------------------------------- Reprise de la logique de l'ancien handler-----------------------------------------------------------------------//
+      // TODO -> Vérifier que la relance des API ne fait pas trop souvent- > Peut être relancer uniquement si l'utiliseur se trouve sur le quai concerné
+    this.refresh_after_wsnotifiction(action,type_msg,msg_txt)
+}
+
+public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: string)
+{
+// TODO -> Vérifier que la relance des API ne fait pas trop souvent- > Peut être relancer uniquement si l'utilisaeur se trouve sur le quai concerné
+// TODO-> En cas de notification de chargement relancer uniquement si c'est une notification de type 'S' et si le quai affiché est concerné par la notification
+
+  if ((action == 'chargement') && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
+        {
+          MessageToast.show(msg_txt);
+          this.getEventBus().publish("Default", "chargementEvent", {}); 
+          this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
+        }
+
+      if ( action == 'finchargement'  ||  action == 'startchargement')
+      {
+      console.log("-----P1-----------------------Notification de fin de chargement ou de début de chargement// Rafraichissement des chargements-------------------------------------------");
+      MessageToast.show(msg_txt);
+      this.getEventBus().publish("Default", "chargementEvent", {});  //Notification fin de chargement"
+      this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
+      }
+}
 
     public get_chargements_prevus():void {
 //     BEGIN DELETE SPTEMBER 2025
@@ -401,22 +427,22 @@ export default class Component extends BaseComponent {
             chargementsPrevusListModel =   this.getModel( "chargementsPrevusListModel") as JSONModel;
         }
      
-     let lv_chargement_url : string;
-     if ( location.hostname === 'localhost' ) // Lancement de l'application en localhost
-     {
-        console.log("Lancement de l'appli en localhost");
-        if (this.environment === "dev") {lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; }
-        else {
-                    if (this.environment === "qual") {lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; }  //TODO -> Ajouter proxy quaal
-                    else {  lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";   } 
-                }
-     }
-      else // Lancement sur les serveurs SAP
-      { 
-        lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";
-     }
-     console.log("Chargement de l'API : " + lv_chargement_url);
-     chargementsPrevusListModel.loadData(lv_chargement_url,"",true,  "GET", false, true, mHeader); 
+    //  let lv_chargement_url : string;
+    //  if ( location.hostname === 'localhost' ) // Lancement de l'application en localhost
+    //  {
+    //     console.log("Lancement de l'appli en localhost");
+    //     if (this.environment === "dev") {lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; }
+    //     else {
+    //                 if (this.environment === "qual") {lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; }  //TODO -> Ajouter proxy quaal
+    //                 else {  lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";   } 
+    //             }
+    //  }
+    //   else // Lancement sur les serveurs SAP
+    //   { 
+    //     lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";
+    //  }
+    //  console.log("Chargement de l'API : " + lv_chargement_url);
+     chargementsPrevusListModel.loadData(this.gv_chargementprevus_api_url,"",true,  "GET", false, true, mHeader); 
      //chargementsPrevusListModel.forceNoCache(true);
      //chargementsPrevusListModel.updateBindings(true);
     }
@@ -445,22 +471,22 @@ export default class Component extends BaseComponent {
             MaterialUmStockListModel =   this.getModel( "MaterialUmStockListModel") as JSONModel;
         }
      
-     let lv_chargement_url : string;
-     if ( location.hostname === 'localhost' ) // Lancement de l'application en localhost
-     {
-        console.log("Lancement de l'appli en localhost");
-        if (this.environment === "dev") {lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list"; }
-        else {
-                    if (this.environment === "qual") {lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list"; }  //TODO -> Ajouter proxy quaal
-                    else {  lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";   } 
-                }
-     }
-      else // Lancement sur les serveurs SAP
-      { 
-        lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-     }
-    console.log("Chargement de l'API : " + lv_chargement_url);
-    MaterialUmStockListModel.loadData(lv_chargement_url,"",true,  "GET", false, true, mHeader); 
+    //  let lv_chargement_url : string;
+    //  if ( location.hostname === 'localhost' ) // Lancement de l'application en localhost
+    //  {
+    //     console.log("Lancement de l'appli en localhost");
+    //     if (this.environment === "dev") {lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list"; }
+    //     else {
+    //                 if (this.environment === "qual") {lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list"; }  //TODO -> Ajouter proxy quaal
+    //                 else {  lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";   } 
+    //             }
+    //  }
+    //   else // Lancement sur les serveurs SAP
+    //   { 
+    //     lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+    //  }
+    //console.log("Chargement de l'API : " + lv_chargement_url);
+    MaterialUmStockListModel.loadData(this.gv_material_umstock_api_url,"",true,  "GET", false, true, mHeader); 
     }
 
       //----------------------------------------------------------------------------------------------------------------------------//
@@ -516,39 +542,40 @@ export default class Component extends BaseComponent {
          console.log("Relance du chargement list"),
          chargementQuaiModel =   this.getModel( "chargementModelJson") as JSONModel;
      }
-        let lv_chargement_url : string;
-        if ( location.hostname === 'localhost' ) {
-            console.log("Lancement de l'appli en localhost sur les API de : " + this.environment);
-          if (this.environment === "dev") {
-                lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
-                console.log("Lancement de l'appli sur les API de la dev : /rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement");    
-           }
-          else {
-                    if (this.environment === "qual") {
-                    console.log("Lancement de l'appli sur les API de la qualité : /rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement");    
-                    lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement"; }  //TODO -> Ajouter proxy qual
+    //     let lv_chargement_url : string;
+    //     if ( location.hostname === 'localhost' ) {
+    //         console.log("Lancement de l'appli en localhost sur les API de : " + this.environment);
+    //       if (this.environment === "dev") {
+    //             lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
+    //             console.log("Lancement de l'appli sur les API de la dev : /rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement");    
+    //        }
+    //       else {
+    //                 if (this.environment === "qual") {
+    //                 console.log("Lancement de l'appli sur les API de la qualité : /rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement");    
+    //                 lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement"; }  //TODO -> Ajouter proxy qual
                     
-                    else {  console.log("Pas de variable environnement");
-                            console.log("Lancement de l'appli sur les API de la dev : /rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement");
-                            lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement";   } 
-                }
-        }
-          else 
-         { 
-                    console.log("Location hostname :" + location.hostname +    "Location host :" +        location.host);
-                    lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";
-                    console.log("URL Chargement de quais:" +  lv_chargement_url);
-         }       
-     console.log("Début Chargement de l'API : " + lv_chargement_url);
-     this.gv_chargement_url = lv_chargement_url // Lot4 Démarrage chargement des quais
+    //                 else {  console.log("Pas de variable environnement");
+    //                         console.log("Lancement de l'appli sur les API de la dev : /rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement");
+    //                         lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement";   } 
+    //             }
+    //     }
+    //       else 
+    //      { 
+    //                 console.log("Location hostname :" + location.hostname +    "Location host :" +        location.host);
+    //                 lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";
+    //                 console.log("URL Chargement de quais:" +  lv_chargement_url);
+    //      }       
+    //  console.log("Début Chargement de l'API : " + lv_chargement_url);
+     //this.gv_chargement_url = lv_chargement_url // Lot4 Démarrage chargement des quais
      // TODO LOT4 => RECUPERER LE TOKEN CSRF du GET
-     //var token = XMLHttpRequest.getResponseHeader('X-CSRF-Token'); 
-     chargementQuaiModel.loadData(lv_chargement_url,"",true,  "GET", false, true, mHeader)?.then((data) => {   this.getEventBus().publish("Default", "chargementFinishedEvent", {});
+     //var token = XMLHttpRequest.getResponseHeader('X-CSRF-Token');
+     console.log("P1 URL  API Chargement  des quais: " + this.gv_chargementquais_api_url ); 
+     chargementQuaiModel.loadData(this.gv_chargementquais_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {   this.getEventBus().publish("Default", "chargementFinishedEvent", {});
                              console.log("DATA DANS LE PROMISE DU GET" + data)       });
      
       //chargementQuaiModel.attachRequestCompleted(function (evt) { console.log("PARAMETRES RESPONSE HEADER:" +evt.getParameter('infoObject')); });
             chargementQuaiModel.attachRequestCompleted(function (evt) { console.log("PARAMETRES RESPONSE HEADER:" +evt); });
-     console.log("Fin Chargement de l'API : " + lv_chargement_url); 
+     console.log("Fin Chargement de l'API : " + this.gv_chargementquais_api_url); 
     }
 
      //----------------------------------------------------------------------------------------------------------------------------//
@@ -569,19 +596,19 @@ export default class Component extends BaseComponent {
             ChargementStartModel =   this.getModel( "ChargementStartModel") as JSONModel;
         }
  //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//   
-        if ( location.hostname === 'localhost' ) {          
-          if (this.environment === "dev") {
-                lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";          
-           }
-          else {
-                    if (this.environment === "qual") {                 
-                             lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; }                 
-                    else {   lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";  } 
-                         }
-             }
-        else { 
-                    lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";            
-            }
+        // if ( location.hostname === 'localhost' ) {          
+        //   if (this.environment === "dev") {
+        //         lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";          
+        //    }
+        //   else {
+        //             if (this.environment === "qual") {                 
+        //                      lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; }                 
+        //             else {   lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";  } 
+        //                  }
+        //      }
+        // else { 
+        //             lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";            
+        //     }
  //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//           
   
 /* EXEMPLE DE POST
@@ -605,13 +632,13 @@ true/false, // BCache?
             "X-Requested-With":"X"
             
         }
-       ChargementStartModel.loadData(lv_chargement_url,"",true,  "GET", false, true, mHeader);
+       ChargementStartModel.loadData(this.gv_startchargement_api_url,"",true,  "GET", false, true, mHeader);
     }
 
      //---------------------------------------------------------------------------------------------------------------------------------//
      //               Méthode d'appel à l'API  REST de lancement du chargeemnt d'un quai  [ZCL_PCF_START_CHARG_RESOURCE/Méthode POST ]                                       //  
      //---------------------------------------------------------------------------------------------------------------------------------//
-    public startchargementquai(i_quai:string):void{
+    public startchargementquai_post(i_quai:string):void{
         let ChargementStartModel: JSONModel;
         let lv_chargement_url : string;
 
@@ -627,19 +654,19 @@ true/false, // BCache?
             ChargementStartModel =   this.getModel( "ChargementStartModel") as JSONModel;
         }
  //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//   
-        if ( location.hostname === 'localhost' ) {          
-          if (this.environment === "dev") {
-                lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";          
-           }
-          else {
-                    if (this.environment === "qual") {                 
-                             lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; }                 
-                    else {   lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";  } 
-                         }
-             }
-        else { 
-                    lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";            
-            }
+        // if ( location.hostname === 'localhost' ) {          
+        //   if (this.environment === "dev") {
+        //         lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";          
+        //    }
+        //   else {
+        //             if (this.environment === "qual") {                 
+        //                      lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; }                 
+        //             else {   lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";  } 
+        //                  }
+        //      }
+        // else { 
+        //             lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";            
+        //     }
  //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//           
   
 /* EXEMPLE DE POST
@@ -669,20 +696,16 @@ true/false, // BCache?
             "matri": input_data.results.matri,
             "name1": input_data.results.name1,
         }
-        ChargementStartModel.loadData(lv_chargement_url,"",true,  "POST", false, true, mHeader)?.then(result=>{
+        ChargementStartModel.loadData(this.gv_startchargement_api_url,"",true,  "POST", false, true, mHeader)?.then(result=>{
         let lv_target_quai : string; 
-       
        // MessageToast.show("Chargement démarré sur le quai : " + i_quai ,{ duration: 3000, width : '50%' })
-         i_quai = i_quai.toLowerCase();
-         i_quai = i_quai.replace(/^\w/, (c) => c.toUpperCase());
+        i_quai = i_quai.toLowerCase();
+        i_quai = i_quai.replace(/^\w/, (c) => c.toUpperCase());
         lv_target_quai = "TargetChargement" + i_quai; 
         const router = this.getRouter();
-         console.log("P1 Navigation vers le quai: " + i_quai  + " pour démarrage du chargement"); 
-         console.log("P1 Navigation vers le quai avec target " + lv_target_quai); 
-
-                                                                      // Je comprends pas pourquoi il manque la navigation sur le quai
-         // TODO -> Remettre en place une notification de début de chargement au niveau de l'API StartChargement
-          router.getTargets()?.display(lv_target_quai);           // TODO -> Remis après refonte du modèle de notification car manquant
+        console.log("P1 Navigation vers le quai avec target " + lv_target_quai); 
+         this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});
+         router.getTargets()?.display(lv_target_quai);           // TODO -> Remis après refonte du modèle de notification car manquant
         //  let data : {type_msg:String, msg_txt:String,transport:String, um:String, current_quai:String,action:String,user:string} = {
         //         type_msg: 'information',
         //         msg_txt: 'Chargement démarré sur le quai:' + i_quai.toLowerCase() ,
@@ -698,7 +721,7 @@ true/false, // BCache?
             //this.getEventBus().publish("Default", "chargementEvent", {});  // Ce serait mieux de relancer le chargment dans le handler de la Navigation 
             //LOT4-> Démarrage du chargment => A priori il est nécessaire de refaire un Get après le POST
                                                                                                                       },reason=>{  console.log("P1 REJECTED PROMISE POST StartChargment" + ChargementStartModel.getJSON.toString());
-                                                                                                                      }); 
+                                                                                                             }); 
     }
     
       //----------------------------------------------------------------------------------------------------------------------------//
@@ -739,15 +762,16 @@ true/false, // BCache?
             let params = e.getParameters();
             console.log("e.getParameters() " + e.getParameters() );  
             let content : any = params.data;
-            let content_json : {type_msg:String, msg_txt:String,quai:String,um:string,action:string,statut: string,transport:string,user:string} = JSON.parse(content);   
-             let data : {type_msg:String, msg_txt:String,transport:String, um:String, quai:String,action:String,user:string} = {
+            let content_json : {type_msg:String, msg_txt:String,quai:String,um:string,action:string,statut: string,transport:string,user:string,  time : Date} = JSON.parse(content);   
+             let data : {type_msg:String, msg_txt:String,transport:String, um:String, quai:String,action:String,user:string, time : Date} = {
                 type_msg: content_json.type_msg,
                 msg_txt: content_json.msg_txt,
                 transport: content_json.um,
                 um: content_json.um, 
                 quai: content_json.quai,
                 action: content_json.action,
-                user: content_json.user                 
+                user: content_json.user,
+                time: content_json.time                    
               };
              // On envoie une notification UM qui sera gérée dans la vue de Chargement
              // LOT Démarrage Chargement quai -> On va définir un handler notificationWebSocketEvent qui va redispatcher vers notificationUMEvent

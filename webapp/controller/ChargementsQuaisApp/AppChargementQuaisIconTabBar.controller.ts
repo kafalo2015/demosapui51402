@@ -182,6 +182,8 @@ export default class AppChargementQuaisIconTabBar extends Controller {
        //LOT 6 : Démarrage du chargement à partir du quai
        
               let ChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
+              
+              let notificationsQuaisModel : JSONModel = this.getOwnerComponent()?.getModel("notificationsQuaisModel") as JSONModel;
               let indice_quai : number;
               let indice_json : number;
 
@@ -200,9 +202,15 @@ export default class AppChargementQuaisIconTabBar extends Controller {
 
           if ( encours == true ) 
           {
+           /******************    REINITIALISATION DES MESSAGES ERREUR/WARNING LORS DE CHANGEMENT DE QUAI**************************************** */      
+            notificationsQuaisModel.setProperty("/chargementstartnotifs/notifwarning/msg_txt","");   
+            notificationsQuaisModel.setProperty("/chargementstartnotifs/notifwarning/visible",false);    
             // Relance de la récupération des données de chargement avant la navigation sur le quai
             this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {}); 
-            if ( key == "QUAI08" )   {  router.getTargets()?.display("TargetChargementQuai08");   }   // Evolution quai 8 et 09
+            if ( key == "QUAI08" )   {  
+              router.getTargets()?.display("TargetChargementQuai08"); }
+              //Réinitialisation des messages d'erreurs de de warning (pour ne pas voir les messages qui concernent un autre quai)
+             
             if ( key == "QUAI09" )   {  router.getTargets()?.display("TargetChargementQuai09");  }   // Evolution quai 8 et 09
             if ( key == "QUAI10" )  {  router.getTargets()?.display("TargetChargementQuai10");  }
             if ( key == "QUAI11" )  {  router.getTargets()?.display("TargetChargementQuai11");  }
