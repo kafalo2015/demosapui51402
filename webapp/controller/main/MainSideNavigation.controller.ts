@@ -37,12 +37,12 @@ export default class MainSideNavigation extends Controller {
        
      }
 
-    async onOpenDialog(): Promise<void> {
-      this.dialog ??= await this.loadFragment({
-         name: "clf.demo.sapui51402.demosapui51402.view.Busy"
-      }) as Dialog;
+    // async onOpenDialog(): Promise<void> {
+    //   this.dialog ??= await this.loadFragment({
+    //      name: "clf.demo.sapui51402.demosapui51402.view.Busy"
+    //   }) as Dialog;
      // this.dialog.open();
-    }  
+    // }  
 
     onCloseDialog(): void {
       // note: We don't need to chain to the pDialog promise, since this event-handler
@@ -71,7 +71,14 @@ export default class MainSideNavigation extends Controller {
              // let indice_quai : number;
               let indice_json : number;
   if ( event.getParameter("item")?.getText() == "Chargements par quais" )
-    {  console.log("P1 CLIC CHARGEMENT  QUAIS Chargement du quai 08 dans side Navigation Controller ")   ; 
+    { 
+     
+             
+
+       //--------------------- CODE DE TEST OUVERTURE BOITE DE DIALOGUE VALIDATION CHARGEMENT END->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>//
+      
+      
+      console.log("P1 CLIC CHARGEMENT  QUAIS Chargement du quai 08 dans side Navigation Controller ")   ; 
       indice_json = 0;
      
       //-------------------- BEGIN On récupère dans le modèle si le quai 8 est cours de chargement -----------------------------------------------------------------------------------------------------------------------------//

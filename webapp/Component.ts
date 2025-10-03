@@ -8,11 +8,14 @@ import ResourceBundle from "sap/base/i18n/ResourceBundle";
 import DataAnalyzer from "sap/sac/df/DataAnalyzer";
 import Model$RequestCompletedEvent from "sap/ui/model/Model";
 import UIComponent from "sap/ui/core/UIComponent";
- import MessageToast from "sap/m/MessageToast"; 
+ import MessageToast from "sap/m/MessageToast";
+ import Dialog from "sap/m/Dialog";
+ import Fragment from "sap/ui/core/Fragment"; 
  
-
+// LOT/DATE/AUTEUR/DECRIPTION
 // LOT 6 => Lancement du démarrage du chargemnet à partir du quai
 // 18/09/2025 LOT 7 => Modèle de Notifications au niveau du component 
+// LOT8-18/09/2025- GILLES CAMILLERI- => Boîte de dialogue de validation de chargement
 
 /**
  * @namespace clf.logistique.chargementquais
@@ -38,6 +41,7 @@ export default class Component extends BaseComponent {
     public gv_chargementquais_api_url: string;          // URL API chargement des quais
     public gv_chargementprevus_api_url: string;         // URL API Chargement prévus
     public gv_material_umstock_api_url: string;         // URL material_umstock_list
+    //private gv_dialog_validation_charg: Dialog;
     public get environment(): String {
         return this._environment;
     }
@@ -106,6 +110,7 @@ export default class Component extends BaseComponent {
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
             },
+             "validation_msg_list" : [{"validationtxt": "Test Validation quai08"},{"validationtxt": "Test2 Validation quai08"}]
         },
         {
             "quai": "quai09",
@@ -114,54 +119,61 @@ export default class Component extends BaseComponent {
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
             },
+            "validation_msg_list" : [{"validationtxt": "Test Validation quai09"},{"validationtxt": "Test2 Validation quai09"}]
         },
         {
             "quai": "quai10",
             "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false   },
+                "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
             },
+            "validation_msg_list" : [{"validationtxt": "Test Validation quai10"},{"validationtxt": "Test2 Validation quai10"}]
         },
         {
             "quai": "quai11",
             "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false   },
+                "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
             },
+            "validation_msg_list" : [{"validationtxt": "Test Validation quai11"},{"validationtxt": "Test2 Validation quai11"}]
         },
         {
             "quai": "quai12",
             "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false   },
+                "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
             },
+            "validation_msg_list" : [{"validationtxt": "Test Validation quai12"},{"validationtxt": "Test2 Validation quai12"}]
         },
         {
             "quai": "quai13",
             "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false   },
+                "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
             },
+            "validation_msg_list" : [{"validationtxt": "Test Validation quai13"},{"validationtxt": "Test2 Validation quai13"}]
         },
         {
             "quai": "quai14",
              "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false   },
+                "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
             },
+            "validation_msg_list" : [{"validationtxt": "Test Validation quai14"},{"validationtxt": "Test2 Validation quai14"}]
         },
         {
-            "quai": "quai15",
+        "quai": "quai15",
            "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false   },
+                "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
             },
+            "validation_msg_list" : [{"validationtxt": "Test Validation quai15"},{"validationtxt": "Test2 Validation quai15"}]
         }
     ],
     "notif_txt_all": [
@@ -178,10 +190,20 @@ export default class Component extends BaseComponent {
             this.setModel(notificationsQuaisModel, "notificationsQuaisModel");
 
 
+
+
+            // this.create_validation_chargement_model();     //OBSOLETE
+
+
       //----------------------------------------------------------------------------------------------------------------------------//
      //               Détermination des URL des API                                                                                //  
      //----------------------------------------------------------------------------------------------------------------------------//
       this.getApiUrl();
+      //----------------------------------------------------------------------------------------------------------------------------//
+     //               LOT 8 -> Instantiation de la la Boîte de dialogue de validation de chargement                                                                           //  
+     //----------------------------------------------------------------------------------------------------------------------------//
+
+      //this.onOpenDialogValidCharg();
 
      this.open_websocket_NotificationUM();
      // Abonnement à l'eventing
@@ -245,6 +267,7 @@ export default class Component extends BaseComponent {
             this.get_material_umstock_list(lv_material);
         },this);  
 
+
      //----------------------------------------------------------------------------------------------------------------------------//
      //               Appel des API de chargement quais, chargements prévu et matchcode de lancement de chargement                 //  
      //----------------------------------------------------------------------------------------------------------------------------//
@@ -255,6 +278,19 @@ export default class Component extends BaseComponent {
      this.getRouter().initialize();   // Le router ne doit pas être forcément utilisé 
 	};
 
+
+
+
+      //----------------------------------------------------------------------------------------------------------------------------//
+         //               LOT 8 : Validation des messages de chargement                                                                              //  
+         //----------------------------------------------------------------------------------------------------------------------------//
+        //  public create_validation_chargement_model():void{
+        //   //-----------------------  Remarque: Ce modèle sert à stocket les messages d'avertissementà valider par l'utilisateur----------------------------------/
+        //         let messageValidationChargementModel = new JSONModel();
+        //         let json_object : object = {"validationchargementmessage": ""};
+        //         messageValidationChargementModel.setData(json_object);
+        //         this.setModel(messageValidationChargementModel , "messageValidationChargementModel");
+        //  } 
 //---------------------------------------------------------------------------------------------------------------------------------//
 //     Méthode de récupération des URLS des API                                                                                    //  
 //---------------------------------------------------------------------------------------------------------------------------------//
@@ -295,22 +331,29 @@ export default class Component extends BaseComponent {
       current_quai_index_json =   current_quai_index_json - 8 ;
       console.log("QUAI = " + current_quai + " /Valeur de l'indice json  du quai: " +  current_quai_index_json + "/Type de Message:" + type_msg)
       console.log("------------------------------------MAJ des notififications dans le modèle de notification-----------------------------------------------");  
-
+      console.log("P1 HIGH TEST POPOP VALIDATION CHARGEMENT ACTION=" + action + " TYPE MESSAGE = " + type_msg + "MSG_TXT = " +  msg_txt);
       // TODO  LOT7  A changer c'est plus subtil que cela si startchargement et Succes alors il faut pointer sur le root path des quais  (Path /chargementstartnotifs)
       //------------------En fonction du type d'action et du du type de message on enregistre la notification dans le modèle de notifications des quais  /quais/{indice_quai}/notifs
       //----------------- dans le  modèle de notifications le démarrage du chargement (Path /chargementstartnotifs)
     switch (action) {
         case 'chargement':
             model_root_path = "/quais/" + current_quai_index_json + "/notifs";
+      //----------- Si la notification de chargement est un Warning alors une boîte de dialogue de Validation s'ouvre -----------------------------------/  
+      //----------------------------------------- OBSOLETE-----------------------------------------------------  
+            // if ( type_msg == 'W' ) {      //--------------------- CODE DE TEST OUVERTURE BOITE DE DIALOGUE VALIDATION CHARGEMENT BEGIN ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>//
+            //      console.log("P1 HIGH TEST POPUP VALIDATION CHARGEMENT=> Condition affichage popup remplie-> ACTION=" + action + " TYPE MESSAGE = " + type_msg + "MSG_TXT = " +  msg_txt);
+            //     let data : {validation_msg:String} =  { validation_msg:  msg_txt };
+            //     this.getEventBus().publish("Default", "validationDialogEvent", data);
+            // }    
             break;
         case 'startchargement':
-          if ( ( type_msg == 'W' )  || ( type_msg == 'E' ) )
+          if ( type_msg == 'E'  )
           {
               model_root_path = "/chargementstartnotifs";
-                break;
+            break;
           }
           else
-          {      if    ( type_msg == 'information' ) {    model_root_path = "/quais/" + current_quai_index_json + "/notifs";    break; }      
+          {      if    ( ( type_msg == 'information' ) || ( type_msg == 'W' )  ){    model_root_path = "/quais/" + current_quai_index_json + "/notifs";  console.log("P1 Mise à jour notifications Warning");  break; }      
           }
         default:
             model_root_path = "/quais/" + current_quai_index_json + "/notifs";
@@ -374,7 +417,16 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
           this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
         }
 
-      if ( action == 'finchargement'  ||  action == 'startchargement')
+    if ( (action == 'startchargement') && (type_msg == 'information' ))
+      {
+      console.log("-----P1-----------------------Notification de fin de chargement ou de début de chargement// Rafraichissement des chargements-------------------------------------------");
+      MessageToast.show(msg_txt);
+      this.getEventBus().publish("Default", "chargementEvent", {});  //Notification fin de chargement"
+      this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
+      }
+
+
+      if ( (action == 'finchargement') )
       {
       console.log("-----P1-----------------------Notification de fin de chargement ou de début de chargement// Rafraichissement des chargements-------------------------------------------");
       MessageToast.show(msg_txt);
@@ -382,6 +434,19 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
       this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
       }
 }
+
+    // async onOpenDialogValidCharg(): Promise<void> {
+    //   this.gv_dialog_validation_charg ??= await Fragment.load({
+    //      name: "clf.logistique.chargementquais.view.fragment.DialogValidChargement"
+    //   }) as Dialog;
+    //  // this.dialog.open();    // TODO => L'ouverture de la boîte de dialogue se fera au moment de la réception de la notification
+    // }  
+
+    onCloseDialog(): void {
+      // note: We don't need to chain to the pDialog promise, since this event-handler
+      // is only called from within the loaded dialog itself.
+    //   (this.byId("busyDialog") as Dialog)?.close();
+  }    
 
     public get_chargements_prevus():void {
 //     BEGIN DELETE SPTEMBER 2025

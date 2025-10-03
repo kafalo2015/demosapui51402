@@ -8,18 +8,27 @@ import View from "sap/ui/core/mvc/View";
 import Panel from "sap/m/Panel";
 import SideNavigation, { SideNavigation$ItemSelectEvent } from "sap/tnt/SideNavigation";
 import JSONModel from "sap/ui/model/json/JSONModel";
+import Dialog from "sap/m/Dialog";
 
 /**
  * @namespace clf.logistique.chargementquais.controller
  */
 export default class AppChargementQuaisIconTabBar extends Controller {
 
+
+    private gv_current_quai_number : number;
+    private gv_dialog_validation_charg: Dialog;
+    
     /*eslint-disable @typescript-eslint/no-empty-function*/
     public onInit(): void {
 
   let panelMessage : Panel = this.byId("PanelMessageAppChargementQuais") as Panel;   // TODO=>Mettre le numéro de quai en dynamique
-      
-
+    
+  
+  //----------------------------------------------------------------------------------------------------------------------------//
+  //               LOT 8 : Validation des messages de chargement                                                                 //  
+  //----------------------------------------------------------------------------------------------------------------------------//
+this.onOpenDialogValidCharg();
 
   //panelMessage.bindAggregation()
   // METHODE : On s'abonne à un évènement déclenché par le event handler du Socket dans le componnet controller       
@@ -32,7 +41,53 @@ export default class AppChargementQuaisIconTabBar extends Controller {
         this.getOwnerComponent()?.getEventBus().subscribe("Default","chargementQuaiButtonEvent",(channel:string,event:string,data: Object) => {           
               this.button_chargementquai_handler();  
             },this); 
-        }
+
+     //----------------------------------------------------------------------------------------------------------------------------//
+     //                LOT 8 : Validation des messages de chargement                                                                                 //  
+     //----------------------------------------------------------------------------------------------------------------------------//
+      this.getOwnerComponent()?.getEventBus().subscribe("Default","validationDialogEvent",(channel:string,event:string,data: Object) => {           
+            //this.notification_handler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5]);  
+          //------------------------ OSOLETE BEGIN--------------------------------------------
+          // let messageValidationChargementModel : JSONModel =  this.getOwnerComponent()?.getModel("messageValidationChargementModel") as JSONModel;
+          // console.log("P1 HIGH vALEUR DE VALIDATION TXT : " + Object.values(data)[0])
+          // if (messageValidationChargementModel.setProperty("/validationchargementmessage", Object.values(data)[0]) == true)
+          // {
+          //     console.log("P1 MAJ du modèle de validation de chargemnt avec la dernier message de WARNING :" + messageValidationChargementModel.getProperty("/validationchargementmessage") );;
+
+          // }
+          //------------------------ OSOLETE END--------------------------------------------
+
+           // TODO => Avant d'ouvrir la boîte de dialoque il faaut modifier le context binding pour pointer sur le contexte d'un quai donné
+          
+           // S'inspirer de ce qui a été fait dans la boite de dialogue des UMS en faux camion
+          // console.log("Event press UM postes non chargés :" + event.getSource());
+          //       let lv_quai:string = "01";
+          //       console.log("event onSelectDialogUmFauxCam .getSource().toString()" + event.getSource().toString());
+          //       // TODO => Créer un loop sur l'ensemble des quais pour remplir les indices de binding 
+          //       if (event.getSource().toString().includes("quai8") === true )  { lv_quai = '0' ;  
+          //                                                                        console.log("onSelectDialogUmFauxCam SOURCE BUTTON = QUAI8"); };
+          //       if (event.getSource().toString().includes("quai9") === true )  { lv_quai = '1'};
+          //       if (event.getSource().toString().includes("quai10") === true ) { lv_quai = '2'};
+          //       if (event.getSource().toString().includes("quai11") === true ) { lv_quai = '3'};
+          //       if (event.getSource().toString().includes("quai12") === true ) { lv_quai = '4'};
+          //       if (event.getSource().toString().includes("quai13") === true ) { lv_quai = '6'};
+          //       if (event.getSource().toString().includes("quai14") === true ) { lv_quai = '6'};
+          //       if (event.getSource().toString().includes("quai15") === true ) { lv_quai = '7'};
+          
+          //       let lv_length : number = event.getSource().toString().length;
+          //       let postenocharge_indice = event.getSource().toString().charAt(lv_length-1);
+          //        console.log("postenocharge_indice" + postenocharge_indice);
+          //        this.dialog.setBindingContext(this.getOwnerComponent()?.getModel("chargementModelJson")?.createBindingContext("/results/" + lv_quai + "/tPosteNocharge/" + postenocharge_indice + "/") as Context,"chargementModelJson")
+          //        this.dialog.open();
+
+
+
+
+
+            this.gv_dialog_validation_charg.open();
+        },this);
+      }
+
      //----------------------------------------------------------------------------------------------------------------------------//
      //               Affichage des notifications d'Erreur/Warning ou Succes dans les messages Strip du quaui                                                                                     //  
      //----------------------------------------------------------------------------------------------------------------------------// 
@@ -184,10 +239,13 @@ export default class AppChargementQuaisIconTabBar extends Controller {
               let ChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
               
               let notificationsQuaisModel : JSONModel = this.getOwnerComponent()?.getModel("notificationsQuaisModel") as JSONModel;
+              let chargementStartModel : JSONModel = this.getOwnerComponent()?.getModel("ChargementStartModel") as JSONModel;
               let indice_quai : number;
               let indice_json : number;
 
                indice_quai = Number( key?.slice(4,6));
+
+              
                indice_json = indice_quai - 8;
 
             //TargetStartChargementQuai10
@@ -202,9 +260,12 @@ export default class AppChargementQuaisIconTabBar extends Controller {
 
           if ( encours == true ) 
           {
+       
+          
            /******************    REINITIALISATION DES MESSAGES ERREUR/WARNING LORS DE CHANGEMENT DE QUAI**************************************** */      
             notificationsQuaisModel.setProperty("/chargementstartnotifs/notifwarning/msg_txt","");   
-            notificationsQuaisModel.setProperty("/chargementstartnotifs/notifwarning/visible",false);    
+            notificationsQuaisModel.setProperty("/chargementstartnotifs/notifwarning/visible",false);   
+        
             // Relance de la récupération des données de chargement avant la navigation sur le quai
             this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {}); 
             if ( key == "QUAI08" )   {  
@@ -222,12 +283,53 @@ export default class AppChargementQuaisIconTabBar extends Controller {
              
           }
                else
-               {
-
+               {      
+          /******************    REINITIALISATION DU FORMULAIRE DE SAISIE**************************************** */ 
+          // Uniquement si on ne clique pas sur le quai actuellement affiché  
+                console.log("P1 HIGH gv_current_quai_number:" + this.gv_current_quai_number + " indice_quai:" + indice_quai  );   
+                if ( this.gv_current_quai_number != indice_quai )
+                {
+                      chargementStartModel.setProperty("/results/tknum",""); 
+                      chargementStartModel.setProperty("/results/matri",""); 
+                }
                    router.getTargets()?.display("TargetStartChargement");
-
                }
-
+       this.gv_current_quai_number = indice_quai;
     } 
+
+        async onOpenDialogValidCharg(): Promise<void> {
+          this.gv_dialog_validation_charg ??= await this.loadFragment({                                // A noter qu'il existe également une méthode sur la classe Fragement pour instantier un fragment
+             name: "clf.logistique.chargementquais.view.fragment.DialogValidChargement"
+          }) as Dialog;
+
+           // TODO =>  Mettre le modèle de notification en modèle du fragment (ou modèle du dialogue)
+           // this.gv_dialog_validation_charg.setModel(this.getOwnerComponent()?.getModel("chargementModelJson"),"chargementModelJson");
+         // this.dialog.open();    // TODO => L'ouverture de la boîte de dialogue se fera au moment de la réception de la notification
+        }  
+    
+        onCloseDialog(): void {
+          // note: We don't need to chain to the pDialog promise, since this event-handler
+          // is only called from within the loaded dialog itself.
+        //   (this.byId("busyDialog") as Dialog)?.close();
+      } 
+      
+       public onTestValidationButtonPress(): void {
+        
+        // let messageValidationChargementModel : JSONModel =  this.getOwnerComponent()?.getModel("messageValidationChargementModel") as JSONModel;
+        // let msg_txt =  messageValidationChargementModel.getProperty("/validationchargementmessage");
+
+        //       let data : {validation_msg:String} = {
+        //         validation_msg:  msg_txt
+                                  
+        //       };
+        //                    this.getOwnerComponent()?.getEventBus().publish("Default", "validationDialogEvent", data);  //Notification fin de chargement"
+      } 
+
+
+public onValidationReject(): void {
+
+  this.gv_dialog_validation_charg.close();
+}
+
 
 }

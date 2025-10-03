@@ -53,14 +53,29 @@
 
 							  
 							  <Input
-							id="MatriculeTabular"
+							id="MatriculeTabularInput"
 							value=   "{ChargementStartModel>/results/matri}" 
+							valueState=""
 							textFormatMode="ValueKey"
 							placeholder="Saisir le matricule..."
 							showSuggestion="true"
 							showTableSuggestionValueHelp="false"
-							suggestionRows="{ChargementStartModel>/results/tSuggestedMatricule}"
-							suggestionItemSelected=".onSuggestionItemSelected">
+							suggestionRows="{ChargementStartModel>/results/tSuggestedMatricule}" 
+							suggestionItemSelected=".onSuggestionItemSelected"
+							submit=".onSubmit">
+							<formattedValueStateText>
+							<FormattedText htmlText="Veuillez saisir un numéro de matricule">
+								<controls>
+									<Link
+										text="See more information"
+										href=""
+										press=".onFormattedTextLinkPress" />
+								</controls>
+							</FormattedText>
+						</formattedValueStateText>	
+							
+
+
 						<suggestionColumns>
 							<Column
 								popinDisplay="Inline"
@@ -88,14 +103,28 @@
 			      </Input>
  <Label id= "LabelTransport" class="sapUiTinyMarginEnd" text="TRANSPORT"  design="Bold" />
 							  <Input
-							id="TknumInputTabular"
-							value="{ChargementStartModel>/results/tknum}" 
+							id="tknumTabularInput"
+							value="{ChargementStartModel>/results/tknum}"
+							valueState="" 
 							textFormatMode="ValueKey"
 							placeholder="Saisir le numéro de transport "
 							showSuggestion="true"
 							showTableSuggestionValueHelp="false"
 							suggestionRows="{ChargementStartModel>/results/tSuggestedTknum}"
-							suggestionItemSelected=".onSuggestionItemSelected">
+							suggestionItemSelected=".onSuggestionItemSelected"
+							submit=".onSubmit"      
+								  >
+
+                        	<formattedValueStateText>
+							<FormattedText htmlText="Veuillez saisir un numéro transport">
+								<controls>
+									
+								</controls>
+							</FormattedText>
+						</formattedValueStateText>	
+
+
+
 						<suggestionColumns>
 							<Column
 								popinDisplay="Inline"
