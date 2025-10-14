@@ -22,17 +22,7 @@ height = "100%">
 	             <!-- Le quai sera chargé pr routing  -->
 		</content>
 	</IconTabBar>
-	<ScrollContainer vertical='true'>
-	 <Button text="TEST VALIDATION CHARG" press="onTestValidationButtonPress" />
-
-
-	 <Input 
-	 value= "{messageValidationChargementModel>/validationchargementmessage}" 
-	 valueState=""
-	textFormatMode="ValueKey"
-	placeholder="Saisir le message de Validation"
-	 />
-	     
+	<ScrollContainer vertical='true'>   
 	 <Panel  headerText ="Messages" id = "PanelMessageAppChargementQuais" stickyHeader="true" height="120px" >
 			<content>
 

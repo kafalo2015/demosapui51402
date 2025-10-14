@@ -2,24 +2,54 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	
-<Dialog title="Validation" >
-<content>
-
-<Text text= "{messageValidationChargementModel>/validationchargementmessage}" />
-
-</content>
-
-<beginButton>
-<Button text = "Rejeter" press=".onValidationReject"> </Button>
-
-</beginButton>
-
-<endButton >
-<Button text = "Valider"> </Button>
-
-</endButton>
-
+<Dialog title="Validation" 	contentWidth = "25%"
+		contentHeight = "25%" >
+ 
+	 <Panel  headerText ="" id = "PanelValidationChargement" stickyHeader="true" height="100%" width = "100%">
+	      <content>  
+				<List   headerText="" mode="" items="{ path : 'notificationsQuaisModel>validation_msg_list'}"
+						growing="false"
+						growingThreshold="1"
+						growingScrollToLoad="false">
+					<CustomListItem>
+					<FlexBox type = "Horizontal">
+						<MessageStrip 
+							text="{notificationsQuaisModel>validationtxt} Check id : {notificationsQuaisModel>checkid} Numéro d'UM : {notificationsQuaisModel>codum} Numéro de check : {notificationsQuaisModel>checknumber}"
+							type="Warning"
+							showIcon="true"
+							visible = "true"
+							class="sapUiNoMarginBottom sapUiNoMarginBegin">
+						</MessageStrip>	
+						<Button
+					id="ButtonOK"
+					class="sapUiTinyMarginBeginEnd"
+					icon="sap-icon://accept"
+					type="Default"
+					badgeStyle="Attention"
+					text="OK"
+					press=".onConfirmValidationMsgChargement">
+					 </Button>
+						<Button
+					id="ButtonReject"
+					visible = "{= %{notificationsQuaisModel>validationtype} === 'C'?true:false}"
+					class="sapUiTinyMarginBeginEnd"
+					icon="sap-icon://decline"
+					type="Default"
+					badgeStyle="Attention"
+					text="Refuser"
+					press=".onConfirmValidationMsgChargement"
+					>
+				       </Button>
+                </FlexBox>
+					</CustomListItem>
+	            </List>
+				
+		  </content>		
+     </Panel>
+	 <beginButton>
+    <Button text = "Fermer" press=".onValidationClose"> </Button>
+	</beginButton>	 
+ 
 </Dialog>
-
 
 </core:FragmentDefinition>
