@@ -11,12 +11,16 @@ import UIComponent from "sap/ui/core/UIComponent";
  import MessageToast from "sap/m/MessageToast";
  import Dialog from "sap/m/Dialog";
  import Fragment from "sap/ui/core/Fragment"; 
+import Target from "sap/ui/core/routing/Target";
+import { Targets$DisplayEvent } from "sap/ui/core/routing/Targets";
  
 // LOT/DATE/AUTEUR/DECRIPTION
 // LOT 6 => Lancement du démarrage du chargemnet à partir du quai
-// LOT7-18/09/2025- GILLES CAMILLERI LOT 7 => Modèle de Notifications au niveau du component 
-// LOT8-18/09/2025- GILLES CAMILLERI- => Boîte de dialogue de validation de chargement
-// LOT9-08/10/2025- GILLES CAMILLERI- => Validation des messages de Warning par appel API et passage du contexte 
+// LOT7- 18/09/2025- GILLES CAMILLERI LOT 7 => Modèle de Notifications au niveau du component 
+// LOT8- 18/09/2025- GILLES CAMILLERI => Boîte de dialogue de validation de chargement
+// LOT9- 08/10/2025- GILLES CAMILLERI => Validation des messages de Warning par appel API et passage du contexte 
+// LOT10-16/10/2025- GILLES CAMILLERI => Problématique Authentification RESTAPI -> Essai pas d'authentification
+// LOT11-14/11/2025- GILLES CAMILLERI => Anomalie Popup de validation des quais s'affiche dans liste des chargements + Anomalie synchronisation routing/selected key de l'IconTabBar
 
 /**
  * @namespace clf.logistique.chargementquais
@@ -29,20 +33,17 @@ export default class Component extends BaseComponent {
         ]
 	};
 
-    //private _wsNotificationUm: WebSocket;                                 //TODO -> Delete 
-    //public get wsNotificationUm(): WebSocket {                           //TODO -> Delete 
-      //  return this._wsNotificationUm;                                   //TODO -> Delete 
-   // }                                                                   //TODO -> Delete 
-//public set wsNotificationUm(value: WebSocket) {                         //TODO -> Delete 
-    //    this._wsNotificationUm = value;                                //TODO -> Delete 
-   // }                                                                 //TODO -> Delete 
     public _environment :String = "dev";
     public gv_chargement_url : string;
     public gv_chargement_um_api_url: string;          // URL API startchargement
     public gv_startchargement_api_url: string;          // URL API startchargement
     public gv_chargementquais_api_url: string;          // URL API chargement des quais
+    public gv_validation_msg_chargementquais_api_url: string;                                                                     //gv_validation_msg_chargementquais_api_url
     public gv_chargementprevus_api_url: string;         // URL API Chargement prévus
     public gv_material_umstock_api_url: string;         // URL material_umstock_list
+    public const_chargementsPrevusApp = "ChargementsPrevusApp";  // Application Chargement prévues
+    public const_chargementsQuaisApp = "ChargementsQuaisApp";    // Application Chargement des quais
+    public gv_current_application: string;                       // Stocke le nom de l'application actuellement affiché (Liste des chargmentn ou Chargement des quais)
     //private gv_dialog_validation_charg: Dialog;
     public get environment(): String {
         return this._environment;
@@ -63,119 +64,98 @@ export default class Component extends BaseComponent {
          //   bundleName: "clf.logistique.chargementquais.i18n.i18n"
         //});
         //this.setModel(i18nModel, "i18n"); 
-        //Définition d'un view Model pour le busy
-        //let ChargementViewModel = new JSONModel();    
-        //this.setModel(ChargementViewModel, "chargementViewModel");
-
-      // let chargementQuaiSelectionDateModel = new JSONModel();  
-       //chargementQuaiSelectionDateModel.setDefaultBindingMode("TwoWay")           
-       //this.setModel(chargementQuaiSelectionDateModel, "chargementQuaiSelectionDateModel");                       
-       //let oDateFormat = DateFormat.getDateInstance({
-       //     format: "yyyyMMdd",                               //""   "dd-MM-yyyy"
-        //    pattern: "YYYYMMdd"
-        //}); 
-    
-       // La classe UI5Date n'existe pas sur le serveur-> Mettre à jour la version SAPUI5 sur le serveur
-      // chargementQuaiSelectionDateModel.setData({
-        //    datechargement:  oDateFormat.format(UI5Date.getInstance(2023,2,7)),
-        //});
-        //chargementQuaiSelectionDateModel.setData({
-       //       datechargement:  oDateFormat.format(new Date()),                 // On initialise à la date du jour pour les tests en DEV
-       // });    
-
-       // ----------------------EXEMPLE  ALIMENTATION DES MESSAGEs---------------------------------------------------
-    //   "notif_txt_all": [{ "msg_txt" : "TEST NOTIF ALL 1 ", "type_msg" : "Success"},
-    //   { "msg_txt" : "TEST NOTIF ALL 2 ",   "type_msg" : "Warning"},
-    //   { "msg_txt" : "TEST NOTIF ALL 3 ",  "type_msg" : "Information"},
-    //  { "msg_txt" : "TEST NOTIF ALL 4 ",   "type_msg" : "Error"}, 
-    //  { "msg_txt" : "TEST NOTIF ALL 5 ",  "type_msg" : "None"} 
  // ----------------------EXEMPLE  TYPE DE MESSAGEs---------------------------------------------------
 /*		Information : "Information",
 	          	Warning : "Warning",
 		          Error : "Error",
 		          None : "None",
 		          Success : "Success"   */ 
-
-
      //----------------------------------------------------------------------------------------------------------------------------//
      //               TODO -> Faire une méthode séparée pour enregistrement du modèle de notifications                              //  
      //----------------------------------------------------------------------------------------------------------------------------//
             let notificationsQuaisModel = new JSONModel();
             let json_object : object = 
-
               {
     "quais": [
         {
             "quai": "quai08",
+            "um" : "",
             "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
-            },
-             "validation_msg_list" : [{"validationtype": "warning","validationtxt": "Test Validation quai08"},{"validationtype": "warning","validationtxt": "Test2 Validation quai08"}]
+            }
+             
         },
         {
             "quai": "quai09",
+            "um" : "",
             "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
-            },
-            "validation_msg_list" : [{"validationtype": "warning","validationtxt": "Test Validation quai09"},{"validationtype": "warning","validationtxt": "Test2 Validation quai09"}]
+            }
+            
         },
         {
             "quai": "quai10",
+            "um" : "",
             "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
-            },
-            "validation_msg_list" : []
+            }
+            
         },
         {
             "quai": "quai11",
+            "um" : "",
             "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror"   : {"msg_txt": "","visible": false    },
-            },
-            "validation_msg_list" : []
+            }
+            
         },
         {
             "quai": "quai12",
+            "um" : "",
             "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
-            },
-            "validation_msg_list" : [{"validationtype": "warning","validationtxt": "Test Validation quai12"},{"validationtype": "warning","validationtxt": "Test2 Validation quai12"}]
+            }
+            
         },
         {
             "quai": "quai13",
+            "um" : "",
             "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
-            },
-            "validation_msg_list" : [{"validationtype": "warning","validationtxt": "Test Validation quai13"},{"validationtype": "warning","validationtxt": "Test2 Validation quai13"}]
+            }
+            
         },
         {
             "quai": "quai14",
+            "um" : "",
              "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
-            },
-            "validation_msg_list" : [{"validationtype": "warning","validationtxt": "Test Validation quai14"},{"validationtype": "warning","validationtxt": "Test2 Validation quai14"}]
+            }
+            
         },
         {
         "quai": "quai15",
+         "um" : "",
            "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
-            },
-            "validation_msg_list" : [{"validationtype": "warning","validationtxt": "Test Validation quai15"},{"validationtype": "warning","validationtxt": "Test2 Validation quai15"}]
+            }
+            
         }
     ],
     "notif_txt_all": [
@@ -191,21 +171,13 @@ export default class Component extends BaseComponent {
             notificationsQuaisModel.setData(json_object);
             this.setModel(notificationsQuaisModel, "notificationsQuaisModel");
 
-
-
-
-            // this.create_validation_chargement_model();     //OBSOLETE
-
-
       //----------------------------------------------------------------------------------------------------------------------------//
      //               Détermination des URL des API                                                                                //  
      //----------------------------------------------------------------------------------------------------------------------------//
       this.getApiUrl();
       //----------------------------------------------------------------------------------------------------------------------------//
-     //               LOT 8 -> Instantiation de la la Boîte de dialogue de validation de chargement                                                                           //  
+     //                                                                                                                            //  
      //----------------------------------------------------------------------------------------------------------------------------//
-
-      //this.onOpenDialogValidCharg();
 
      this.open_websocket_NotificationUM();
      // Abonnement à l'eventing
@@ -214,15 +186,15 @@ export default class Component extends BaseComponent {
      //----------------------------------------------------------------------------------------------------------------------------//
      this.getEventBus().subscribe("Default","chargementEvent",() => { 
         console.log("ChargementEvent");
-        //let chargementViewModel: JSONModel;                                                 TODELETE 15/09/2025
-       // chargementViewModel =  this.getModel("chargementViewModel") as JSONModel;           TODELETE 15/09/2025
-       // chargementViewModel.setData({                                                       TODELETE 15/09/2025
-       //     busy :  true                                                                    TODELETE 15/09/2025
-       // });                                                                                 TODELETE 15/09/2025
         this.get_chargement_quais();
-        //chargementViewModel.setData({                                                      TODELETE 15/09/2025
-        //    busy :  false                                                                  TODELETE 15/09/2025
-        //});                                                                                TODELETE 15/09/2025
+     } );
+
+      //----------------------------------------------------------------------------------------------------------------------------//
+     //               HANDLER DE  validationMsgChargementEvent                                                                                                 //  
+     //----------------------------------------------------------------------------------------------------------------------------//
+     this.getEventBus().subscribe("Default","validationMsgChargementEvent",() => { 
+        console.log("validationMsgChargementEvent");
+        this.get_validation_msg_chargements();
      } );
      //----------------------------------------------------------------------------------------------------------------//
      //               HANDLER pour Appel de l'API REST de récupération des chargements prévus                          //  
@@ -239,48 +211,49 @@ export default class Component extends BaseComponent {
        this.startchargementquai_post(quai);
      }, this ); 
 
-
      //----------------------------------------------------------------------------------------------------------------//
      //               HANDLER pour Validation UM                                                                       //  
      //----------------------------------------------------------------------------------------------------------------//
     this.getEventBus().subscribe("Default","ValidationWarningUMEvent", (channel:string,event:string,data: Object) => { 
        console.log("chargementStartEvent"); 
       //----------------------------------------------------------------------------------------------------------------//
-      //---- LOT 9 Validation des messages de Warning TODO -> Récupérer le contexte du Warning (quai, um, checknumber)--//
+      //---- LOT 9 Validation des messages de Warning TODO )                                                            //
       //----------------------------------------------------------------------------------------------------------------//
-       let quai :number = Object.values(data)[0];  
-       let codum :string = Object.values(data)[1]; 
-       let checknumber :number = Object.values(data)[2];  
-       let choice :boolean = Object.values(data)[3];
-       let checkid :string = Object.values(data)[4];
-       let sourcestring :string = Object.values(data)[5];
-       this.api_chargement_um_post(quai,codum,checknumber,choice, checkid, sourcestring);
+       let quai :number    = Object.values(data)[0];  
+       let codum :string   = Object.values(data)[1];  
+       let msgid :string   = Object.values(data)[2];
+       let aenam :string   = Object.values(data)[3];
+       let errdt :string   = Object.values(data)[4];
+       let errzt :string   = Object.values(data)[5];
+       let choice :boolean = Object.values(data)[6];
+        
+       this.api_chargement_um_post(quai,codum,msgid,aenam,errdt,errzt,choice);
      }, this );
 
-     //----------------------------------------------------------------------------------------------------------------        //
-     //               HANDLER pour Appel de l'API REST de lAPI REST Chargement Start Model (Matchcodes du formulaire de saisie)//  
-     //----------------------------------------------------------------------------------------------------------------        //
+     //----------------------------------------------------------------------------------------------------------------         //
+     //               HANDLER pour Appel de l'API REST de l'API REST Chargement Start Model (Matchcodes du formulaire de saisie)//  
+     //----------------------------------------------------------------------------------------------------------------         //
      this.getEventBus().subscribe("Default","chargementStartModelGetEvent",() => { 
         //------ Envoi d'une notification à la vue ChargementStart pour rendre invisible les messagesStrip----
         this.getEventBus().publish("Default", "InitializeChargementStartMessageStripEvent", {});    
-        //------ Récupération des matchcodes du formulaire de saisie de démarrge d'un nouveau Chargement------
+        //------ Récupération des matchcodes du formulaire de saisie de démararge d'un nouveau Chargement------
         this.ChargementStartModel_Get();     // Démarrage du chargment
      } ); 
 
-         this.getEventBus().subscribe("Default","notificationWebSocketEvent",(channel:string,event:string,data: Object) => {           
-            // EVOL : Notification en fin de chargementTODO ajout de l'action en paramètre
-            console.log("-----------------------------------notificationWebSocketEvent Event----------------------------------------------");
-            console.log("P1 LOT 7 Valeur du paramètre de notification time: " + Object.values(data)[7] + " CHECK_ID: " + Object.values(data)[9]);
+     //----------------------------------------------------------------------------------------------------------------         //
+     //               HANDLER pour Appel de Notification WebSocket                                                              //  
+     //----------------------------------------------------------------------------------------------------------------         //
+    this.getEventBus().subscribe("Default","notificationWebSocketEvent",(channel:string,event:string,data: Object) => {           
+    // EVOL : Notification en fin de chargementTODO ajout de l'action en paramètre
+    console.log("-----------------------------------notificationWebSocketEvent Event----------------------------------------------");
+    console.log("P1 LOT 7 Valeur du paramètre de notification time: " + Object.values(data)[7] + " CHECK_ID: " + Object.values(data)[8]);
 
-            //this.getEventBus().publish("Default", "notificationUMEvent",  data);      //=> LOT 7 Les notifications seront affichées par binding du component controlleur au vues
-             this.notificationWebSocketHandler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5]
-             , Object.values(data)[6], Object.values(data)[7], Object.values(data)[8], Object.values(data)[9]);  
-          
-
-        },this); 
+        this.notificationWebSocketHandler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5]
+        , Object.values(data)[6], Object.values(data)[7], Object.values(data)[8]);  
+},this); 
 
      //----------------------------------------------------------------------------------------------------------------------------//
-     //               HANDLER pour Appel de l'API REST de lAPI REST Chargement Start Model (Matchcodes du formulaire de saisie)    //  
+     //                                                                                                                            //  
      //----------------------------------------------------------------------------------------------------------------------------//
       this.getEventBus().subscribe("Default","LoadMaterialUmStockListEvent",(channel:string,event:string,data: Object) => {           
             //this.notification_handler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5]);  
@@ -289,66 +262,86 @@ export default class Component extends BaseComponent {
             this.get_material_umstock_list(lv_material);
         },this);  
 
-
      //----------------------------------------------------------------------------------------------------------------------------//
      //               Appel des API de chargement quais, chargements prévu et matchcode de lancement de chargement                 //  
      //----------------------------------------------------------------------------------------------------------------------------//
      this.getEventBus().publish("Default", "chargementListEvent", {});
      this.getEventBus().publish("Default", "chargementEvent", {});
      this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});
+     this.getEventBus().publish("Default", "validationMsgChargementEvent", {});
    
-     this.getRouter().initialize();   // Le router ne doit pas être forcément utilisé 
-	};
+      const router = this.getRouter().initialize();   
+      
+         let target_chargement_list: Target = router.getTarget("TargetChargementList") as Target;
+         let target_quai08: Target = router.getTarget("TargetChargementQuai08") as Target;
+         let target_quai09: Target = router.getTarget("TargetChargementQuai09") as Target;
+         let target_quai10: Target = router.getTarget("TargetChargementQuai10") as Target;
+         let target_quai11: Target = router.getTarget("TargetChargementQuai11") as Target;
+         let target_quai12: Target = router.getTarget("TargetChargementQuai12") as Target;
+         let target_quai13: Target = router.getTarget("TargetChargementQuai13") as Target;
+         let target_quai14: Target = router.getTarget("TargetChargementQuai14") as Target;
+         let target_quai15: Target = router.getTarget("TargetChargementQuai15") as Target;
 
+           target_chargement_list.attachDisplay(()=>{  this.gv_current_application = this.const_chargementsPrevusApp;}     //Stockage du nom de l'application en cours d'utilisation
+                                             );    
+           target_quai08.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}                //Stockage du nom de l'application en cours d'utilisation
+                                      );
+           target_quai09.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+                                      );  
+           target_quai10.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+                                      );   
+           target_quai11.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+                                      );  
+           target_quai12.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+                                      );   
+           target_quai13.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+                                      );    
+           target_quai14.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+                                      ); 
+           target_quai15.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+                                      );                                                                                                          
+}
 
-
-
-      //----------------------------------------------------------------------------------------------------------------------------//
-         //               LOT 8 : Validation des messages de chargement                                                                              //  
-         //----------------------------------------------------------------------------------------------------------------------------//
-        //  public create_validation_chargement_model():void{
-        //   //-----------------------  Remarque: Ce modèle sert à stocket les messages d'avertissementà valider par l'utilisateur----------------------------------/
-        //         let messageValidationChargementModel = new JSONModel();
-        //         let json_object : object = {"validationchargementmessage": ""};
-        //         messageValidationChargementModel.setData(json_object);
-        //         this.setModel(messageValidationChargementModel , "messageValidationChargementModel");
-        //  } 
-//---------------------------------------------------------------------------------------------------------------------------------//
+    //---------------------------------------------------------------------------------------------------------------------------------//
 //     Méthode de récupération des URLS des API                                                                                    //  
 //---------------------------------------------------------------------------------------------------------------------------------//
   public getApiUrl() : void{
     if ( location.hostname === 'localhost' ) {          
         if (this.environment === "dev") {
-                this.gv_chargementquais_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement";    
+                this.gv_chargementquais_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
+                this.gv_validation_msg_chargementquais_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
                 this.gv_chargementprevus_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
                 this.gv_startchargement_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
                 this.gv_material_umstock_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
                 this.gv_chargement_um_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
         }
         if (this.environment === "qual") {      
-                    this.gv_chargementquais_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
-                    this.gv_chargementprevus_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";            
-                    this.gv_startchargement_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; 
-                    this.gv_material_umstock_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-                    this.gv_chargement_um_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
+                this.gv_chargementquais_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
+                this.gv_validation_msg_chargementquais_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";  
+                this.gv_chargementprevus_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";            
+                this.gv_startchargement_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; 
+                this.gv_material_umstock_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+                this.gv_chargement_um_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
         }
     }
-    else {           this.gv_chargementquais_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";   
-                     this.gv_chargementprevus_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
-                     this.gv_startchargement_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";   
-                     this.gv_material_umstock_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-                     this.gv_chargement_um_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";            
+else {          this.gv_chargementquais_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";  
+                this.gv_validation_msg_chargementquais_api_url  = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";   
+                this.gv_chargementprevus_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
+                this.gv_startchargement_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";   
+                this.gv_material_umstock_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+                this.gv_chargement_um_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";            
     }                     
           
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 //                                                                                                                                 //  
 //---------------------------------------------------------------------------------------------------------------------------------// 
-    public notificationWebSocketHandler(type_msg:string, msg_txt: string,transport:string, um: String, current_quai: string, action :string, user:string, time:any,  p_checknumber:number, p_checkid:string ) : void{ 
+    public notificationWebSocketHandler(type_msg:string, msg_txt: string,transport:string, um: String, current_quai: string, action :string, user:string, time:any,  p_checkid:string ) : void{ 
           
       let current_quai_index_json:number;
       let type_msg_strip : string;
       let model_root_path: string;
+      let model_root_path_quai: string;
       let notificationsQuaisModel : JSONModel  = this.getModel("notificationsQuaisModel") as JSONModel;
     //  let input_data:any = notificationsQuaisModel.getData(); 
       // 1 TODO Récupération de l'indice ou de l'ID du quai concerné par modification => Récupérer l'indice du quai à partir du current_quai
@@ -361,12 +354,10 @@ export default class Component extends BaseComponent {
       // TODO  LOT7  A changer c'est plus subtil que cela si startchargement et Succes alors il faut pointer sur le root path des quais  (Path /chargementstartnotifs)
       //------------------En fonction du type d'action et du du type de message on enregistre la notification dans le modèle de notifications des quais  /quais/{indice_quai}/notifs
       //----------------- dans le  modèle de notifications le démarrage du chargement (Path /chargementstartnotifs)
+
     switch (action) {
         case 'chargement':
             model_root_path = "/quais/" + current_quai_index_json + "/notifs";
-      //----------- Si la notification de chargement est un Warning alors une boîte de dialogue de Validation s'ouvre -----------------------------------/  
-      //----------------------------------------- OBSOLETE-----------------------------------------------------  
-        
             break;
         case 'startchargement':
           if ( type_msg == 'E'  )
@@ -383,44 +374,100 @@ export default class Component extends BaseComponent {
     }
       console.log("-----P1--------- LOT 7 Modèle root path :" + model_root_path  );
 
+// Code pour afficher qu'une seule notifications (Si Success alors warning est masqué)     
+//      if ( notificationsQuaisModel.setProperty(model_root_path +"/notifsuccess/msg_txt",type_msg == 'information' ? msg_txt : "") == true)
+// {
+//     console.log(" P1 LOT 7  MAJ de du message Strip de succès" +  msg_txt  );
+// }
+//       notificationsQuaisModel.setProperty(model_root_path +"/notifsuccess/visible",type_msg == 'information' ? true : true);   // false (Evol on affiche tous les types de notification)
 
-     if ( notificationsQuaisModel.setProperty(model_root_path +"/notifsuccess/msg_txt",type_msg == 'information' ? msg_txt : "") == true)
+//       notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/msg_txt",type_msg == 'W' ? msg_txt : "");
+//       notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/visible",type_msg == 'W' ? true : true);
+
+//       notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt",type_msg == 'E' ? msg_txt : "");
+//       notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",type_msg == 'E' ? true : true);
+
+// BEGIN EVOLUTION -> Affichage de plusieurs messsages strip en même temps sur le quai
+// Code pour effacer les notifications d'erreur en cas de démarrage de chargement  
+if (action == 'startchargement' &&  (( type_msg == 'information' ) || ( type_msg == 'W' )) )
 {
-    console.log(" P1 LOT 7  MAJ de du message Strip de succès" +  msg_txt  );
+ notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt","");
+ notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",false);
 }
-      notificationsQuaisModel.setProperty(model_root_path +"/notifsuccess/visible",type_msg == 'information' ? true : false);
 
-      notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/msg_txt",type_msg == 'W' ? msg_txt : "");
-      notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/visible",type_msg == 'W' ? true : false);
+// Code pour effacer les notifications affichés au bas de l'écran des quais dans le cas ou l'on charge une nouvelle UM
+if ( (notificationsQuaisModel.getProperty("/quais/" + current_quai_index_json + "/um") != um) && (action == 'chargement') ) 
+{
+  console.log("-----P1 HIGH LOT Validations des Warning/Choice (LOT 9) ------  CHARGEMENT d'une nouvelle UM -> Les notifications Msg strip sont clearées--------" );
+ notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess/msg_txt","");
+ notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess/visible",false); 
+ notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/msg_txt","");
+ notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/visible",false);
+ notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt","");
+ notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",false);
 
-      notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt",type_msg == 'E' ? msg_txt : "");
-      notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",type_msg == 'E' ? true : false);
+notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um", um);    // On stocke le dernier UM traité dans le modèle des notifications 
+}
+
+    if ( type_msg == 'information' )   // Si la notificaiton est de type information (succès) alors il faut cacher la notification de type erreur
+        {
+        notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess/msg_txt",msg_txt);
+        notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess/visible",true);
+
+        notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt","");
+        notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",false);
+        }
+
+    if ( type_msg == 'W' )          // Si la notificatios est de type Warning alors il faut cacher la notificdtion  de type erreur
+        
+        {
+        notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/msg_txt",msg_txt);
+        notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/visible",true);
+
+        notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt","");
+        notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",false);
+        }
+
+    if ( type_msg == 'E' )             // Si la notification est de type erreur alors il faut cacher les notifications de warning ou d'information(Succès)
+        {
+        notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt",msg_txt);
+        notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",true);
+
+        notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess/msg_txt","");
+        notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess/visible",false);
+        notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/msg_txt","");
+        notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/visible",false);
+        }
     
-    console.log("Strip Error Text : "+ notificationsQuaisModel.getProperty(model_root_path + "/notiferror/msg_txt"));
+// END EVOLUTION -> Affichage de plusieurs messsages strip en même temps sur le quai
+    console.log("Strip Error Text   : "+ notificationsQuaisModel.getProperty(model_root_path + "/notiferror/msg_txt"));
     console.log("Strip success Text : "+ notificationsQuaisModel.getProperty(model_root_path + "/notifsuccess/msg_txt"));
     console.log("Strip Warning Text : "+ notificationsQuaisModel.getProperty(model_root_path + "/notifwarning/msg_txt"));
 
-  
-    //  notificationsQuaisModel.updateBindings(true);
-    // Enregistrement dans la zone message_all
-    if ( (action  == 'chargement') && ((type_msg == 'W') || (type_msg == 'C')) ) {
-              //--------------------- CODE DE TEST OUVERTURE BOITE DE DIALOGUE VALIDATION CHARGEMENT BEGIN ->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>//
-                 console.log("P1 HIGH TEST POPUP VALIDATION CHARGEMENT=> Condition affichage popup remplie-> ACTION=" + action + " TYPE MESSAGE = " + type_msg + "MSG_TXT = " +  msg_txt);
-                 let validation_msg_list : Object[] = notificationsQuaisModel.getProperty("/quais/" + current_quai_index_json + "/validation_msg_list") ;
-                 validation_msg_list.push({validationtype: type_msg,validationtxt: msg_txt, codum: um, checknumber: p_checknumber, checkid: p_checkid})
-                notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/validation_msg_list", validation_msg_list);
-                let data : {quai_number_popupdisplay:string,notification_websocket : boolean} =  { quai_number_popupdisplay:  current_quai,notification_websocket : true };
-                this.getEventBus().publish("Default", "validationDialogEvent", data);
-            }    
-
-    
+// TODO Rappel de l'API REST des messages de validation de chargement + Ouverture de la boîte de dialogue de validation de chargement 
+// TODO-> Vérifier que le popup s'affiche uniquement que si on se trouve sur l'application de chargement des quais
+      if ( (action  == 'chargement') && ((type_msg == 'V') || (type_msg == 'C')) ) {                 // if ( (action  == 'chargement') && ((type_msg == 'W') || (type_msg == 'C')) ) {
+           this.getEventBus().publish("Default", "validationMsgChargementEvent", {});
+           if ( this.gv_current_application == this.const_chargementsQuaisApp )     // Anomalie ouverture de la popup de la validation - > La popup ne doit s'ouvrir que si l'utilisateur se trouve sur l'application 
+                                                                                    // de chargement des quais
+           {
+           let data : {quai_number_popupdisplay:string} =  { quai_number_popupdisplay:  current_quai};
+           this.getEventBus().publish("Default", "validationDialogEvent", data);
+           }
+          }    
     
       console.log("------------------------------------MAJ des notififications ALL QUAIS dans le modèle de notification-----------------------------------------------"); 
-                switch (type_msg) {
+         switch (type_msg) {
             case 'information':
             type_msg_strip = "Success";
             break;
             case 'W':
+            type_msg_strip = "Warning";
+            break;
+            case 'V':
+            type_msg_strip = "Warning";
+            break;
+            case 'C':
             type_msg_strip = "Warning";
             break;
             case 'E':
@@ -452,6 +499,14 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
           this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
         }
 
+      if ((action == 'dechargement') && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
+        {
+          MessageToast.show(msg_txt);
+          this.getEventBus().publish("Default", "chargementEvent", {}); 
+          this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
+        }
+
+
     if ( (action == 'startchargement') && (type_msg == 'information' ))
       {
       console.log("-----P1-----------------------Notification de fin de chargement ou de début de chargement// Rafraichissement des chargements-------------------------------------------");
@@ -469,14 +524,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
       this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
       }
 }
-
-    // async onOpenDialogValidCharg(): Promise<void> {
-    //   this.gv_dialog_validation_charg ??= await Fragment.load({
-    //      name: "clf.logistique.chargementquais.view.fragment.DialogValidChargement"
-    //   }) as Dialog;
-    //  // this.dialog.open();    // TODO => L'ouverture de la boîte de dialogue se fera au moment de la réception de la notification
-    // }  
-
     onCloseDialog(): void {
       // note: We don't need to chain to the pDialog promise, since this event-handler
       // is only called from within the loaded dialog itself.
@@ -484,37 +531,22 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
   }    
 
     public get_chargements_prevus():void {
-//     BEGIN DELETE SPTEMBER 2025
-//    let date_chargement_modelformat : string  =     this.getModel("chargementQuaiSelectionDateModel")?.getProperty("/datechargement");
-//    let date_sapformat : string;
-//    let date_tsformat : string;
-//    console.log("this.getModel(chargementQuaiSelectionDateModel)?.getProperty(/datechargement)"  + this.getModel("chargementQuaiSelectionDateModel")?.getProperty("/datechargement"));
-
-//    if (date_chargement_modelformat.includes("/"))
-//    {
-//     let lv_jour : string  = date_chargement_modelformat.slice(0,2);
-//     let lv_mois : string  = date_chargement_modelformat.slice(3,5)  ;
-//     let lv_annee : string  = date_chargement_modelformat.slice(6,10);
-//     console.log("Jour: " + lv_jour);
-//     console.log("Mois: " + lv_mois);
-//     console.log("Annee: " + lv_annee);
-//     date_tsformat = lv_annee +"-"+ lv_mois + "-" + lv_jour;
-//     date_sapformat = lv_annee + lv_mois + lv_jour;
-//     console.log("Data au format sAP durant rechargement:"  + date_sapformat);
-//     //console.log("Date Sélection dans méthode chargement après formatage:" + oDateFormat.format(new Date(date_tsformat)));
-// }
-// else
-// {   console.log("Date Sélection dans méthode chargement au format SAP:" + this.getModel("chargementQuaiSelectionDateModel")?.getProperty("/datechargement"));
-//     date_sapformat = date_chargement_modelformat;
-// } 
-
-//     ENDDELETE SPTEMBER 2025
-        var mHeader = {
-            "Authorization": "Basic",
+        //-----------------------------------------------------------------------------------------
+        // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification
+        //----------------------------------------------------------------------------------------
+        // var mHeader = {
+        //     "Authorization": "Basic",
+        //     "Access-Control-Allow-Origin": "*",
+        //     "Content-Type":"application/json",
+        // }
+          var mHeader = {
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",
-            "datechargementquai": ""             // TODO SEPTEMBER 2025 => Retirer le paramètre    // oDateFormat.format(new Date(date_tsformat))
         }
+
+        //-----------------------------------------------------------------------------------------
+        // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification
+        //----------------------------------------------------------------------------------------
 
         let chargementsPrevusListModel: JSONModel;
         if ( this.getModel("chargementsPrevusListModel") == undefined)
@@ -526,22 +558,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
             console.log("Relance du chargement list"),
             chargementsPrevusListModel =   this.getModel( "chargementsPrevusListModel") as JSONModel;
         }
-     
-    //  let lv_chargement_url : string;
-    //  if ( location.hostname === 'localhost' ) // Lancement de l'application en localhost
-    //  {
-    //     console.log("Lancement de l'appli en localhost");
-    //     if (this.environment === "dev") {lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; }
-    //     else {
-    //                 if (this.environment === "qual") {lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; }  //TODO -> Ajouter proxy quaal
-    //                 else {  lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";   } 
-    //             }
-    //  }
-    //   else // Lancement sur les serveurs SAP
-    //   { 
-    //     lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";
-    //  }
-    //  console.log("Chargement de l'API : " + lv_chargement_url);
+    
      chargementsPrevusListModel.loadData(this.gv_chargementprevus_api_url,"",true,  "GET", false, true, mHeader); 
      //chargementsPrevusListModel.forceNoCache(true);
      //chargementsPrevusListModel.updateBindings(true);
@@ -552,14 +569,14 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
      //----------------------------------------------------------------------------------------------------------------------------//
   public get_material_umstock_list(material:string):void {
  
-    // Mettre le material en paramètre
-        var mHeader = {
-            "Authorization": "Basic",
+           var mHeader = {
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",
             "material": material                                      
         }
-
+    //-----------------------------------------------------------------------------------------
+    // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
+    //----------------------------------------------------------------------------------------
         let MaterialUmStockListModel: JSONModel;
         if ( this.getModel("MaterialUmStockListModel") == undefined)
         {
@@ -570,22 +587,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
             console.log("Relance du chargement list"),
             MaterialUmStockListModel =   this.getModel( "MaterialUmStockListModel") as JSONModel;
         }
-     
-    //  let lv_chargement_url : string;
-    //  if ( location.hostname === 'localhost' ) // Lancement de l'application en localhost
-    //  {
-    //     console.log("Lancement de l'appli en localhost");
-    //     if (this.environment === "dev") {lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list"; }
-    //     else {
-    //                 if (this.environment === "qual") {lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list"; }  //TODO -> Ajouter proxy quaal
-    //                 else {  lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";   } 
-    //             }
-    //  }
-    //   else // Lancement sur les serveurs SAP
-    //   { 
-    //     lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-    //  }
-    //console.log("Chargement de l'API : " + lv_chargement_url);
     MaterialUmStockListModel.loadData(this.gv_material_umstock_api_url,"",true,  "GET", false, true, mHeader); 
     }
 
@@ -593,32 +594,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
      //               Méthode d'appel à l'API  REST de chargement des quais                                                        //  
      //----------------------------------------------------------------------------------------------------------------------------//
     public get_chargement_quais():void {
-
-//     console.log("Date Sélection dans méthode chargement avant formatage:" + this.getModel("chargementQuaiSelectionDateModel")?.getProperty("/datechargement"));
-//    let date_chargement_modelformat : string  =     this.getModel("chargementQuaiSelectionDateModel")?.getProperty("/datechargement");
-//    let date_sapformat : string;
-//    let date_tsformat : string;
-//    console.log("this.getModel(chargementQuaiSelectionDateModel)?.getProperty(/datechargement)"  + this.getModel("chargementQuaiSelectionDateModel")?.getProperty("/datechargement"));
-
-//    if (date_chargement_modelformat.includes("/"))
-//    {
-//    let lv_jour : string  = date_chargement_modelformat.slice(0,2);
-//    let lv_mois : string  = date_chargement_modelformat.slice(3,5)  ;
-//    let lv_annee : string  = date_chargement_modelformat.slice(6,10);
-//     console.log("Jour: " + lv_jour);
-//     console.log("Mois: " + lv_mois);
-//     console.log("Annee: " + lv_annee);
-//     date_tsformat = lv_annee +"-"+ lv_mois + "-" + lv_jour;
-//     date_sapformat = lv_annee + lv_mois + lv_jour;
-//     //console.log("Date Sélection dans méthode chargement après formatage:" + oDateFormat.format(new Date(date_tsformat)));
-// }
-// else
-// {   
-//     console.log("Date Sélection dans méthode chargement au format SAP:" + this.getModel("chargementQuaiSelectionDateModel")?.getProperty("/datechargement"));
-//     date_sapformat = date_chargement_modelformat;
-// }
-
-
 // METHODE auhentification 1 - > Authorization : auth        (Retiré suite aux problématiques d'authentification d'Octobre 2025)
 //         let userName = "USERNAME";                           //TODO SEPTEMBER 2025 => ???
 //         let password = "PASSWORD";
@@ -631,20 +606,21 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
 //             "Authorization": auth,
 //             "Access-Control-Allow-Origin": "*",
 //             "Content-Type":"application/json",
-//             "datechargementquai": "" ,                                     // oDateFormat.format(new Date(date_tsformat))
 //             "X-CSRF-Token" :  "Fetch"                                                                   //LOOT4
 //         }
 
-// METHODE auhentification 1 - > Authorization : "Basic" ou ""   
+    //-----------------------------------------------------------------------------------------
+    // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
+   //----------------------------------------------------------------------------------------
 
-        var mHeader = {
-            "Authorization": "",
+           var mHeader = {
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",
-            "datechargementquai": "" ,                                     // oDateFormat.format(new Date(date_tsformat))
             "X-CSRF-Token" :  "Fetch"                                                                   //LOOT4
         }
-
+        //-----------------------------------------------------------------------------------------
+        // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification
+        //----------------------------------------------------------------------------------------
 
 // On instancie le modèle que s'il n'est pas déja défini au niveau du composant (premier chargement/rechargement)
      let  chargementQuaiModel: JSONModel;
@@ -657,40 +633,43 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
          console.log("Relance du chargement list"),
          chargementQuaiModel =   this.getModel( "chargementModelJson") as JSONModel;
      }
-    //     let lv_chargement_url : string;
-    //     if ( location.hostname === 'localhost' ) {
-    //         console.log("Lancement de l'appli en localhost sur les API de : " + this.environment);
-    //       if (this.environment === "dev") {
-    //             lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
-    //             console.log("Lancement de l'appli sur les API de la dev : /rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement");    
-    //        }
-    //       else {
-    //                 if (this.environment === "qual") {
-    //                 console.log("Lancement de l'appli sur les API de la qualité : /rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement");    
-    //                 lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement"; }  //TODO -> Ajouter proxy qual
-                    
-    //                 else {  console.log("Pas de variable environnement");
-    //                         console.log("Lancement de l'appli sur les API de la dev : /rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement");
-    //                         lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement";   } 
-    //             }
-    //     }
-    //       else 
-    //      { 
-    //                 console.log("Location hostname :" + location.hostname +    "Location host :" +        location.host);
-    //                 lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";
-    //                 console.log("URL Chargement de quais:" +  lv_chargement_url);
-    //      }       
-    //  console.log("Début Chargement de l'API : " + lv_chargement_url);
-     //this.gv_chargement_url = lv_chargement_url // Lot4 Démarrage chargement des quais
+    
      // TODO LOT4 => RECUPERER LE TOKEN CSRF du GET
      //var token = XMLHttpRequest.getResponseHeader('X-CSRF-Token');
      console.log("P1 URL  API Chargement  des quais: " + this.gv_chargementquais_api_url ); 
      chargementQuaiModel.loadData(this.gv_chargementquais_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {   this.getEventBus().publish("Default", "chargementFinishedEvent", {});
                              console.log("DATA DANS LE PROMISE DU GET" + data)       });
      
-      //chargementQuaiModel.attachRequestCompleted(function (evt) { console.log("PARAMETRES RESPONSE HEADER:" +evt.getParameter('infoObject')); });
-            chargementQuaiModel.attachRequestCompleted(function (evt) { console.log("PARAMETRES RESPONSE HEADER:" +evt); });
+     chargementQuaiModel.attachRequestCompleted(function (evt) { console.log("PARAMETRES RESPONSE HEADER:" +evt); });
      console.log("Fin Chargement de l'API : " + this.gv_chargementquais_api_url); 
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------------//
+    //            LOT10:  Méthode d'appel à l'API  REST des messages de validation des chargements sur les quais                  //  
+    //----------------------------------------------------------------------------------------------------------------------------//
+    public get_validation_msg_chargements():void {
+           var mHeader = {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type":"application/json",
+            "X-CSRF-Token" :  "Fetch"                                                                   
+        }
+    //  let  validationMsgChargementQuaiModelJSON: JSONModel;
+    //  if ( this.getModel("validationMsgChargementQuaiModelJSON") == undefined)
+    //  {
+    //     validationMsgChargementQuaiModelJSON = new JSONModel();
+    //     this.setModel(validationMsgChargementQuaiModelJSON, "validationMsgChargementQuaiModelJSON");
+    //  }else
+    //  {  
+    //     validationMsgChargementQuaiModelJSON =   this.getModel( "validationMsgChargementQuaiModelJSON") as JSONModel;
+    //  }
+
+      if ( this.getModel("validationMsgChargementQuaiModelJSON") == undefined)
+     {
+        this.setModel(new JSONModel(), "validationMsgChargementQuaiModelJSON");
+     }
+    
+     console.log("P1 URL API ZCL_PCF_CHARG_VALIDMSG_RESOUR: " + this.gv_validation_msg_chargementquais_api_url ); 
+     (this.getModel("validationMsgChargementQuaiModelJSON") as JSONModel).loadData(this.gv_validation_msg_chargementquais_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {     });
     }
 
      //----------------------------------------------------------------------------------------------------------------------------//
@@ -705,53 +684,43 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
             ChargementStartModel = new JSONModel();
             this.setModel(ChargementStartModel, "ChargementStartModel");
             ChargementStartModel.setDefaultBindingMode("TwoWay");   // TODO => vérifier si c'est nécessaire d'activer  le two way binding
-            //ChargementStartModel.set
         }else
         {  
             ChargementStartModel =   this.getModel( "ChargementStartModel") as JSONModel;
         }
- //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//   
-        // if ( location.hostname === 'localhost' ) {          
-        //   if (this.environment === "dev") {
-        //         lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";          
-        //    }
-        //   else {
-        //             if (this.environment === "qual") {                 
-        //                      lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; }                 
-        //             else {   lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";  } 
-        //                  }
-        //      }
-        // else { 
-        //             lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";            
-        //     }
- //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//           
   
-/* EXEMPLE DE POST
-       loadData("https://your url",  // sURL
-{}, //oParameters
-true, // bASync
-"POST", // sType
-true/false, // bMerge
-true/false, // BCache?
-{ // mHeaders
-			         "X-Requested-With": "XMLHttpRequest",
-			         "Content-Type": "application/json",
-			         "DataServiceVersion": "2.0",
-			         "Accept": "application/atom+xml,application/atomsvc+xml,application/xml",
-			         "X-CSRF-Token": "0e855895-5023-4350-bd3e-5651beaadeae"
-} )*/                                                            
-       let mHeader = {
-            "Authorization": "Basic",                    
+        /* EXEMPLE DE POST
+            loadData("https://your url",  // sURL
+        {}, //oParameters
+        true, // bASync
+        "POST", // sType
+        true/false, // bMerge
+        true/false, // BCache?
+        { // mHeaders
+                            "X-Requested-With": "XMLHttpRequest",
+                            "Content-Type": "application/json",
+                            "DataServiceVersion": "2.0",
+                            "Accept": "application/atom+xml,application/atomsvc+xml,application/xml",
+                            "X-CSRF-Token": "0e855895-5023-4350-bd3e-5651beaadeae"
+        } )*/  
+       
+    //-----------------------------------------------------------------------------------------
+    // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
+    //----------------------------------------------------------------------------------------                     
+           let mHeader = {
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",  
             "X-Requested-With":"X"
             
         }
+     //-----------------------------------------------------------------------------------------
+    // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
+    //----------------------------------------------------------------------------------------
        ChargementStartModel.loadData(this.gv_startchargement_api_url,"",true,  "GET", false, true, mHeader);
     }
 
      //---------------------------------------------------------------------------------------------------------------------------------//
-     //               Méthode d'appel à l'API  REST de lancement du chargeemnt d'un quai  [ZCL_PCF_START_CHARG_RESOURCE/Méthode POST ]                                       //  
+     //               Méthode d'appel à l'API  REST de lancement du chargement d'un quai  [ZCL_PCF_START_CHARG_RESOURCE/Méthode POST ]                                       //  
      //---------------------------------------------------------------------------------------------------------------------------------//
     public startchargementquai_post(i_quai:string):void{
         let ChargementStartModel: JSONModel;
@@ -768,41 +737,14 @@ true/false, // BCache?
         {  
             ChargementStartModel =   this.getModel( "ChargementStartModel") as JSONModel;
         }
- //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//   
-        // if ( location.hostname === 'localhost' ) {          
-        //   if (this.environment === "dev") {
-        //         lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";          
-        //    }
-        //   else {
-        //             if (this.environment === "qual") {                 
-        //                      lv_chargement_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; }                 
-        //             else {   lv_chargement_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";  } 
-        //                  }
-        //      }
-        // else { 
-        //             lv_chargement_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";            
-        //     }
- //-----------------------------------CONSTRUCTION URL---------------------------------------------------------------//           
-  
-/* EXEMPLE DE POST
-       loadData("https://your url",  // sURL
-{}, //oParameters
-true, // bASync
-"POST", // sType
-true/false, // bMerge
-true/false, // BCache?
-{ // mHeaders
-			         "X-Requested-With": "XMLHttpRequest",
-			         "Content-Type": "application/json",
-			         "DataServiceVersion": "2.0",
-			         "Accept": "application/atom+xml,application/atomsvc+xml,application/xml",
-			         "X-CSRF-Token": "0e855895-5023-4350-bd3e-5651beaadeae"
-} )*/                                                            
+                                                                        
         let input_data:any = ChargementStartModel.getData();  
         console.log("P1 Appel  de Start Chargement Valeur de quai:" + i_quai  + "// transport: " + input_data.results.tknum);
-       
-       let mHeader = {
-            "Authorization": "Basic",                    
+
+    //-----------------------------------------------------------------------------------------
+    // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
+   //----------------------------------------------------------------------------------------
+          let mHeader = {
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",  
             "X-Requested-With":"X",
@@ -811,6 +753,9 @@ true/false, // BCache?
             "matri": input_data.results.matri,
             "name1": input_data.results.name1,
         }
+    //-----------------------------------------------------------------------------------------
+    // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
+   //----------------------------------------------------------------------------------------
         ChargementStartModel.loadData(this.gv_startchargement_api_url,"",true,  "POST", false, true, mHeader)?.then(result=>{
         let lv_target_quai : string; 
        // MessageToast.show("Chargement démarré sur le quai : " + i_quai ,{ duration: 3000, width : '50%' })
@@ -821,29 +766,14 @@ true/false, // BCache?
         console.log("P1 Navigation vers le quai avec target " + lv_target_quai); 
          this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});
          router.getTargets()?.display(lv_target_quai);           // TODO -> Remis après refonte du modèle de notification car manquant
-        //  let data : {type_msg:String, msg_txt:String,transport:String, um:String, current_quai:String,action:String,user:string} = {
-        //         type_msg: 'information',
-        //         msg_txt: 'Chargement démarré sur le quai:' + i_quai.toLowerCase() ,
-        //         transport: input_data.results.tknum,
-        //         um: '', 
-        //         current_quai: i_quai.toLowerCase(),
-        //         action: 'startchargement',
-        //         user: input_data.results.matri                 
-        //       };
-             // On envoie une notification UM qui sera gérée dans la vue de Chargement
-             // LOT Démarrage Chargement quai -> On va définir un handler notificationWebSocketEvent qui va redispatcher vers notificationUMEvent
-            //this.getEventBus().publish("Default", "notificationUMEvent",  data);   // Il est possible d'essayer avec    that.getEventBus().publish("Default", "notificationUMEvent",  content_json)
-            //this.getEventBus().publish("Default", "chargementEvent", {});  // Ce serait mieux de relancer le chargment dans le handler de la Navigation 
-            //LOT4-> Démarrage du chargment => A priori il est nécessaire de refaire un Get après le POST
                                                                                                                       },reason=>{  console.log("P1 REJECTED PROMISE POST StartChargment" + ChargementStartModel.getJSON.toString());
                                                                                                              }); 
     }
 
-
-    //---------------------------------------------------------------------------------------------------------------------------------//
-     //               Méthode d'appel à l'API  REST de lancement du chargement d'un quai  [ZCL_PCF_START_CHARG_RESOURCE/Méthode POST ]                                       //  
      //---------------------------------------------------------------------------------------------------------------------------------//
-    public api_chargement_um_post(i_quai:number,i_codum:string,i_checknumber:number, i_choice:boolean,i_checkid :string, i_sourcestring: string) :void{
+     //               Méthode d'appel à l'API  REST de lancement du chargement d'un quai  [ZCL_PCF_START_CHARG_RESOURCE/Méthode POST ]  //  
+     //---------------------------------------------------------------------------------------------------------------------------------//
+    public api_chargement_um_post(i_quai:number,i_codum:string, i_msgid :string, i_aenam:string , i_errdt:string, i_errzt:string, i_choice:boolean) :void{
        
         let ChargementUmModel: JSONModel;
         console.log("-------------------------------METHODE  api_chargement_um_post---------------------------------------------------------------------------------------- "); 
@@ -857,30 +787,34 @@ true/false, // BCache?
             ChargementUmModel =   this.getModel( "ChargementUmModel") as JSONModel;
         }                                                            
        
-       let mHeader = {
-            "Authorization": "Basic",                    
+  //-----------------------------------------------------------------------------------------
+    // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
+   //----------------------------------------------------------------------------------------
+
+    //    let mHeader = {
+    //         "Authorization": "Basic",                    
+
+              let mHeader = {
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",  
             "X-Requested-With":"X",
             "codum":  i_codum,      // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
             "quai1":  i_quai,       //input_data.results.quai1 
-            "checkid": i_checkid,
-            "checknumber": i_checknumber,
+            "msgid": i_msgid,
+            "aenam": i_aenam,
+            "errdt": i_errdt,
+            "errzt": i_errzt,
             "choice": i_choice
-           
         }
+
+
+    //-----------------------------------------------------------------------------------------
+    // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
+    //----------------------------------------------------------------------------------------   
         ChargementUmModel.loadData(this.gv_chargement_um_api_url,"",true,  "POST", false, true, mHeader)?.then(result=>{  
     //------------------- TODO LOT9  Validation des messages de Warning->Mettre le code de suppression du Warning de la promise de l'API POST--------------------------------------------------
-     let current_indicejson_quai : Number;
-    let notificationsQuaisModel : JSONModel = this.getModel("notificationsQuaisModel") as JSONModel;
-
-    current_indicejson_quai =   i_quai - 8;
-    let validation_msg_list : Object[] = notificationsQuaisModel.getProperty("/quais/" + current_indicejson_quai + "/validation_msg_list") ;
-    
-    console.log("-----------------------------------------------------------P1 LOT 8/9 Popup Validation UM/Validation UM Valeur de i_sourcestring------------------:" + i_sourcestring)
-    validation_msg_list.splice(Number(i_sourcestring.at(i_sourcestring.length-1)),1);       // Essai de suppression du premier élément => TODO récupérer l'indice du message à supprimer
-    notificationsQuaisModel.setProperty("/quais/" + i_quai + "/validation_msg_list", validation_msg_list);
-    notificationsQuaisModel.refresh();
+    // TODO => Rappel de l'API de récupération des messages de Validation de chargement
+     this.getEventBus().publish("Default", "validationMsgChargementEvent", {});
                                                                                                                       },reason=>{ 
                                                                                                              }); 
     }
@@ -924,7 +858,7 @@ true/false, // BCache?
             console.log("e.getParameters() " + e.getParameters() );  
             let content : any = params.data;
             let content_json : {type_msg:String, msg_txt:String,quai:String,um:string,action:string,statut: string,transport:string,user:string,  time : Date, checknumber:number, checkid:string} = JSON.parse(content);   
-             let data : {type_msg:String, msg_txt:String,transport:String, um:String, quai:String,action:String,user:string, time : Date,checknumber:number, checkid:string} = {
+             let data : {type_msg:String, msg_txt:String,transport:String, um:String, quai:String,action:String,user:string, time : Date, checkid:string} = {
                 type_msg: content_json.type_msg,
                 msg_txt: content_json.msg_txt,
                 transport: content_json.um,
@@ -933,7 +867,6 @@ true/false, // BCache?
                 action: content_json.action,
                 user: content_json.user,
                 time: content_json.time,
-                checknumber:  content_json.checknumber,
                 checkid:  content_json.checkid                   
               };
              // On envoie une notification UM qui sera gérée dans la vue de Chargement

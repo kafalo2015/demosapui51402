@@ -20,16 +20,11 @@ export default class MainSideNavigation extends Controller {
     //  à retourner des résultats 
        this.onOpenDialog();*/
 
-  // Enregistrement d'un handler pour la fin d'un chargeemnt
+  // Enregistrement d'un handler pour la fin d'un chargement   // TODO 11/25 -> Voir à quoi ce handler sert?
   this.getOwnerComponent()?.getEventBus().subscribe("Default","SidenavigationsetSelectedItemEvent",(channel:string,event:string,data: Object) => {           
-   
            let SideNavigationControl : SideNavigation = this.getView()?.byId("sideNavigation") as SideNavigation;
-           //let content_string : any  = this.byId("sideNavigation")?.getAggregation("item")?.;
-           //let content_string_table : string[] = content_string.split("---",2 );
-           //console.log("sideNavigation content_string  " + content_string);
-           //console.log("sideNavigation content_string table " + content_string_table[1]);
            console.log("sideNavigation Selected Key" + SideNavigationControl.getSelectedItem());
-          SideNavigationControl.setSelectedItem("container-clf.logistique.chargementquais---App--item_quai_all");
+           SideNavigationControl.setSelectedItem("container-clf.logistique.chargementquais---App--item_quai_all");
     },this);  
 
     }
@@ -47,15 +42,8 @@ export default class MainSideNavigation extends Controller {
     onCloseDialog(): void {
       // note: We don't need to chain to the pDialog promise, since this event-handler
       // is only called from within the loaded dialog itself.
-      (this.byId("busyDialog") as Dialog)?.close();
-  }    
-
-  public handleChange(event: DatePicker$ChangeEvent): void {
-    }     
-    
-     public onselectionChange(event:Table$RowSelectionChangeEvent)
-     {
-     }
+      //(this.byId("busyDialog") as Dialog)?.close();
+    }    
 
      public onCollapseExpandPress() {
       const oSideNavigation = this.byId("sideNavigation") as SideNavigation;
@@ -63,45 +51,27 @@ export default class MainSideNavigation extends Controller {
       oSideNavigation.setExpanded(!bExpanded);
     }
 
-    public itemSelect(event:SideNavigation$ItemSelectEvent)  {
-     console.log("SideNavigation$ItemSelectEvent: " +  event.getParameter("item")?.getId() );
+  public itemSelect(event:SideNavigation$ItemSelectEvent)  {
+     console.log("P1 VERY HIGH/------------------------------------------ Méthode Item select------------------------------------------------------ ");
      const router = UIComponent.getRouterFor(this);
-
-             let ChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
-             // let indice_quai : number;
-              let indice_json : number;
-  if ( event.getParameter("item")?.getText() == "Chargements par quais" )
+     let ChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
+  
+    if ( event.getParameter("item")?.getText() == "Chargements par quais" )           //TODO-> Utiliser plutôt l'ID 
     { 
-     
-             
-
-       //--------------------- CODE DE TEST OUVERTURE BOITE DE DIALOGUE VALIDATION CHARGEMENT END->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>//
-      
-      
-      console.log("P1 CLIC CHARGEMENT  QUAIS Chargement du quai 08 dans side Navigation Controller ")   ; 
-      indice_json = 0;
-     
-      //-------------------- BEGIN On récupère dans le modèle si le quai 8 est cours de chargement -----------------------------------------------------------------------------------------------------------------------------//
-      ChargementQuaiModel  = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
-      console.log("P1 valeur de Encours dans  modèle du chargement QUAI08 dans Main Side Navigation Controller  " + ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours"));
+      let indice_json : number = 0;                                                                             // Le quai 8 est affiché lorsque l'utilisateur clique sur Chargements par quais et l'indice json du quai 8 est 0
+      //ChargementQuaiModel  = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
       let encours : boolean = ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours");
        //-------------------- END On récupère dans le modèle si le quai 8 est cours de chargement -----------------------------------------------------------------------------------------------------------------------------//
-      // TODO tester si on doit afficher le formulaire de début de chargement (quai 8 inactif) ou le quai 8 (quai8 actif ) 
-       if (encours == true)
-      {router.getTargets()?.display("TargetChargementQuai08");  }   // Ajout Quai08,09++ }
-      else
-      {
-       router.getTargets()?.display("TargetStartChargement");
-      }
+       if (encours == true)                                                                                   // Si le quai 8 est en cours de chargement alors on affiche la vue du quai 8 sinon on affiche le formulaire de démarrage de chargement
+        { console.log("P1 VERY HIGH/ Méthode Item select/Appel du routing sur quai 8 ");
+          router.getTargets()?.display("TargetChargementQuai08"); 
+        }   
+       else
+        { router.getTargets()?.display("TargetStartChargementQuai08");}
     }
       
-  if (  event.getParameter("item")?.getText() == "Suivi Chargement" ) { console.log("Rechargement de la list ")   ;router.getTargets()?.display("TargetChargementList");}
-  // if (  event.getParameter("item")?.getId() == "container-clf.logistique.chargementquais---App--item_startchargement" ) { console.log("Démarrage Chargement ")   ;
-  //                                                                                                                          this.getOwnerComponent()?.getEventBus().publish("Default", "chargementStartModelGetEvent", {}); //LOT4 => Rajouter un Get sur StartChargmentModel
+     if (  event.getParameter("item")?.getText() == "Suivi Chargement" ) { router.getTargets()?.display("TargetChargementList");}
     
-  //                                                                                                                        router.getTargets()?.display("TargetChargementStart");}
-    }
-
-  
+  }
 
 }

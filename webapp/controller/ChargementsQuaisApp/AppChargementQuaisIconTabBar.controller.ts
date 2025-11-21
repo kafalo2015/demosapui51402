@@ -19,6 +19,7 @@ import { Button$PressEvent } from "sap/m/Button";
  */
 export default class AppChargementQuaisIconTabBar extends Controller {
     private gv_current_quai_number : number;
+    private gv_current_quai : string;
     private gv_dialog_validation_charg: Dialog;
     
     /*eslint-disable @typescript-eslint/no-empty-function*/
@@ -49,74 +50,111 @@ export default class AppChargementQuaisIconTabBar extends Controller {
  let target_quai13: Target = router.getTarget("TargetChargementQuai13") as Target;
  let target_quai14: Target = router.getTarget("TargetChargementQuai14") as Target;
  let target_quai15: Target = router.getTarget("TargetChargementQuai15") as Target;
+ 
+ let target_startchargement_quai08: Target = router.getTarget("TargetStartChargementQuai08") as Target;
+ let target_startchargement_quai09: Target = router.getTarget("TargetStartChargementQuai09") as Target;
+ let target_startchargement_quai10: Target = router.getTarget("TargetStartChargementQuai10") as Target;
+ let target_startchargement_quai11: Target = router.getTarget("TargetStartChargementQuai11") as Target;
+ let target_startchargement_quai12: Target = router.getTarget("TargetStartChargementQuai12") as Target;
+ let target_startchargement_quai13: Target = router.getTarget("TargetStartChargementQuai13") as Target;
+ let target_startchargement_quai14: Target = router.getTarget("TargetStartChargementQuai14") as Target;
+ let target_startchargement_quai15: Target = router.getTarget("TargetStartChargementQuai15") as Target;
 
 target_quai08.attachDisplay(()=>{ 
-  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("notificationsQuaisModel")?.getProperty("/quais/0/validation_msg_list");
+   this.gv_current_quai = 'QUAI08';
+   console.log("--------ICONTABBAR CONTROLLER Target08 AttachDisplay : " +  this.gv_current_quai);
+     
+  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/0/tValidationMsg");
   // La popup ne doit s'afficher que s'il existe des notifications de validation dans le modèle notificationsQuaisModel pour le quai en question
   if (t_validation_msg_list.length > 0 ) {  
-  let data : {quai_number_popup:String, notification_websocket : Boolean} =  { quai_number_popup:  "QUAI08",  notification_websocket : false };
+  let data : {quai_number_popup:String} =  { quai_number_popup:  "QUAI08"};
+
   this.getOwnerComponent()?.getEventBus().publish("Default", "validationDialogEvent", data);
   }
                                 });
 
 target_quai09.attachDisplay(()=>{ 
-  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("notificationsQuaisModel")?.getProperty("/quais/1/validation_msg_list");
+  this.gv_current_quai = 'QUAI09';
+  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/1/tValidationMsg");
   if (t_validation_msg_list.length > 0 ) {  
-  let data : {quai_number_popup:String, notification_websocket : Boolean}  =  { quai_number_popup:  "QUAI09",  notification_websocket : false };
+  let data : {quai_number_popup:String}  =  { quai_number_popup:  "QUAI09"};
   this.getOwnerComponent()?.getEventBus().publish("Default", "validationDialogEvent", data);
   }
                                 });
 
 target_quai10.attachDisplay(()=>{ 
-  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("notificationsQuaisModel")?.getProperty("/quais/2/validation_msg_list");
+   this.gv_current_quai = 'QUAI10';
+  console.log("--------ICONTABBAR CONTROLLER Target10 AttachDisplay : " +  this.gv_current_quai);
+     
+  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/2/tValidationMsg");
   if (t_validation_msg_list.length > 0 ) {  
-  let data : {quai_number_popup:String,notification_websocket : Boolean} =  { quai_number_popup:  "QUAI10",  notification_websocket : false };
+  let data : {quai_number_popup:String} =  { quai_number_popup:  "QUAI10"};
   this.getOwnerComponent()?.getEventBus().publish("Default", "validationDialogEvent", data);
   }
                                 });
 target_quai11.attachDisplay(()=>{ 
-  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("notificationsQuaisModel")?.getProperty("/quais/3/validation_msg_list");
+   this.gv_current_quai = 'QUAI11';
+  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/3/tValidationMsg");
   if (t_validation_msg_list.length > 0 )      {   
-  let data : {quai_number_popup:String,notification_websocket : Boolean} =  { quai_number_popup:  "QUAI11",  notification_websocket : false };
+  let data : {quai_number_popup:String} =  { quai_number_popup:  "QUAI11"};
   this.getOwnerComponent()?.getEventBus().publish("Default", "validationDialogEvent", data);
   }                                               
                             });
 
 
 target_quai12.attachDisplay(()=>{ 
-  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("notificationsQuaisModel")?.getProperty("/quais/4/validation_msg_list");
+    this.gv_current_quai = 'QUAI12';
+  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/4/tValidationMsg");
   if (t_validation_msg_list.length > 0 ) {  
-  let data : {quai_number_popup:String,notification_websocket : Boolean} =  { quai_number_popup:  "QUAI12",  notification_websocket : false };
+  let data : {quai_number_popup:String} =  { quai_number_popup:  "QUAI12"};
   this.getOwnerComponent()?.getEventBus().publish("Default", "validationDialogEvent", data);
   }
                                 });
 
 
 target_quai13.attachDisplay(()=>{ 
-  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("notificationsQuaisModel")?.getProperty("/quais/5/validation_msg_list");
+    this.gv_current_quai = 'QUAI13';
+  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/5/tValidationMsg");
   if (t_validation_msg_list.length > 0 ) {  
-  let data : {quai_number_popup:String, notification_websocket : Boolean} =  { quai_number_popup:  "QUAI13",  notification_websocket : false };
+  let data : {quai_number_popup:String} =  { quai_number_popup:  "QUAI13"};
   this.getOwnerComponent()?.getEventBus().publish("Default", "validationDialogEvent", data);
   }
                                 });        
                                 
 target_quai14.attachDisplay(()=>{ 
-  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("notificationsQuaisModel")?.getProperty("/quais/6/validation_msg_list");
+    this.gv_current_quai = 'QUAI14';
+  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/6/tValidationMsg");
   if (t_validation_msg_list.length > 0 ) {  
-  let data : {quai_number_popup:String,notification_websocket : Boolean} =  { quai_number_popup:  "QUAI14",  notification_websocket : false };
+  let data : {quai_number_popup:String} =  { quai_number_popup:  "QUAI14" };
   this.getOwnerComponent()?.getEventBus().publish("Default", "validationDialogEvent", data);
   }
                                 }); 
                                 
 target_quai15.attachDisplay(()=>{ 
-  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("notificationsQuaisModel")?.getProperty("/quais/7/validation_msg_list");
+    this.gv_current_quai = 'QUAI15';
+  let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/7/tValidationMsg");
   if (t_validation_msg_list.length > 0 ) {  
-  let data : {quai_number_popup:String,notification_websocket : Boolean} =  { quai_number_popup:  "QUAI15",  notification_websocket : false };
+  let data : {quai_number_popup:String} =  { quai_number_popup:  "QUAI15"};
   this.getOwnerComponent()?.getEventBus().publish("Default", "validationDialogEvent", data);
   }
-                                });                                 
+                                });       
+                                
+   target_startchargement_quai08.attachDisplay(()=>{   this.gv_current_quai = 'QUAI08';});    
+                                                                                                
+   target_startchargement_quai09.attachDisplay(()=>{   this.gv_current_quai = 'QUAI09';});   
 
-  // let panelMessage : Panel = this.byId("PanelMessageAppChargementQuais") as Panel;   // TODO=>Mettre le numéro de quai en dynamique
+   target_startchargement_quai10.attachDisplay(()=>{   this.gv_current_quai = 'QUAI10';});  
+                                                                                                
+   target_startchargement_quai11.attachDisplay(()=>{   this.gv_current_quai = 'QUAI11';}); 
+                                                                                                
+   target_startchargement_quai12.attachDisplay(()=>{   this.gv_current_quai = 'QUAI12';});  
+                                                                                                
+   target_startchargement_quai13.attachDisplay(()=>{   this.gv_current_quai = 'QUAI13';});    
+    
+   target_startchargement_quai14.attachDisplay(()=>{   this.gv_current_quai = 'QUAI14';});     
+                                                                                                
+   target_startchargement_quai15.attachDisplay(()=>{   this.gv_current_quai = 'QUAI15';});                                                                                               
+                                                                                                
           // Enregistrement d'un handler pour le click sur quai dans Chargement List   
         this.getOwnerComponent()?.getEventBus().subscribe("Default","chargementQuaiButtonEvent",(channel:string,event:string,data: Object) => {           
               this.button_chargementquai_handler();  
@@ -125,24 +163,17 @@ target_quai15.attachDisplay(()=>{
      //----------------------------------------------------------------------------------------------------------------------------//
      //             HANDLER validationDialogEvent  [LOT 8 : Validation des messages de chargement]                                 //  
      //----------------------------------------------------------------------------------------------------------------------------//
-      this.getOwnerComponent()?.getEventBus().subscribe("Default","validationDialogEvent",(channel:string,event:string,data: Object) => {           
+    this.getOwnerComponent()?.getEventBus().subscribe("Default","validationDialogEvent",(channel:string,event:string,data: Object) => {           
+       
+      let quai_number: number = Number(Object.values(data)[0].slice(4,6));
+      let current_quai_index_json:number=   quai_number - 8 ;
 
-      let current_quai_index_json:number;
-      let notification_websocket: Boolean = Object.values(data)[1];
-      let quai_number_popupdisplay: string = Object.values(data)[0];
-      let quai_number_popupdisplay_number: number = Number(quai_number_popupdisplay.slice(4,6));
-
-      console.log("P1 HIGH POPUP VALIDATION COMPARAISON ENTRE LA VALEUR DU QUAI AFFICHE: " + this.gv_current_quai_number + "et la valeur du quai sur lequel il ya une notification: " + quai_number_popupdisplay_number);
-      if ((notification_websocket == false) || (notification_websocket == true && quai_number_popupdisplay_number == this.gv_current_quai_number))   //=> TODO Commenter cette condition (A revoir websocket == false est peut être inutile)
-                                                                                                                                                     //(Deux  cas : Affichage du popup en cas de changement de quai/en cas de réception de notification )
-      {
-          current_quai_index_json =   quai_number_popupdisplay_number - 8 ;
-          console.log("P1 HIGH Validation Dialog Event--- Valeur du quai:   " + Object.values(data)[0] + "Valeur de l'indice du quai: " + current_quai_index_json);
-           this.gv_dialog_validation_charg.setBindingContext(this.getOwnerComponent()?.getModel("notificationsQuaisModel")?.createBindingContext("/quais/" + current_quai_index_json + "/") as Context,"notificationsQuaisModel");  
+      console.log("P1 LOT10 Validation des chargements QUAI DE LA NOTIFICATION: " + quai_number + "-QUAI ACTUEL:  " + this.gv_current_quai_number);
+       if ( quai_number == this.gv_current_quai_number) 
+      {    this.gv_dialog_validation_charg.setBindingContext(this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.createBindingContext("/results/" + current_quai_index_json + "/") as Context,"validationMsgChargementQuaiModelJSON");  
            this.gv_dialog_validation_charg.open();
       }
         },this);
-      
       }
 
      //----------------------------------------------------------------------------------------------------------------------------//
@@ -251,12 +282,13 @@ target_quai15.attachDisplay(()=>{
         //          this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {});  //Notification fin de chargement"
         //          }
     }
-      //----------------------------------------------------------------------------------------------------------------------------//
-     //               Handler clic sur le quai                                                                                     //  
+     //----------------------------------------------------------------------------------------------------------------------------//
+     //   Handler clic sur le quai      -> A VERIFIER SI C'EST UTILISE  (serait utilisé pour le lien vers le quai dans l'application 'Chargement prévus" )                                               //  
      //----------------------------------------------------------------------------------------------------------------------------//
     public button_chargementquai_handler() : void{ 
-      let IconTabBarControl : IconTabBar;
-      IconTabBarControl = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
+       console.log("P1 VERY HIGH------------------------------------------------- Méthode button_chargementquai_handler() ------------------ " );
+       let IconTabBarControl : IconTabBar;
+       IconTabBarControl = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
        let selectedKeyQuaiNumber : string  =  IconTabBarControl.getSelectedKey();
        console.log(" button_chargementquai_handler() : " + selectedKeyQuaiNumber);
          const router = UIComponent.getRouterFor(this);
@@ -275,36 +307,36 @@ target_quai15.attachDisplay(()=>{
      //               Handler clic sur le quai  (Pour synchroniser le routing avec le quai sélectionné)                                                                                   //  
      //----------------------------------------------------------------------------------------------------------------------------//
     public onAfterRendering(): void {
-      let IconTabBarControl : IconTabBar;
-      IconTabBarControl = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
-
-     let content_string : any  = this.byId("idIconTabBarQuais")?.getAggregation("content")?.toString();
-     let content_string_table : string[] = content_string.split("---",2 );
-     console.log("IcontabBar content_string" + content_string_table[1]);
-     console.log("IconTabBar Selected Key" + IconTabBarControl.getSelectedKey());
-     IconTabBarControl.setSelectedKey(content_string_table[1].toUpperCase());
+      // Ce code pour synchroniser le selected key avec le routing a été retiré momentanaément
+    let IconTabBarControl : IconTabBar;       
+    IconTabBarControl = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
+    //  let content_string : any  = this.byId("idIconTabBarQuais")?.getAggregation("content")?.toString();
+    //  let content_string_table : string[] = content_string.split("---",2 );
+    //  console.log("IcontabBar content_string" + content_string_table[1]);
+    //  console.log("IconTabBar Selected Key" + IconTabBarControl.getSelectedKey());
+    console.log("VERY HIGH SYNCHRONIZATION DU SELECTED KEY DE l'ICON TAB BAR ---VALEUR DU QUAI: " +  this.gv_current_quai);
+    IconTabBarControl.setSelectedKey(this.gv_current_quai);
      }
 //----------------------------------------------------------------------------------------------------------------------------//
 //               Handler de sélection d'un onglet de l'IConTabBar                                                       //  
 //----------------------------------------------------------------------------------------------------------------------------//
     public onTabSelect(event: IconTabBar$SelectEvent): void {
           // Récupération de l'identififant de l'onglet sélectionné
-          let key = event.getParameter("key");
-          const router = UIComponent.getRouterFor(this);
-          // Récupération des modèles json nécessaires
-          let ChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
-          let notificationsQuaisModel : JSONModel = this.getOwnerComponent()?.getModel("notificationsQuaisModel") as JSONModel;
-          let chargementStartModel : JSONModel = this.getOwnerComponent()?.getModel("ChargementStartModel") as JSONModel;
-          // Calcul des indices et indice json du quai sélectionné
-          let indice_quai : number;
-          let indice_json : number;
-          indice_quai = Number( key?.slice(4,6));
-          indice_json = indice_quai - 8;
-          // Stockage du quai actuellement sélectionné en global dans le contrôlleur
-          this.gv_current_quai_number = indice_quai;
+      let key = event.getParameter("key");
+      const router = UIComponent.getRouterFor(this);
+      // Récupération des modèles json nécessaires
+      let ChargementQuaiModel     : JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson")     as JSONModel;
+      let notificationsQuaisModel : JSONModel = this.getOwnerComponent()?.getModel("notificationsQuaisModel") as JSONModel;
+      let chargementStartModel    : JSONModel = this.getOwnerComponent()?.getModel("ChargementStartModel")    as JSONModel;
+      // Calcul des indices et indice json du quai sélectionné
+      
+      let indice_quai : number= Number( key?.slice(4,6));
+      let indice_json : number; indice_json = indice_quai - 8;
+      // Stockage du quai actuellement sélectionné en global dans le contrôlleur
+    
 
-        //----------------------------- Détection de s'il s'agit de si le quai est en cours de chargement ou non ----------------------------------------------                
-         let encours : boolean = ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours");
+    //----------------------------- Détection de s'il s'agit de si le quai est en cours de chargement ou non ----------------------------------------------                
+      let encours : boolean = ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours");
           if ( encours == true ) 
           {
            /******************    REINITIALISATION DES MESSAGES ERREUR/WARNING LORS DE CHANGEMENT DE QUAI**************************************** */      
@@ -325,14 +357,27 @@ target_quai15.attachDisplay(()=>{
           else   //Si aucun chargement en cours sur le quai alors on affiche un formulaire de lancement de chargement
           {      
           //  REINITIALISATION DU FORMULAIRE DE SAISIE Uniquement si on ne clique pas sur le quai actuellement affiché  
+          console.log("");
             if ( this.gv_current_quai_number != indice_quai )
             {
                   chargementStartModel.setProperty("/results/tknum",""); 
                   chargementStartModel.setProperty("/results/matri",""); 
+                  notificationsQuaisModel.setProperty("/chargementstartnotifs/notiferror/msg_txt",""); 
+                  notificationsQuaisModel.setProperty("/chargementstartnotifs/notiferror/visible",false); 
+
+
             }
-                router.getTargets()?.display("TargetStartChargement");
+            // Evolution Anomalie Synchroniszation routing et selected key   
+            if ( key == "QUAI08" )  {  router.getTargets()?.display("TargetStartChargementQuai08"); }
+            if ( key == "QUAI09" )  {  router.getTargets()?.display("TargetStartChargementQuai09");  }   // Evolution quai 8 et 09
+            if ( key == "QUAI10" )  {  router.getTargets()?.display("TargetStartChargementQuai10");  }
+            if ( key == "QUAI11" )  {  router.getTargets()?.display("TargetStartChargementQuai11");  }
+            if ( key == "QUAI12" )  {  router.getTargets()?.display("TargetStartChargementQuai12");  }
+            if ( key == "QUAI13" )  {  router.getTargets()?.display("TargetStartChargementQuai13");  }
+            if ( key == "QUAI14" )  {  router.getTargets()?.display("TargetStartChargementQuai14");  }
+            if ( key == "QUAI15" )  {  router.getTargets()?.display("TargetStartChargementQuai15");  }
           }
-      // this.gv_current_quai_number = indice_quai;
+            this.gv_current_quai_number = indice_quai;
     } 
 
         async onOpenDialogValidCharg(): Promise<void> {
@@ -348,23 +393,23 @@ target_quai15.attachDisplay(()=>{
     }
 
  public onConfirmValidationMsgChargement(event:Button$PressEvent):void {
-    console.log("------------------------------------------------------P1 HIGH LOT9 onConfirmValidationMsgChargement Handler: -------------------------------------------------");
-    let validation_msg_indicejson:string;
-    // Récupération du modèle de notifications des quais (Messages de validation par quai)
-    let notificationsQuaisModel : JSONModel = this.getOwnerComponent()?.getModel("notificationsQuaisModel") as JSONModel;
-    
-    let source_string:string = event.getSource().toString();                             // Pour récupérer l'indice de message de warning , l'élément source du handler utilisé (Autre possibilité -> Utiliser event->GetParameter())
-    let current_indicejson_quai :number =  this.gv_current_quai_number - 8;              // Calcul de l'indice json du quai (quai number-8)
-    let indice_warningmsg_string : string = source_string.at(source_string.length-1)!;   // Récupération de l'indice du message de Warning
-    //----------------------------------------------------------------------------------------------------------------------------------------------------//
-    //------------------- LOT8/9 Validation des messages de Warning-> Récupérer le contexte de la validation (QUAI/UM/Checknumber)------------------------//
-    //----------------------------------------------------------------------------------------------------------------------------------------------------//
-  let validation_msg_codum : string       = notificationsQuaisModel.getProperty("/quais/" + current_indicejson_quai + "/validation_msg_list/" + indice_warningmsg_string + "/codum") ;
-  let validation_msg_checkid : string     = notificationsQuaisModel.getProperty("/quais/" + current_indicejson_quai + "/validation_msg_list/" + indice_warningmsg_string + "/checkid") ;
-  let validation_msg_checknumber : number = notificationsQuaisModel.getProperty("/quais/" + current_indicejson_quai + "/validation_msg_list/" + indice_warningmsg_string + "/checknumber") ;
-  console.log("P1 HIGH LOT9 Récupération du contexte du message de Warning// codum : " +  validation_msg_codum + "-checknumber: " + validation_msg_checknumber + "-checkid: " + validation_msg_checkid);
-  console.log("P1 HIGH LOT9 VALIDATION/REFUSER dans boîte de dialogue de validation: " +   event.getSource().getId());
-  console.log("P1 HIGH LOT9 VALIDATION/REFUSER dans boîte de dialogue de validation event.getParameters() : " +   event.getParameters());
+  console.log("------------------------------------------------------P1 HIGH LOT10 onConfirmValidationMsgChargement Handler: --------------------------------------------------------------");
+  let validation_msg_indicejson:string;
+  // Récupération du modèle de notifications des quais (Messages de validation par quai)
+  let validationMsgChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON") as JSONModel;
+  
+  let source_string:string                 = event.getSource().toString();                // Pour récupérer l'indice de message de validation(Warning ou choice) , l'élément source du handler utilisé (Autre possibilité -> Utiliser event->GetParameter())
+  let current_indicejson_quai :number      = this.gv_current_quai_number - 8;             // Calcul de l'indice json du quai (quai number-8)
+  let indice_validationmsg_string : string = source_string.at(source_string.length-1)!;   // Récupération de l'indice du message de Validation // A vérifier si c'est toujours Ok pour le L0T 10
+  //----------------------------------------------------------------------------------------------------------------------------------------------------//
+  //------------------- LOT8/9 Validation des messages de Warning-> Récupérer le contexte de la validation (QUAI/UM/Checknumber)------------------------//
+  //----------------------------------------------------------------------------------------------------------------------------------------------------//
+  let validation_msg_codum : string     = validationMsgChargementQuaiModel.getProperty("/results/" +  current_indicejson_quai +  "/tValidationMsg/" + indice_validationmsg_string + "/exidv") ;
+  let validation_msg_msgid : string     = validationMsgChargementQuaiModel.getProperty("/results/" +  current_indicejson_quai + "/tValidationMsg/" + indice_validationmsg_string + "/msgId") ;
+  let validation_msg_aenam : string     = validationMsgChargementQuaiModel.getProperty("/results/" +  current_indicejson_quai + "/tValidationMsg/" + indice_validationmsg_string + "/aenam") ;
+  let validation_msg_errdt : string     = validationMsgChargementQuaiModel.getProperty("/results/" +  current_indicejson_quai + "/tValidationMsg/" + indice_validationmsg_string + "/errdt") ;
+  let validation_msg_errzt : string     = validationMsgChargementQuaiModel.getProperty("/results/" +  current_indicejson_quai + "/tValidationMsg/" + indice_validationmsg_string + "/errzt") ;
+  console.log("P1 HIGH LOT9 Récupération du contexte du message de Warning// -errzt: " + validation_msg_errzt);
   // Détection de si l'utilisateur a cliqué sur Ok ou Refuser (ne concerne que les Validations de types Choice)
   let lv_choice:string='';
   if  (event.getSource().getId().includes("ButtonOK"))     {   lv_choice = 'X' ;}
@@ -372,15 +417,17 @@ target_quai15.attachDisplay(()=>{
   //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   //-----------------------------------------Envoi d'un évènement au controlleur pour appel de l'API de Chargement de l'UM-------------------------------------------------------------------------------------------------- 
   //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    let data : {quai:number, codum :string, checknumber :number, choice:string, checkid:string,sourcestring:string} = { quai: this.gv_current_quai_number, codum : validation_msg_codum,  checknumber : validation_msg_checknumber, choice: lv_choice, checkid: validation_msg_checkid, sourcestring : source_string}
+  
+  // Anomalie 18/11/2025 BEGIN [Quai au format attendu par l'API]
+  let lv_quai:string;
+  // Fournir à l'API (Chargement UM) le quai sous forme 'QUAI09','QUAI10" (Si le numéro de quai  <10 alors il faut rajouter un "O" entre QU et le numéro de quai)
+  if ( this.gv_current_quai_number < 10 )
+      { lv_quai = "QUAI" + "0" + this.gv_current_quai_number; }
+  else{ lv_quai = "QUAI" + this.gv_current_quai_number; }
+// Anomalie 18/11/2025 END
+
+  let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string} =
+     { quai: lv_quai, codum : validation_msg_codum,  msgid: validation_msg_msgid, aenam : validation_msg_aenam, errdt: validation_msg_errdt, errzt: validation_msg_errzt, choice : lv_choice}
     this.getOwnerComponent()?.getEventBus().publish("Default", "ValidationWarningUMEvent", data);
-    //---------------------------------------------------------------------------------------------------------------------------------------------------
-    //------------------- TODO LOT9  Validation des messages de Warning->Mettre le code de suppression du Warning de la promise de l'API POST--------------------------------------------------
-    //----------------------------------------------------------------------------------------------------------------------------------------------------
-    // let validation_msg_list : Object[] = notificationsQuaisModel.getProperty("/quais/" + current_indicejson_quai + "/validation_msg_list") ;
-    // //  validation_msg_list.push({validationtxt: msg_txt})
-    // validation_msg_list.splice(Number(source_string.at(source_string.length-1)),1);       // Essai de suppression du premier élément => TODO récupérer l'indice du message à supprimer
-    // notificationsQuaisModel.setProperty("/quais/" + this.gv_current_quai_number + "/validation_msg_list", validation_msg_list);
-    // notificationsQuaisModel.refresh();
  }
 }

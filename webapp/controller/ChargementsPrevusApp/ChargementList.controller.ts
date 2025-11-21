@@ -3,6 +3,7 @@ import { Link$PressEvent } from "sap/m/Link";
 import UIComponent from "sap/ui/core/UIComponent";
 import Table from "sap/m/Table";
 import { Sticky } from "sap/m/library";
+import { Targets$DisplayEvent } from "sap/ui/core/routing/Targets";
 
 /**
  * @namespace clf.logistique.chargementquais.controller
@@ -14,6 +15,10 @@ export default class ChargementList extends Controller {
      let chargementTable: Table = this.byId("chargementTable") as Table;
      let t_sticky: Sticky[] = new Array(Sticky.ColumnHeaders); 
      chargementTable.setSticky(t_sticky);
+
+
+    
+
     }
 
     public onAfterRendering(): void {

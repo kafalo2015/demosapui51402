@@ -1,0 +1,22 @@
+ 16/10/2025
+ API REST -> Problème d'authentification : 3 possibilitées 1/ Pas d'authentification  2/ Authentification BASIC 3/ Authentification avec un ISU (Integrated System User)
+
+TEMPLATE DE CODE POUR S'AUTHENTIFIER AVEC UN ISU
+
+ // METHODE auhentification 1 - > Authorization : auth        (Retiré suite aux problématiques d'authentification d'Octobre 2025)
+//         let userName = "USERNAME";                           //TODO SEPTEMBER 2025 => ???
+//         let password = "PASSWORD";
+//         let credentials = userName + ':' + password;
+//         let hash = btoa(credentials);
+//         let auth = 'Basic '+hash;
+
+//  //"Authorization": "Basic",
+//         var mHeader = {
+//             "Authorization": auth,
+//             "Access-Control-Allow-Origin": "*",
+//             "Content-Type":"application/json",
+//             "datechargementquai": "" ,                                     // oDateFormat.format(new Date(date_tsformat))
+//             "X-CSRF-Token" :  "Fetch"                                                                   //LOOT4
+//         }
+
+

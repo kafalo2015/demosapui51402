@@ -2,24 +2,32 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	
-<Dialog title="Validation" 	contentWidth = "25%"
-		contentHeight = "25%" >
+<Dialog title="Validation" 	contentWidth = "50%"
+		contentHeight = "25%" resizable ="true">
  
 	 <Panel  headerText ="" id = "PanelValidationChargement" stickyHeader="true" height="100%" width = "100%">
 	      <content>  
-				<List   headerText="" mode="" items="{ path : 'notificationsQuaisModel>validation_msg_list'}"
+				<List   headerText="" mode="" items="{ path : 'validationMsgChargementQuaiModelJSON>tValidationMsg'}"
 						growing="false"
 						growingThreshold="1"
 						growingScrollToLoad="false">
 					<CustomListItem>
 					<FlexBox type = "Horizontal">
+						<!--    INFOS SUPPLEMENTAIRES DANS LE TEXTE DU MSG_STRIP POUR DES TESTS LOT8/LOT9 VALDATION DES QUAIS
 						<MessageStrip 
 							text="{notificationsQuaisModel>validationtxt} Check id : {notificationsQuaisModel>checkid} Numéro d'UM : {notificationsQuaisModel>codum} Numéro de check : {notificationsQuaisModel>checknumber}"
 							type="Warning"
 							showIcon="true"
 							visible = "true"
 							class="sapUiNoMarginBottom sapUiNoMarginBegin">
-						</MessageStrip>	
+						</MessageStrip>	-->
+						<MessageStrip 
+							text="DATE({validationMsgChargementQuaiModelJSON>errdt}) HEURE({validationMsgChargementQuaiModelJSON>errzt}) USER({validationMsgChargementQuaiModelJSON>aenam}) UM({validationMsgChargementQuaiModelJSON>exidv}) : {validationMsgChargementQuaiModelJSON>errtx}"
+							type="Warning"
+							showIcon="true"
+							visible = "true"
+							class="sapUiNoMarginBottom sapUiNoMarginBegin">
+						</MessageStrip>
 						<Button
 					id="ButtonOK"
 					class="sapUiTinyMarginBeginEnd"
@@ -31,7 +39,7 @@
 					 </Button>
 						<Button
 					id="ButtonReject"
-					visible = "{= %{notificationsQuaisModel>validationtype} === 'C'?true:false}"
+					visible = "{= %{validationMsgChargementQuaiModelJSON>msgType} === 'C'?true:false}"
 					class="sapUiTinyMarginBeginEnd"
 					icon="sap-icon://decline"
 					type="Default"

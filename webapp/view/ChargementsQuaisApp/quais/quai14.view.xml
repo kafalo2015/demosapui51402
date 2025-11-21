@@ -129,13 +129,15 @@
 	</Table>
 	</ScrollContainer>
 
-      <MessageStrip id = "messageStripErrorV2"
-				text="{notificationsQuaisModel>/quais/6/notifs/notiferror/msg_txt}"
-				type="Error"
+		<MessageStrip id = "messageStripInformationV2"
+				text="{notificationsQuaisModel>/quais/6/notifs/notifsuccess/msg_txt}"
+				type="Success"
 				showIcon="true"
-				visible = "{notificationsQuaisModel>/quais/6/notifs/notiferror/visible}"
-				class="sapUiNoMarginBottom">
+				visible = "{notificationsQuaisModel>/quais/6/notifs/notifsuccess/visible}"
+				class="sapUiNoMarginBottom sapUiNoMarginBegin">
 			</MessageStrip>
+
+     
   <MessageStrip id = "messageStripWarningV2"
 				text="{notificationsQuaisModel>/quais/6/notifs/notifwarning/msg_txt}"
 				type="Warning"
@@ -143,14 +145,14 @@
 				visible = "{notificationsQuaisModel>/quais/6/notifs/notifwarning/visible}"
 				class="sapUiNoMarginBottom">
 			</MessageStrip>
-		
-			<MessageStrip id = "messageStripInformationV2"
-				text="{notificationsQuaisModel>/quais/6/notifs/notifsuccess/msg_txt}"
-				type="Success"
+		 <MessageStrip id = "messageStripErrorV2"
+				text="{notificationsQuaisModel>/quais/6/notifs/notiferror/msg_txt}"
+				type="Error"
 				showIcon="true"
-				visible = "{notificationsQuaisModel>/quais/6/notifs/notifsuccess/visible}"
-				class="sapUiNoMarginBottom sapUiNoMarginBegin">
+				visible = "{notificationsQuaisModel>/quais/6/notifs/notiferror/visible}"
+				class="sapUiNoMarginBottom">
 			</MessageStrip>
+		
 
 
 		
