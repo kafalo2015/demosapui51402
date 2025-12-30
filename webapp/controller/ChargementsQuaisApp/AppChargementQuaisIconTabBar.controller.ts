@@ -42,23 +42,23 @@ export default class AppChargementQuaisIconTabBar extends Controller {
  //router.getTarget?(["TargetChargementQuai08","TargetChargementQuai09","TargetChargementQuai10", "TargetChargementQuai11","TargetChargementQuai12","TargetChargementQuai13","TargetChargementQuai14","TargetChargementQuai15"])
  router.getTargets()?.attachDisplay((evt: Targets$DisplayEvent)=>{ console.log("P1 HIGH// TEST de l'attach display de l'ensemble des targets")      }); 
  
- let target_quai08: Target = router.getTarget("TargetChargementQuai08") as Target;
- let target_quai09: Target = router.getTarget("TargetChargementQuai09") as Target;
- let target_quai10: Target = router.getTarget("TargetChargementQuai10") as Target;
- let target_quai11: Target = router.getTarget("TargetChargementQuai11") as Target;
- let target_quai12: Target = router.getTarget("TargetChargementQuai12") as Target;
- let target_quai13: Target = router.getTarget("TargetChargementQuai13") as Target;
- let target_quai14: Target = router.getTarget("TargetChargementQuai14") as Target;
- let target_quai15: Target = router.getTarget("TargetChargementQuai15") as Target;
+ let target_quai08: Target = router.getTarget("targetchargementquai08") as Target;
+ let target_quai09: Target = router.getTarget("targetchargementquai09") as Target;
+ let target_quai10: Target = router.getTarget("targetchargementquai10") as Target;
+ let target_quai11: Target = router.getTarget("targetchargementquai11") as Target;
+ let target_quai12: Target = router.getTarget("targetchargementquai12") as Target;
+ let target_quai13: Target = router.getTarget("targetchargementquai13") as Target;
+ let target_quai14: Target = router.getTarget("targetchargementquai14") as Target;
+ let target_quai15: Target = router.getTarget("targetchargementquai15") as Target;
  
- let target_startchargement_quai08: Target = router.getTarget("TargetStartChargementQuai08") as Target;
- let target_startchargement_quai09: Target = router.getTarget("TargetStartChargementQuai09") as Target;
- let target_startchargement_quai10: Target = router.getTarget("TargetStartChargementQuai10") as Target;
- let target_startchargement_quai11: Target = router.getTarget("TargetStartChargementQuai11") as Target;
- let target_startchargement_quai12: Target = router.getTarget("TargetStartChargementQuai12") as Target;
- let target_startchargement_quai13: Target = router.getTarget("TargetStartChargementQuai13") as Target;
- let target_startchargement_quai14: Target = router.getTarget("TargetStartChargementQuai14") as Target;
- let target_startchargement_quai15: Target = router.getTarget("TargetStartChargementQuai15") as Target;
+ let target_startchargement_quai08: Target = router.getTarget("targetstartchargementquai08") as Target;
+ let target_startchargement_quai09: Target = router.getTarget("targetstartchargementquai09") as Target;
+ let target_startchargement_quai10: Target = router.getTarget("targetstartchargementquai10") as Target;
+ let target_startchargement_quai11: Target = router.getTarget("targetstartchargementquai11") as Target;
+ let target_startchargement_quai12: Target = router.getTarget("targetstartchargementquai12") as Target;
+ let target_startchargement_quai13: Target = router.getTarget("targetstartchargementquai13") as Target;
+ let target_startchargement_quai14: Target = router.getTarget("targetstartchargementquai14") as Target;
+ let target_startchargement_quai15: Target = router.getTarget("targetstartchargementquai15") as Target;
 
 target_quai08.attachDisplay(()=>{ 
    this.gv_current_quai = 'QUAI08';
@@ -292,15 +292,15 @@ target_quai15.attachDisplay(()=>{
        let selectedKeyQuaiNumber : string  =  IconTabBarControl.getSelectedKey();
        console.log(" button_chargementquai_handler() : " + selectedKeyQuaiNumber);
          const router = UIComponent.getRouterFor(this);
-           if ( selectedKeyQuaiNumber == "" )        {  router.getTargets()?.display("TargetChargementQuai08");  }   // Evolution quai 8 et 09
-           if ( selectedKeyQuaiNumber == "QUAI08" )  {  router.getTargets()?.display("TargetChargementQuai08");  }   // Evolution quai 8 et 09s
-           if ( selectedKeyQuaiNumber == "QUAI09" )  {  router.getTargets()?.display("TargetChargementQuai09");  }
-           if ( selectedKeyQuaiNumber == "QUAI10" )  {  router.getTargets()?.display("TargetChargementQuai10");  }
-           if ( selectedKeyQuaiNumber == "QUAI11" )  {  router.getTargets()?.display("TargetChargementQuai11");  }
-           if ( selectedKeyQuaiNumber == "QUAI12" )  {  router.getTargets()?.display("TargetChargementQuai12");  }
-           if ( selectedKeyQuaiNumber == "QUAI13" )  {  router.getTargets()?.display("TargetChargementQuai13");  }
-           if ( selectedKeyQuaiNumber == "QUAI14" )  {  router.getTargets()?.display("TargetChargementQuai14");  }
-           if ( selectedKeyQuaiNumber == "QUAI15" )  {  router.getTargets()?.display("TargetChargementQuai15");  }
+           if ( selectedKeyQuaiNumber == "" )        {  router.getTargets()?.display("targetchargementquai08");  }   // Evolution quai 8 et 09
+           if ( selectedKeyQuaiNumber == "QUAI08" )  {  router.getTargets()?.display("targetchargementquai08");  }   // Evolution quai 8 et 09s
+           if ( selectedKeyQuaiNumber == "QUAI09" )  {  router.getTargets()?.display("targetchargementquai09");  }
+           if ( selectedKeyQuaiNumber == "QUAI10" )  {  router.getTargets()?.display("targetchargementquai10");  }
+           if ( selectedKeyQuaiNumber == "QUAI11" )  {  router.getTargets()?.display("targetchargementquai11");  }
+           if ( selectedKeyQuaiNumber == "QUAI12" )  {  router.getTargets()?.display("targetchargementquai12");  }
+           if ( selectedKeyQuaiNumber == "QUAI13" )  {  router.getTargets()?.display("targetchargementquai13");  }
+           if ( selectedKeyQuaiNumber == "QUAI14" )  {  router.getTargets()?.display("targetchargementquai14");  }
+           if ( selectedKeyQuaiNumber == "QUAI15" )  {  router.getTargets()?.display("targetchargementquai15");  }
         }
 
      //----------------------------------------------------------------------------------------------------------------------------//
@@ -345,14 +345,14 @@ target_quai15.attachDisplay(()=>{
         
             // Relance de la récupération des données de chargement avant la navigation sur le quai
             this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {}); 
-            if ( key == "QUAI08" )  {  router.getTargets()?.display("TargetChargementQuai08"); }
-            if ( key == "QUAI09" )  {  router.getTargets()?.display("TargetChargementQuai09");  }   // Evolution quai 8 et 09
-            if ( key == "QUAI10" )  {  router.getTargets()?.display("TargetChargementQuai10");  }
-            if ( key == "QUAI11" )  {  router.getTargets()?.display("TargetChargementQuai11");  }
-            if ( key == "QUAI12" )  {  router.getTargets()?.display("TargetChargementQuai12");  }
-            if ( key == "QUAI13" )  {  router.getTargets()?.display("TargetChargementQuai13");  }
-            if ( key == "QUAI14" )  {  router.getTargets()?.display("TargetChargementQuai14");  }
-            if ( key == "QUAI15" )  {  router.getTargets()?.display("TargetChargementQuai15");  }
+            if ( key == "QUAI08" )  {  router.getTargets()?.display("targetchargementquai08"); }
+            if ( key == "QUAI09" )  {  router.getTargets()?.display("targetchargementquai09");  }   // Evolution quai 8 et 09
+            if ( key == "QUAI10" )  {  router.getTargets()?.display("targetchargementquai10");  }
+            if ( key == "QUAI11" )  {  router.getTargets()?.display("targetchargementquai11");  }
+            if ( key == "QUAI12" )  {  router.getTargets()?.display("targetchargementquai12");  }
+            if ( key == "QUAI13" )  {  router.getTargets()?.display("targetchargementquai13");  }
+            if ( key == "QUAI14" )  {  router.getTargets()?.display("targetchargementquai14");  }
+            if ( key == "QUAI15" )  {  router.getTargets()?.display("targetchargementquai15");  }
           }
           else   //Si aucun chargement en cours sur le quai alors on affiche un formulaire de lancement de chargement
           {      
@@ -368,14 +368,14 @@ target_quai15.attachDisplay(()=>{
 
             }
             // Evolution Anomalie Synchroniszation routing et selected key   
-            if ( key == "QUAI08" )  {  router.getTargets()?.display("TargetStartChargementQuai08"); }
-            if ( key == "QUAI09" )  {  router.getTargets()?.display("TargetStartChargementQuai09");  }   // Evolution quai 8 et 09
-            if ( key == "QUAI10" )  {  router.getTargets()?.display("TargetStartChargementQuai10");  }
-            if ( key == "QUAI11" )  {  router.getTargets()?.display("TargetStartChargementQuai11");  }
-            if ( key == "QUAI12" )  {  router.getTargets()?.display("TargetStartChargementQuai12");  }
-            if ( key == "QUAI13" )  {  router.getTargets()?.display("TargetStartChargementQuai13");  }
-            if ( key == "QUAI14" )  {  router.getTargets()?.display("TargetStartChargementQuai14");  }
-            if ( key == "QUAI15" )  {  router.getTargets()?.display("TargetStartChargementQuai15");  }
+            if ( key == "QUAI08" )  {  router.getTargets()?.display("targetstartchargementquai08"); }
+            if ( key == "QUAI09" )  {  router.getTargets()?.display("targetstartchargementquai09");  }   // Evolution quai 8 et 09
+            if ( key == "QUAI10" )  {  router.getTargets()?.display("targetstartchargementquai10");  }
+            if ( key == "QUAI11" )  {  router.getTargets()?.display("targetstartchargementquai11");  }
+            if ( key == "QUAI12" )  {  router.getTargets()?.display("targetstartchargementquai12");  }
+            if ( key == "QUAI13" )  {  router.getTargets()?.display("targetstartchargementquai13");  }
+            if ( key == "QUAI14" )  {  router.getTargets()?.display("targetstartchargementquai14");  }
+            if ( key == "QUAI15" )  {  router.getTargets()?.display("targetstartchargementquai15");  }
           }
             this.gv_current_quai_number = indice_quai;
     } 

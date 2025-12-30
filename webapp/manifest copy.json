@@ -7,7 +7,6 @@
         "applicationVersion": {
             "version": "0.0.1"
         },
-        
       
         
         "title": "{{appTitle}}",
@@ -62,7 +61,6 @@
         }
     },
     "sap.ui5": {
-        
         "flexEnabled": true,
         "dependencies": {
             "minUI5Version": "1.132.1",
@@ -79,9 +77,6 @@
             "compact": true,
             "cozy": true
         },
-        "config": {
-                        "api_env": "dev"
-                },
         "models": {
             
           
@@ -105,8 +100,7 @@
                   },
                 "type": "View",
                 "viewType": "XML",
-                "path": "clf.logistique.chargementquais.view",
-                "async": true
+                "path": "clf.logistique.chargementquais.view"
                
             },
             "routes": [
@@ -195,7 +189,7 @@
                     "id": "chargementlist",
                     "name": "chargementlist",
                     "path": "clf.logistique.chargementquais.view.chargementsprevusapp",
-                    
+                    "viewPath": "clf.logistique.chargementquais.view.chargementsprevusapp",
                     "level" : 2,
                     "transition": "slide",
                     "clearControlAggregation": true
@@ -409,7 +403,7 @@
                     "id": "notfound",
                     "name": "notfound",
                      "path": "clf.logistique.chargementquais.view.error",
-                   
+                     "viewPath": "clf.logistique.chargementquais.view.error",
                      "transition": "show"
                  }
 
@@ -418,8 +412,7 @@
         "rootView": {
             "viewName": "clf.logistique.chargementquais.view.main.MainSideNavigation",       
             "type": "XML",
-            "id": "App",
-            "async": true
+            "id": "App"
         }
     }
 }

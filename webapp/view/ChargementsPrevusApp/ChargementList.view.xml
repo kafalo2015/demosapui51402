@@ -1,4 +1,4 @@
-<mvc:View controllerName="clf.logistique.chargementquais.controller.ChargementsPrevusApp.ChargementList"
+<mvc:View controllerName="clf.logistique.chargementquais.controller.chargementsprevusapp.chargementlist"
     xmlns:f="sap.ui.layout.form"
     xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"

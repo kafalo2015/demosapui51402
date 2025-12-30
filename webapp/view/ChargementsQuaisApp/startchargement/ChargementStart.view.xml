@@ -60,7 +60,7 @@
 							placeholder="Saisir le matricule..."
 							showSuggestion="true"
 							showTableSuggestionValueHelp="false"
-							suggestionRows="{ChargementStartModel>/results/tSuggestedMatricule}" 
+							suggestionRows="{path: 'ChargementStartModel>/results/tSuggestedMatricule', length: 800}" 
 							suggestionItemSelected=".onSuggestionItemSelected"
 							submit=".onSubmit">
 							<formattedValueStateText>

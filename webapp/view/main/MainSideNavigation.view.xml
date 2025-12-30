@@ -27,7 +27,7 @@
 			</tnt:fixedItem>
 		</tnt:SideNavigation>
 	</VBox>
-   		<NavContainer	id="navContainerMain"
+   		<NavContainer	id="navcontainermain"
 						width="1150px"
 						height="100%"
 						class="navContainerControl sapUiSmallMarginBottom">

@@ -8,7 +8,7 @@ import { Targets$DisplayEvent } from "sap/ui/core/routing/Targets";
 /**
  * @namespace clf.logistique.chargementquais.controller
  */
-export default class ChargementList extends Controller {
+export default class chargementlist extends Controller {
 
     /*eslint-disable @typescript-eslint/no-empty-function*/
     public onInit(): void {

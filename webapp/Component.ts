@@ -16,12 +16,13 @@ import { Targets$DisplayEvent } from "sap/ui/core/routing/Targets";
  
 // LOT/DATE/AUTEUR/DECRIPTION
 // LOT 6 => Lancement du démarrage du chargemnet à partir du quai
-// LOT7- 18/09/2025- GILLES CAMILLERI LOT 7 => Modèle de Notifications au niveau du component 
-// LOT8- 18/09/2025- GILLES CAMILLERI => Boîte de dialogue de validation de chargement
-// LOT9- 08/10/2025- GILLES CAMILLERI => Validation des messages de Warning par appel API et passage du contexte 
-// LOT10-16/10/2025- GILLES CAMILLERI => Problématique Authentification RESTAPI -> Essai pas d'authentification
-// LOT11-14/11/2025- GILLES CAMILLERI => Anomalie Popup de validation des quais s'affiche dans liste des chargements + Anomalie synchronisation routing/selected key de l'IconTabBar
-
+// LOT 7- 18/09/2025- GILLES CAMILLERI LOT 7 => Modèle de Notifications au niveau du component 
+// LOT 8- 18/09/2025- GILLES CAMILLERI => Boîte de dialogue de validation de chargement
+// LOT 9- 08/10/2025- GILLES CAMILLERI => Validation des messages de Warning par appel API et passage du contexte 
+// LOT 10-16/10/2025- GILLES CAMILLERI => Problématique Authentification RESTAPI -> Essai pas d'authentification
+// LOT 11-14/11/2025- GILLES CAMILLERI => Anomalie Popup de validation des quais s'affiche dans liste des chargements + Anomalie synchronisation routing/selected key de l'IconTabBar
+// LOt 12-10/12/2025- GILLES CAMILLERI => Test déploiement php -> A REMETTRE LES APPELS AUX APIS RETIRES POUR TESTS
+// LOt 13-300/12/2025-GILLES CAMILLERI => API + Popup Motif de non chargement + fin chargement
 /**
  * @namespace clf.logistique.chargementquais
  */
@@ -32,30 +33,39 @@ export default class Component extends BaseComponent {
             "sap.ui.core.IAsyncContentCreation"
         ]
 	};
+    
+    // public g_const_dev_environment :string = "dev";
+    // public g_const_bas_environment :string = "bas";
+    // public g_const_pre_environment :string = "pre";
+    // public g_const_prod_environment :string = "prod";
 
-    public _environment :String = "dev";
+    public gv_environment :string;
+    
+    public  sap_server_dev  :string  = "sapdev.exaclair.eu";    // ADRESSE UI5 YAML SHDS-SAPDEV.exaclair.clairefontaine.local:1080
+    public  sap_server_bas  :string  = "sapbas.exaclair.eu";  
+    public  sap_server_pre  :string  = "sappre.exaclair.eu";
+    public  sap_server_prod :string  = "sapprod.exaclair.eu";
+
     public gv_chargement_url : string;
-    public gv_chargement_um_api_url: string;          // URL API startchargement
-    public gv_startchargement_api_url: string;          // URL API startchargement
-    public gv_chargementquais_api_url: string;          // URL API chargement des quais
+    public gv_chargement_um_api_url: string;                    // URL API startchargement
+    public gv_startchargement_api_url: string;                  // URL API startchargement
+    public gv_chargementquais_api_url: string;                  // URL API chargement des quais
     public gv_validation_msg_chargementquais_api_url: string;                                                                     //gv_validation_msg_chargementquais_api_url
-    public gv_chargementprevus_api_url: string;         // URL API Chargement prévus
-    public gv_material_umstock_api_url: string;         // URL material_umstock_list
+    public gv_chargementprevus_api_url: string;                  // URL API Chargement prévus
+    public gv_material_umstock_api_url: string;                  // URL material_umstock_list
     public const_chargementsPrevusApp = "ChargementsPrevusApp";  // Application Chargement prévues
     public const_chargementsQuaisApp = "ChargementsQuaisApp";    // Application Chargement des quais
     public gv_current_application: string;                       // Stocke le nom de l'application actuellement affiché (Liste des chargmentn ou Chargement des quais)
     //private gv_dialog_validation_charg: Dialog;
-    public get environment(): String {
-        return this._environment;
-    }
-    public set environment(value: String) {
-        this._environment = value;
-    }
+   
 	public init() : void {
 		// call the base component's init function
 		super.init();
         // Changemment de variable environnement (dev ou qual) pour appeler les API de la qual ou de la dev
-        this.environment = 'dev';
+         this.gv_environment = 'dev';
+      // this.gv_environment = this.getManifestEntry("/sap.ui5/config/api_env");
+       console.log("P1 HIGH Lecture de la variable de configuraiton du manifest /sap.ui5/config/api_env : " +    this.gv_environment )
+
         //this.initchargementquaiModel();                                 //LOT 4 Lancement chargement des quais
         // set the device model
         this.setModel(createDeviceModel(), "device");
@@ -179,7 +189,7 @@ export default class Component extends BaseComponent {
      //                                                                                                                            //  
      //----------------------------------------------------------------------------------------------------------------------------//
 
-     this.open_websocket_NotificationUM();
+     //this.open_websocket_NotificationUM();            //LOt 12-> Rest déploiement phm -> A REMETTRE
      // Abonnement à l'eventing
      //----------------------------------------------------------------------------------------------------------------------------//
      //               TODO -> Mettre tous les listeners dans une  méthode                                                            //  
@@ -265,22 +275,22 @@ export default class Component extends BaseComponent {
      //----------------------------------------------------------------------------------------------------------------------------//
      //               Appel des API de chargement quais, chargements prévu et matchcode de lancement de chargement                 //  
      //----------------------------------------------------------------------------------------------------------------------------//
-     this.getEventBus().publish("Default", "chargementListEvent", {});
+    //  this.getEventBus().publish("Default", "chargementListEvent", {});            //LOt 12-> Rest déploiement phm -> A REMETTRE
      this.getEventBus().publish("Default", "chargementEvent", {});
-     this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});
-     this.getEventBus().publish("Default", "validationMsgChargementEvent", {});
+    //  this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});    //LOt 12-> Rest déploiement phm -> A REMETTRE
+    //  this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOt 12-> Rest déploiement phm -> A REMETTRE
    
       const router = this.getRouter().initialize();   
       
-         let target_chargement_list: Target = router.getTarget("TargetChargementList") as Target;
-         let target_quai08: Target = router.getTarget("TargetChargementQuai08") as Target;
-         let target_quai09: Target = router.getTarget("TargetChargementQuai09") as Target;
-         let target_quai10: Target = router.getTarget("TargetChargementQuai10") as Target;
-         let target_quai11: Target = router.getTarget("TargetChargementQuai11") as Target;
-         let target_quai12: Target = router.getTarget("TargetChargementQuai12") as Target;
-         let target_quai13: Target = router.getTarget("TargetChargementQuai13") as Target;
-         let target_quai14: Target = router.getTarget("TargetChargementQuai14") as Target;
-         let target_quai15: Target = router.getTarget("TargetChargementQuai15") as Target;
+         let target_chargement_list: Target = router.getTarget("targetchargementlist") as Target;
+         let target_quai08: Target = router.getTarget("targetchargementquai08") as Target;
+         let target_quai09: Target = router.getTarget("targetchargementquai09") as Target;
+         let target_quai10: Target = router.getTarget("targetchargementquai10") as Target;
+         let target_quai11: Target = router.getTarget("targetchargementquai11") as Target;
+         let target_quai12: Target = router.getTarget("targetchargementquai12") as Target;
+         let target_quai13: Target = router.getTarget("targetchargementquai13") as Target;
+         let target_quai14: Target = router.getTarget("targetchargementquai14") as Target;
+         let target_quai15: Target = router.getTarget("targetchargementquai15") as Target;
 
            target_chargement_list.attachDisplay(()=>{  this.gv_current_application = this.const_chargementsPrevusApp;}     //Stockage du nom de l'application en cours d'utilisation
                                              );    
@@ -306,32 +316,144 @@ export default class Component extends BaseComponent {
 //     Méthode de récupération des URLS des API                                                                                    //  
 //---------------------------------------------------------------------------------------------------------------------------------//
   public getApiUrl() : void{
-    if ( location.hostname === 'localhost' ) {          
-        if (this.environment === "dev") {
-                this.gv_chargementquais_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
-                this.gv_validation_msg_chargementquais_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
-                this.gv_chargementprevus_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
-                this.gv_startchargement_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
-                this.gv_material_umstock_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-                this.gv_chargement_um_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
-        }
-        if (this.environment === "qual") {      
-                this.gv_chargementquais_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
-                this.gv_validation_msg_chargementquais_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";  
-                this.gv_chargementprevus_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";            
-                this.gv_startchargement_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; 
-                this.gv_material_umstock_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-                this.gv_chargement_um_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
-        }
+
+    //  SAUVEGARDE Evolution déploiement sur PHP
+//     if ( location.hostname === 'localhost' ) {          
+//         if (this.environment === "dev") {
+//                 this.gv_chargementquais_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
+//                 this.gv_validation_msg_chargementquais_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
+//                 this.gv_chargementprevus_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
+//                 this.gv_startchargement_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
+//                 this.gv_material_umstock_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+//                 this.gv_chargement_um_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
+//         }
+//         if (this.environment === "qual") {      
+//                 this.gv_chargementquais_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
+//                 this.gv_validation_msg_chargementquais_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";  
+//                 this.gv_chargementprevus_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";            
+//                 this.gv_startchargement_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; 
+//                 this.gv_material_umstock_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+//                 this.gv_chargement_um_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
+//         }
+//     }
+// else {          this.gv_chargementquais_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";  
+//                 this.gv_validation_msg_chargementquais_api_url  = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";   
+//                 this.gv_chargementprevus_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
+//                 this.gv_startchargement_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";   
+//                 this.gv_material_umstock_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+//                 this.gv_chargement_um_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";            
+//     } 
+ //  SAUVEGARDE Evolution déploiement sur PHP
+    
+    let lv_location :string;
+   
+//  Evolution déploiement sur PHP BEGIN
+  if ( location.hostname === 'localhost' ) {                                 // Test en local host avec le proxy ui5 tooling     
+           console.log("P1 HIGH Exécution en localhost  pour appel sur environnement :" + this.gv_environment);
+           switch (this.gv_environment.toLowerCase()) {
+            case 'dev':
+                lv_location = "rest_dev";    //LOT12 A Remettre
+                // lv_location = "http://sapdev.exaclair.eu";
+                //    lv_location= "https://SHDS-SAPDEV.exaclair.clairefontaine.local:443";               // HTTPS  SHDS-SAPDEV.exaclair.clairefontaine.local:443
+                    // lv_location= "https://shds-sapdev.exaclair.clairefontaine.local";               // appel sans nunméro de port
+                 break;
+            case 'bas':
+                // TESTS CORS en localhost sur 'environnement BAS |Désactivaiton du chemin du proxy rest_bac pour désactiver le proxy
+                   lv_location = "rest_bac";                                                  
+              //   lv_location = "https://sexa-sapoc-s4.exaclair.clairefontaine.local:44301";              //HTTPS 
+              //   lv_location = "http://sexa-sapoc-s4.exaclair.clairefontaine.local:8001";                //HTTP
+                // TESTS CORS en localhost sur 'environnement BAS
+                 console.log("P1 HIGH Environnement BAS");
+                 break;    
+            case 'pre':
+                lv_location = "rest_qual";
+                break;
+                case 'prod':                                 // Rajouter le resource ROOT rest_prod dans le ui5.yaml
+                lv_location = "rest_prod";
+                break;    
+            default:
+                lv_location = "rest_dev";
+                break; 
+            }
+               
+     // this.gv_chargementquais_api_url = "/" + lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";   " TEST CORS SUR EN BAS =>ATTENTION ->Peut être remettre le / après test CORS
+        this.gv_chargementquais_api_url =  lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
+          console.log("P1 HIGH API Chargement des quais: " +   this.gv_chargementquais_api_url);
+
+        //------------------------------------------------ ATTENTION Le / est retiré si on utilise pas le proxy ----------------------------------------------------
+        // this.gv_validation_msg_chargementquais_api_url = "/" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
+        // this.gv_chargementprevus_api_url = "/" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
+        // this.gv_startchargement_api_url = "/" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
+        // this.gv_material_umstock_api_url = "/" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+        // this.gv_chargement_um_api_url = "/" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
+        
+        //------------------------------------------------ ATTENTION Le / est retiré si on utilise pas le proxy ----------------------------------------------------
+
+
+          this.gv_validation_msg_chargementquais_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
+          this.gv_chargementprevus_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
+          this.gv_startchargement_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
+          this.gv_material_umstock_api_url =  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+          this.gv_chargement_um_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
+}
+else {         
+                let lv_index: number =      location.hostname.search(/sap/);
+        //------------------------------------  DEPLOIEMENT SUR SERVEUR SAP--------------------------------------------------------------------------------------------------
+                if (lv_index !== -1) {
+                     lv_location = location.host;
+              
+                 this.gv_chargementquais_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";  
+                this.gv_validation_msg_chargementquais_api_url  = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";   
+                this.gv_chargementprevus_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
+                this.gv_startchargement_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";   
+                this.gv_material_umstock_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+                this.gv_chargement_um_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";     
+                } else 
+           //------------------------------------  DEPLOIEMENT SUR SERVEUR PHP--------------------------------------------------------------------------------------------------            
+                {
+                // public  sap_server_dev  :string  = "sapdev.exaclair.eu";    // ADRESSE UI5 YAML SHDS-SAPDEV.exaclair.clairefontaine.local:1080
+                // public  sap_server_pre  :string  = "sappre.exaclair.eu";
+                // public  sap_server_prod :string  = "sapprod.exaclair.eu";
+                    console.log("P1 HIGH Host différent de sap et différent de localhost" +  location.host);
+                    // DEPLOIEMENT SUR PHP -> On pointe sur le serveur sAP spécifié dans la variable environnement gv_environement
+                     switch (this.gv_environment.toLowerCase()) {
+                        case 'dev':
+                            //lv_location ="shds-sapdev.exaclair.clairefontaine.local:443";   //s sapdev.exaclair.eu SHDS-SAPDEV.exaclair.clairefontaine.local:443
+                            lv_location ="shds-sapdev.exaclair.clairefontaine.local"      // APPEL SANS LE NUM PORT 
+                            break;
+                        case 'pre':
+                            lv_location = "sappre.exaclair.eu";
+                            break;
+                        case 'bas':
+                            //lv_location = "sexa-sapoc-s4.exaclair.clairefontaine.local:8001";
+                            lv_location = "sexa-sapoc-s4.exaclair.clairefontaine.local:44301";      //Déploiement en HTTPS
+                            break;    
+                        case 'prod':
+                            lv_location = "sapprod.exaclair.eu";
+                            break;    
+                        default:
+                            lv_location = "sexa-sapoc-s4.exaclair.clairefontaine.local:44301";
+                            break; 
+                        }
+                console.log("P1 HIGH  variable environnement  = " + this.gv_environment + " URL des API" +   lv_location);
+                  // TODO -> Essayer le HTTPs sur le serveur PHP  -
+                this.gv_chargementquais_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";  
+                this.gv_validation_msg_chargementquais_api_url  = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";   
+                this.gv_chargementprevus_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
+                this.gv_startchargement_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";   
+                this.gv_material_umstock_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+                this.gv_chargement_um_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
+                }   
+
+                //  console.log("P1 HIGH URL des API" +   lv_location);
+                // this.gv_chargementquais_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";  
+                // this.gv_validation_msg_chargementquais_api_url  = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";   
+                // this.gv_chargementprevus_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
+                // this.gv_startchargement_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";   
+                // this.gv_material_umstock_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+                // this.gv_chargement_um_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";         
     }
-else {          this.gv_chargementquais_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";  
-                this.gv_validation_msg_chargementquais_api_url  = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";   
-                this.gv_chargementprevus_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
-                this.gv_startchargement_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";   
-                this.gv_material_umstock_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-                this.gv_chargement_um_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";            
-    }                     
-          
+        //  SAUVEGARDE Evolution déploiement sur PHP END
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 //                                                                                                                                 //  
@@ -535,7 +657,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
         // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification
         //----------------------------------------------------------------------------------------
         // var mHeader = {
-        //     "Authorization": "Basic",
+        //   c
         //     "Access-Control-Allow-Origin": "*",
         //     "Content-Type":"application/json",
         // }
@@ -595,11 +717,33 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
      //----------------------------------------------------------------------------------------------------------------------------//
     public get_chargement_quais():void {
 // METHODE auhentification 1 - > Authorization : auth        (Retiré suite aux problématiques d'authentification d'Octobre 2025)
-//         let userName = "USERNAME";                           //TODO SEPTEMBER 2025 => ???
-//         let password = "PASSWORD";
-//         let credentials = userName + ':' + password;
-//         let hash = btoa(credentials);
-//         let auth = 'Basic '+hash;
+       
+
+        let userName:string = "";                        
+        let password:string = "";
+       if ( this.gv_environment == 'dev')
+
+       {
+         userName = "GCAMILLERI";                           //TODO SEPTEMBER 2025 => ???
+         password = "*Malaga3043";
+
+       }
+
+
+        
+       if ( this.gv_environment == 'bas')
+
+       {
+
+         userName = "GCAMILLERI";                           //TODO SEPTEMBER 2025 => ???
+         password = "*Malaga3043";
+         console.log("P1 VERY HIGH : userName:" + userName + "Password: " + password);
+       }
+        // let userName = "GCAMILLERI";                           //TODO SEPTEMBER 2025 => ???
+        // let password = "*Malaga3043";
+        let credentials = userName + ':' + password;
+        let hash = btoa(credentials);
+        let auth = 'Basic '+hash;
 
 //  //"Authorization": "Basic",
 //         var mHeader = {
@@ -609,18 +753,56 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
 //             "X-CSRF-Token" :  "Fetch"                                                                   //LOOT4
 //         }
 
-    //-----------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------------------------------------------------
     // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
-   //----------------------------------------------------------------------------------------
+   //----------------------------------------------------------------------------------------------------------------------------
 
-           var mHeader = {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type":"application/json",
-            "X-CSRF-Token" :  "Fetch"                                                                   //LOOT4
-        }
+        //    var mHeader = {
+        //     "Access-Control-Allow-Origin": "http://localhost",
+        //     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        //     "Access-Control-Allow-Headers" : "Authorization, Content-Type, Access-Control-Allow-Methods, Access-Control-Allow-Origin, Access-Control-Allow-Credentials ",
+        //     "Access-Control-Allow-Credentials" : true,
+        //     "Content-Type":"application/json",
+        //     "X-CSRF-Token" :  "Fetch"                                                                   //LOOT4
+        // }
         //-----------------------------------------------------------------------------------------
         // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification
         //----------------------------------------------------------------------------------------
+
+       //-----------------------------------------------------------------------------------------
+        // Essai envoi de requête simples pour ne pas générer de préflight   + TEst allow-origin explicite
+        //----------------------------------------------------------------------------------------
+        //   var mHeader = {
+           
+        //     "Access-Control-Allow-Origin": "http://localhost",                                //"Access-Control-Allow-Origin": "*",  -> A essayer aussi https://sclf-webopc
+        //     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+        //     "Access-Control-Allow-Headers" : "Authorization, Content-Type, Access-Control-Allow-Methods, Access-Control-Allow-Origin, Access-Control-Allow-Credentials",
+
+        //     "Content-Type":"application/json"
+        //   }
+
+
+        //-----------------------------------------------------------------------------------------
+        // TESTS PHP->DEV
+        //----------------------------------------------------------------------------------------
+           var mHeader = {     
+             "Authorization": auth,
+             "Content-Type":"application/json",
+             //"Access-Control-Allow-Credentials" : true,
+           
+           }
+
+
+        // TESTS DEPMOIEMENT PHP
+//  var mHeader = {
+            
+//             "Access-Control-Allow-Origin": ["*"],
+//             "Content-Type":"application/json"
+//           }
+         //-----------------------------------------------------------------------------------------
+        // Essai envoi de requête simples pour ne pas générer de préflight
+        //----------------------------------------------------------------------------------------
+
 
 // On instancie le modèle que s'il n'est pas déja défini au niveau du composant (premier chargement/rechargement)
      let  chargementQuaiModel: JSONModel;
@@ -636,7 +818,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     
      // TODO LOT4 => RECUPERER LE TOKEN CSRF du GET
      //var token = XMLHttpRequest.getResponseHeader('X-CSRF-Token');
-     console.log("P1 URL  API Chargement  des quais: " + this.gv_chargementquais_api_url ); 
+     console.log("P1 HIGH URL API Chargement  des quais au moment de l'appel de l'API: " + this.gv_chargementquais_api_url ); 
      chargementQuaiModel.loadData(this.gv_chargementquais_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {   this.getEventBus().publish("Default", "chargementFinishedEvent", {});
                              console.log("DATA DANS LE PROMISE DU GET" + data)       });
      
@@ -648,11 +830,26 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     //            LOT10:  Méthode d'appel à l'API  REST des messages de validation des chargements sur les quais                  //  
     //----------------------------------------------------------------------------------------------------------------------------//
     public get_validation_msg_chargements():void {
-           var mHeader = {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type":"application/json",
-            "X-CSRF-Token" :  "Fetch"                                                                   
-        }
+
+        // LOT 12
+
+        //LOT 12 -> Déploiement PHP
+        
+        // ancienne verssion des paramètres de header pour déploiement PHP 
+        //    var mHeader = {
+        //     "Access-Control-Allow-Origin": "*",
+        //     "Content-Type":"application/json",
+        //     "X-CSRF-Token" :  "Fetch"                                                                   
+        // }
+
+               var mHeader = {
+             "Content-Type":"application/json",
+              }
+
+
+                //LOT 12 -> Déploiement PHP
+
+
     //  let  validationMsgChargementQuaiModelJSON: JSONModel;
     //  if ( this.getModel("validationMsgChargementQuaiModelJSON") == undefined)
     //  {
@@ -707,21 +904,39 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     //-----------------------------------------------------------------------------------------
     // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
     //----------------------------------------------------------------------------------------                     
-           let mHeader = {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type":"application/json",  
-            "X-Requested-With":"X"
+        //    let mHeader = {
+        //     "Access-Control-Allow-Origin": "*",
+        //     "Content-Type":"application/json",  
+        //     "X-Requested-With":"X"
             
-        }
+        // }
      //-----------------------------------------------------------------------------------------
     // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
     //----------------------------------------------------------------------------------------
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------------
+    // BEGIN LOT 12 : Déploiement PHP  -> Vérifier s'il ne faut pas remettre le paramètre "X-Requested-With":"X" et l'autoriser au niveau de UCONCOCKPIT
+    //---------------------------------------------------------------------------------------- --------------------------------------------------------------                    
+           let mHeader = {
+            "Content-Type":"application/json",  
+           
+            
+        }
+     //-----------------------------------------------------------------------------------------
+    // END LOT 12 : Déploiement PHP
+    //----------------------------------------------------------------------------------------
+
        ChargementStartModel.loadData(this.gv_startchargement_api_url,"",true,  "GET", false, true, mHeader);
     }
 
      //---------------------------------------------------------------------------------------------------------------------------------//
      //               Méthode d'appel à l'API  REST de lancement du chargement d'un quai  [ZCL_PCF_START_CHARG_RESOURCE/Méthode POST ]                                       //  
      //---------------------------------------------------------------------------------------------------------------------------------//
+    
+
+     
+
+
     public startchargementquai_post(i_quai:string):void{
         let ChargementStartModel: JSONModel;
         let lv_chargement_url : string;
@@ -828,13 +1043,13 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
           let lv_url: string;
          
         if ( location.hostname === 'localhost' ) {
-        console.log("Lancement des Web Socket en localhost : " + this.environment);
-          if (this.environment === "dev") {
+        console.log("Lancement des Web Socket en localhost : " + this.gv_environment);
+          if (this.gv_environment === "dev") {
                 lv_url = "odata_dev/sap/bc/apc/sap/ychargement_camion_poc"; 
                 console.log("Web Socket de la dev : odata_dev/sap/bc/apc/sap/ychargement_camion_poc");    
            }
           else {
-                    if (this.environment === "qual") {
+                    if (this.gv_environment === "qual") {
                             console.log("Web Socket de la qual : : rest_qual/sap/bc/apc/sap/ychargement_camion_poc");    
                             lv_url = "rest_qual/sap/bc/apc/sap/ychargement_camion_poc"; }  
                     else {  console.log("Web Socket de la dev : odata_dev/sap/bc/apc/sap/ychargement_camion_poc");

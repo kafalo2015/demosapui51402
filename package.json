@@ -23,7 +23,7 @@
   "scripts": {
     "start": "fiori run --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#clfdemosapui51402demosapui5140-display\"",
     "start-local": "fiori run --config ./ui5-local.yaml --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#clfdemosapui51402demosapui5140-display\"",
-    "build": "ui5 build --config=ui5.yaml --clean-dest --dest dist",
+    "build": "ui5 build --include-task generateVersionInfo --config=ui5.yaml --clean-dest --dest dist",
     "lint": "eslint ./",
     "ts-typecheck": "tsc --noEmit",
     "prestart": "npm run ts-typecheck",

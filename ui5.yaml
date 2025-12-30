@@ -9,6 +9,12 @@ framework:
  version : 1.76.0
  libraries:
    - name: sap.ui.core
+   - name: sap.m
+   - name: sap.ui.layout
+   - name: sap.f
+   - name: sap.tnt
+  
+  
 server:
   customMiddleware:
     - name: fiori-tools-proxy
@@ -28,7 +34,7 @@ server:
         delay: 300
     - name: ui5-middleware-simpleproxy
       afterMiddleware: compression
-      mountPath: /rest_bac
+      mountPath: /rest_bas
       configuration:
        baseUri: "http://sexa-sapoc-s4.exaclair.clairefontaine.local:8001"
        enableWebSocket: true

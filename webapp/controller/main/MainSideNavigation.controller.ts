@@ -64,13 +64,13 @@ export default class MainSideNavigation extends Controller {
        //-------------------- END On récupère dans le modèle si le quai 8 est cours de chargement -----------------------------------------------------------------------------------------------------------------------------//
        if (encours == true)                                                                                   // Si le quai 8 est en cours de chargement alors on affiche la vue du quai 8 sinon on affiche le formulaire de démarrage de chargement
         { console.log("P1 VERY HIGH/ Méthode Item select/Appel du routing sur quai 8 ");
-          router.getTargets()?.display("TargetChargementQuai08"); 
+          router.getTargets()?.display("targetchargementquai08"); 
         }   
        else
-        { router.getTargets()?.display("TargetStartChargementQuai08");}
+        { router.getTargets()?.display("targetstartchargementquai08");}
     }
       
-     if (  event.getParameter("item")?.getText() == "Suivi Chargement" ) { router.getTargets()?.display("TargetChargementList");}
+     if (  event.getParameter("item")?.getText() == "Suivi Chargement" ) { router.getTargets()?.display("targetchargementlist");}
     
   }
 
