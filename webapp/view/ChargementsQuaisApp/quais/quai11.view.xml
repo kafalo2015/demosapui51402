@@ -134,6 +134,15 @@
 	</Table>
 	</ScrollContainer>
 
+
+	<Button id="FinChargQuai11" text="Fin Chargement"
+						press=".onPressButtonFinCharg"
+			 			ariaDescribedBy="defaultButtonDescription genericButtonDescription">
+					<layoutData>
+						<FlexItemData growFactor="1" />
+					</layoutData>
+				</Button>
+
 	<MessageStrip id = "messageStripInformationV2"
 				text="{notificationsQuaisModel>/quais/3/notifs/notifsuccess/msg_txt}"
 				type="Success"

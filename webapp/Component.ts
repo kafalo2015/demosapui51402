@@ -49,6 +49,7 @@ export default class Component extends BaseComponent {
     public gv_chargement_url : string;
     public gv_chargement_um_api_url: string;                    // URL API startchargement
     public gv_startchargement_api_url: string;                  // URL API startchargement
+    public gv_endchargement_api_url: string;                    // URL API endchargement
     public gv_chargementquais_api_url: string;                  // URL API chargement des quais
     public gv_validation_msg_chargementquais_api_url: string;                                                                     //gv_validation_msg_chargementquais_api_url
     public gv_chargementprevus_api_url: string;                  // URL API Chargement prévus
@@ -221,6 +222,28 @@ export default class Component extends BaseComponent {
        this.startchargementquai_post(quai);
      }, this ); 
 
+    //----------------------------------------------------------------------------------------------------------------//
+     //         LOT13 ->  HANDLER pour ENd Chargment des quais                                                           //  
+     //----------------------------------------------------------------------------------------------------------------//
+     this.getEventBus().subscribe("Default","chargementEndMotifsNchEvent", (channel:string,event:string,data: Object) => { 
+        console.log("chargementEndMotifsNchEvent"); 
+       let lv_quai :string = Object.values(data)[0];     // TODO LOt13  => Voir comment récupérer le numéro de transport et le numéro de quais
+       let lv_numtransport :string = Object.values(data)[1];     // TODO LOt13  => Voir comment récupérer le numéro de transport et le numéro de quais
+       this.get_motifs_nonchargement(lv_quai,lv_numtransport);
+     }, this ); 
+
+
+     //----------------------------------------------------------------------------------------------------------------//
+     //         LOT13 ->  HANDLER pour ENd Chargment des quais                                                         //  
+     //----------------------------------------------------------------------------------------------------------------//
+     this.getEventBus().subscribe("Default","chargementEndMotifsNchPostEvent", (channel:string,event:string,data: Object) => { 
+        console.log("chargementEndMotifsNchEvent"); 
+       let lv_quai :string = Object.values(data)[0];     // TODO LOt13  => Voir comment récupérer le numéro de transport et le numéro de quais
+       let lv_numtransport :string = Object.values(data)[1];     // TODO LOt13  => Voir comment récupérer le numéro de transport et le numéro de quais
+       this.post_motifs_nonchargement();
+     }, this ); 
+
+
      //----------------------------------------------------------------------------------------------------------------//
      //               HANDLER pour Validation UM                                                                       //  
      //----------------------------------------------------------------------------------------------------------------//
@@ -275,10 +298,11 @@ export default class Component extends BaseComponent {
      //----------------------------------------------------------------------------------------------------------------------------//
      //               Appel des API de chargement quais, chargements prévu et matchcode de lancement de chargement                 //  
      //----------------------------------------------------------------------------------------------------------------------------//
-    //  this.getEventBus().publish("Default", "chargementListEvent", {});            //LOt 12-> Rest déploiement phm -> A REMETTRE
-     this.getEventBus().publish("Default", "chargementEvent", {});
-    //  this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});    //LOt 12-> Rest déploiement phm -> A REMETTRE
-    //  this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOt 12-> Rest déploiement phm -> A REMETTRE
+     // this.getEventBus().publish("Default", "chargementListEvent", {});           //LOt 12-> Rest déploiement phm -> A REMETTRE
+      this.getEventBus().publish("Default", "chargementEvent", {});
+      this.getEventBus().publish("Default", "chargementListEvent", {});             // MODIF LOT13 =>Le chargement list après le chargement
+      this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});    //LOt 12-> Rest déploiement phm -> A REMETTRE
+      this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOt 12-> Rest déploiement phm -> A REMETTRE
    
       const router = this.getRouter().initialize();   
       
@@ -352,16 +376,16 @@ export default class Component extends BaseComponent {
            console.log("P1 HIGH Exécution en localhost  pour appel sur environnement :" + this.gv_environment);
            switch (this.gv_environment.toLowerCase()) {
             case 'dev':
-                lv_location = "rest_dev";    //LOT12 A Remettre
-                // lv_location = "http://sapdev.exaclair.eu";
-                //    lv_location= "https://SHDS-SAPDEV.exaclair.clairefontaine.local:443";               // HTTPS  SHDS-SAPDEV.exaclair.clairefontaine.local:443
-                    // lv_location= "https://shds-sapdev.exaclair.clairefontaine.local";               // appel sans nunméro de port
+               // lv_location = "rest_dev";    //LOT12 A Remettre   //Utilisation du proxy"
+                //lv_location = "http://sapdev.exaclair.eu";         //Pas d'utilisation du proxy 
+                // lv_location= "https://SHDS-SAPDEV.exaclair.clairefontaine.local:443";           // HTTPS  SHDS-SAPDEV.exaclair.clairefontaine.local:443
+                 lv_location= "http://shds-sapdev.exaclair.clairefontaine.local:1080";             // appel sans nunméro de port
                  break;
             case 'bas':
-                // TESTS CORS en localhost sur 'environnement BAS |Désactivaiton du chemin du proxy rest_bac pour désactiver le proxy
-                   lv_location = "rest_bac";                                                  
-              //   lv_location = "https://sexa-sapoc-s4.exaclair.clairefontaine.local:44301";              //HTTPS 
-              //   lv_location = "http://sexa-sapoc-s4.exaclair.clairefontaine.local:8001";                //HTTP
+                // TESTS CORS en localhost sur 'environnement BAS |Désactivation du chemin du proxy rest_bac pour désactiver le proxy
+              //     lv_location = "rest_bac";                                                  
+                lv_location = "https://sexa-sapoc-s4.exaclair.clairefontaine.local:44301";              //HTTPS 
+               // lv_location = "http://sexa-sapoc-s4.exaclair.clairefontaine.local:8001";                //HTTP
                 // TESTS CORS en localhost sur 'environnement BAS
                  console.log("P1 HIGH Environnement BAS");
                  break;    
@@ -376,8 +400,8 @@ export default class Component extends BaseComponent {
                 break; 
             }
                
-     // this.gv_chargementquais_api_url = "/" + lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";   " TEST CORS SUR EN BAS =>ATTENTION ->Peut être remettre le / après test CORS
-        this.gv_chargementquais_api_url =  lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
+    //   this.gv_chargementquais_api_url = "/" + lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";   //TEST CORS SUR EN BAS =>ATTENTION ->Peut être remettre le / après test CORS
+     //   this.gv_chargementquais_api_url =  lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";    //DEPLOIEMENT PHP
           console.log("P1 HIGH API Chargement des quais: " +   this.gv_chargementquais_api_url);
 
         //------------------------------------------------ ATTENTION Le / est retiré si on utilise pas le proxy ----------------------------------------------------
@@ -389,12 +413,17 @@ export default class Component extends BaseComponent {
         
         //------------------------------------------------ ATTENTION Le / est retiré si on utilise pas le proxy ----------------------------------------------------
 
+ //------------------------------------------------ DEPLOIEMENT PHP BEGIN ----------------------------------------------------
+            this.gv_chargementquais_api_url =  lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";
+            this.gv_validation_msg_chargementquais_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
+            this.gv_chargementprevus_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
+            this.gv_startchargement_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
+            this.gv_endchargement_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/end_chargement";
+            this.gv_material_umstock_api_url =  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+            this.gv_chargement_um_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
+ //------------------------------------------------ DEPLOIEMENT PHP END ----------------------------------------------------
 
-          this.gv_validation_msg_chargementquais_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
-          this.gv_chargementprevus_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
-          this.gv_startchargement_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
-          this.gv_material_umstock_api_url =  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-          this.gv_chargement_um_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
+
 }
 else {         
                 let lv_index: number =      location.hostname.search(/sap/);
@@ -405,7 +434,8 @@ else {
                  this.gv_chargementquais_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";  
                 this.gv_validation_msg_chargementquais_api_url  = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";   
                 this.gv_chargementprevus_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
-                this.gv_startchargement_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";   
+                this.gv_startchargement_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; 
+                this.gv_endchargement_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/end_chargement";  
                 this.gv_material_umstock_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
                 this.gv_chargement_um_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";     
                 } else 
@@ -440,7 +470,8 @@ else {
                 this.gv_chargementquais_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";  
                 this.gv_validation_msg_chargementquais_api_url  = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";   
                 this.gv_chargementprevus_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
-                this.gv_startchargement_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";   
+                this.gv_startchargement_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; 
+                this.gv_endchargement_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/end_chargement";    
                 this.gv_material_umstock_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
                 this.gv_chargement_um_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
                 }   
@@ -619,6 +650,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
           MessageToast.show(msg_txt);
           this.getEventBus().publish("Default", "chargementEvent", {}); 
           this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
+          this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOT 13 
         }
 
       if ((action == 'dechargement') && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
@@ -626,6 +658,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
           MessageToast.show(msg_txt);
           this.getEventBus().publish("Default", "chargementEvent", {}); 
           this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
+          this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOT 13
         }
 
 
@@ -788,17 +821,24 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
            var mHeader = {     
              "Authorization": auth,
              "Content-Type":"application/json",
-             //"Access-Control-Allow-Credentials" : true,
            
            }
 
 
         // TESTS DEPMOIEMENT PHP
+
+        
 //  var mHeader = {
             
 //             "Access-Control-Allow-Origin": ["*"],
 //             "Content-Type":"application/json"
 //           }
+
+
+     
+
+
+
          //-----------------------------------------------------------------------------------------
         // Essai envoi de requête simples pour ne pas générer de préflight
         //----------------------------------------------------------------------------------------
@@ -867,6 +907,80 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     
      console.log("P1 URL API ZCL_PCF_CHARG_VALIDMSG_RESOUR: " + this.gv_validation_msg_chargementquais_api_url ); 
      (this.getModel("validationMsgChargementQuaiModelJSON") as JSONModel).loadData(this.gv_validation_msg_chargementquais_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {     });
+    }
+
+
+    //----------------------------------------------------------------------------------------------------------------------------//
+    //            LOT13:  Méthode d'appel à l'API  REST des messages de validation des chargements sur les quais                  //  
+    //----------------------------------------------------------------------------------------------------------------------------//
+    public get_motifs_nonchargement(i_quai:string,i_numtransport:string):void {
+              console.log("P1 HIGH/ Méthode Get_motifs_nonchargement QUAI=" + i_quai + " TRANSPORT= "  + i_numtransport )
+               var mHeader = {
+             "Content-Type":"application/json",
+              "X-Requested-With":"X",
+               "tknum": i_numtransport,    // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
+               "quai1":  i_quai,   
+              }
+
+      if ( this.getModel("finChargementQuaiModelJSON") == undefined)
+     {
+        this.setModel(new JSONModel(), "finChargementQuaiModelJSON");
+     }
+    
+     console.log("P1 URL API ZCL_PCF_CHARGEMENT_END_RESOUR: " + this.gv_endchargement_api_url ); 
+     (this.getModel("finChargementQuaiModelJSON") as JSONModel).loadData(this.gv_endchargement_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {     });
+    }
+
+     //----------------------------------------------------------------------------------------------------------------------------//
+    //            LOT13:  Méthode d'appel à l'API  REST des messages de validation des chargements sur les quais                  //  
+    //----------------------------------------------------------------------------------------------------------------------------//
+    public post_motifs_nonchargement():void {
+     // TODO -> Reprendre l'exemple du post de démarrage du chargement des quais
+        let finChargementQuaiModelJSON: JSONModel =  this.getModel( "finChargementQuaiModelJSON") as JSONModel;
+        let input_data:any =  finChargementQuaiModelJSON.getData(); 
+        
+        
+        //TODO=> A capitaliser 
+
+    //----------------------------------------------------------------------------------------------------------------
+    // LOT 13 : Deux possibilitées  => Passer les motifs de chargement [input_data.tMotifNocharg] dans le header ou dans le body du post
+    //--------------------------------------------------------------------------------------------------------------
+
+     console.log("LOT13 P1 HIGH Valeur des motifs de chargements à poster à l'API= " +  input_data.tMotifNocharg[0] + "/" +   input_data.tMotifNocharg[1] ); 
+     console.log("LOT13 P1 HIGH Valeur du transport/Quai à poster à l'API= " +  input_data.tknum + "/" +   input_data.quai1 ); 
+    //-----------------------------------------------------------------------------------------
+    // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
+   //----------------------------------------------------------------------------------------
+          let mHeader = {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type":"application/json",  
+            "X-Requested-With":"X",
+            "tmotifnocharg": input_data.tMotifNocharg,    // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
+            "tknum": input_data.tknum,    // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
+            "quai1":  input_data.quai1,   
+        }
+
+    //-----------------------------------------------------------------------------------------
+    // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
+   //----------------------------------------------------------------------------------------
+        //finChargementQuaiModelJSON.loadData(this.gv_endchargement_api_url ,"",true,  "POST", false, true, mHeader)?.then(result=>{
+        finChargementQuaiModelJSON.loadData(this.gv_endchargement_api_url , JSON.stringify(input_data.tMotifNocharg)    ,true,  "POST", false, true, mHeader)?.then(result=>{
+    //     let lv_target_quai : string; 
+    //    // MessageToast.show("Chargement démarré sur le quai : " + i_quai ,{ duration: 3000, width : '50%' })
+    //     i_quai = i_quai.toLowerCase();
+    //     i_quai = i_quai.replace(/^\w/, (c) => c.toUpperCase());
+    //     lv_target_quai = "TargetChargement" + i_quai; 
+    //     const router = this.getRouter();
+    //     console.log("P1 Navigation vers le quai avec target " + lv_target_quai); 
+    //      this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});
+         const router = this.getRouter();
+        let lv_target_quai : string;
+        lv_target_quai = "TargetChargementquai" + input_data.quai1;
+         MessageToast.show("Fin de chargement sur quai : " + input_data.quai1 + " et navigation sur Target:" +  lv_target_quai,{ duration: 4000, width : '50%' })
+        router.getTargets()?.display(lv_target_quai);           // TODO -> Remis après refonte du modèle de notification car manquant
+                                                                                                                      },reason=>{  console.log("P1 REJECTED PROMISE POST StartChargment" + finChargementQuaiModelJSON.getJSON.toString());
+                                                                                                             });  
+     
     }
 
      //----------------------------------------------------------------------------------------------------------------------------//
@@ -973,10 +1087,12 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
    //----------------------------------------------------------------------------------------
         ChargementStartModel.loadData(this.gv_startchargement_api_url,"",true,  "POST", false, true, mHeader)?.then(result=>{
         let lv_target_quai : string; 
-       // MessageToast.show("Chargement démarré sur le quai : " + i_quai ,{ duration: 3000, width : '50%' })
+        MessageToast.show("Chargement démarré sur le quai : " + i_quai ,{ duration: 3000, width : '50%' })
         i_quai = i_quai.toLowerCase();
-        i_quai = i_quai.replace(/^\w/, (c) => c.toUpperCase());
-        lv_target_quai = "TargetChargement" + i_quai; 
+        //i_quai = i_quai.replace(/^\w/, (c) => c.toUpperCase());        // LOT13-> A priori cette conversion n'est plus nécessaire
+        MessageToast.show("Chargement démarré sur le quai : " + i_quai ,{ duration: 3000, width : '50%' })
+       // lv_target_quai = "TargetChargement" + i_quai;                  // LOT13-> Attention TargetChargementQuai12 a été changé en targetchargementquai12
+       lv_target_quai = "targetchargement" + i_quai;
         const router = this.getRouter();
         console.log("P1 Navigation vers le quai avec target " + lv_target_quai); 
          this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});

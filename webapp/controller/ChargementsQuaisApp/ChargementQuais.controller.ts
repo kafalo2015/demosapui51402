@@ -4,6 +4,11 @@ import { Sticky } from "sap/m/library";
 import Dialog from "sap/m/Dialog";
 import Context from "sap/ui/model/Context";
 import Button, { Button$PressEvent } from "sap/m/Button";
+import ManagedObject from "sap/ui/base/ManagedObject";
+import { ComboBox$ChangeEvent, ComboBox$SelectionChangeEvent } from "sap/m/ComboBox";
+import Item from "sap/ui/core/Item";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import ContextBinding from "sap/ui/model/ContextBinding";
 
 /**
  * @namespace clf.logistique.chargementquais.controller
@@ -12,6 +17,10 @@ export default class ChargementQuais extends Controller {
 
   private dialog: Dialog;
   private dialogUmStock: Dialog;
+  //------------------------------------------
+  // LOT 13: Fin de chargement    // Attention ne pas forcement mettre le load fragment de le init du controller mais plutôt dans le handler du bouton
+  //------------------------------------------
+  private dialogMotifsNoCharg: Dialog;
 
     /*eslint-disable @typescript-eslint/no-empty-function*/
     public onInit(): void {         
@@ -52,6 +61,10 @@ export default class ChargementQuais extends Controller {
 
      this.onOpenDialog();
      this.onLoadFragmentUmStock();
+     //------------------------------------------
+     // LOT 13: Fin de chargement    // Attention ne pas forcement mettre le load fragment de le init du controller mais plutôt dans le handler du bouton
+     //------------------------------------------
+     this.onLoadFragmentMotifsNonChargement();
       }
 
     public onAfterRendering(): void {
@@ -69,7 +82,7 @@ export default class ChargementQuais extends Controller {
       if (event.getSource().toString().includes("quai10") === true ) { lv_quai = '2'};
       if (event.getSource().toString().includes("quai11") === true ) { lv_quai = '3'};
       if (event.getSource().toString().includes("quai12") === true ) { lv_quai = '4'};
-      if (event.getSource().toString().includes("quai13") === true ) { lv_quai = '6'};
+      if (event.getSource().toString().includes("quai13") === true ) { lv_quai = '5'};
       if (event.getSource().toString().includes("quai14") === true ) { lv_quai = '6'};
       if (event.getSource().toString().includes("quai15") === true ) { lv_quai = '7'};
 
@@ -88,6 +101,67 @@ export default class ChargementQuais extends Controller {
           this.dialogUmStock.open();
          }
 
+
+         //---------------------------------------------------------------------
+         //LOT 13 : Handler du bouton de validation de fin de chargement
+         //---------------------------------------------------------------------
+         public onPressButtonFinCharg(event: Button$PressEvent): void {
+         // TODO -> appel de récupération des motifs de non chargement
+         //console.log(event.getSource().getParent()?.getBindingContext("chargementModelJson")?.getProperty("codart")  );
+        //let lv_material : string = event.getSource().getParent()?.getBindingContext("chargementModelJson")?.getProperty("codart") 
+
+
+         //console.log("P1 HIGH LOT 13 POPUP Motifs non chargement:" + event.getSource().getParent()?.getBindingPath() );
+         console.log("P1 HIGH LOT 13 POPUP Motifs non chargement Valeur du transport du quai" + this.getOwnerComponent()?.getModel("chargementModelJson")?.getProperty("/results/4/numtransport", undefined));
+        // let lv_quai : string = event.getSource().getParent()?.getBindi.getProperty("quai");
+         //let lv_quai_view : ManagedObject = event.getSource().getParent().;
+      
+          let  lv_source_id_length = event.getSource().getId().length;
+          
+          //console.log("P1 HIGH LOT 13 POPUP Motifs non chargement Valeur du transport du quai" +  ) ;
+      
+          let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
+          let  lv_indicejson_quai: number = lv_quai_number-8;
+          
+        let lv_numtransport:string = this.getOwnerComponent()?.getModel("chargementModelJson")?.getProperty("/results/" + lv_indicejson_quai.toString() + "/numtransport", undefined)
+
+        console.log("P1 HIGH LOT 13 POPUP Motifs non chargement Valeur du transport= " +  lv_numtransport+  "/QUAI=" + lv_quai_number); 
+        // console.log("P1 HIGH LOT 13 POPUP Motifs non chargement: Valeur du quai = " + lv_quai + "/Valeur de transport= " + lv_numtransport);
+          // TODO => Récupérer le quai et le numéro de transport dans le contexte
+          let data : {quai:string, transport:string} = { quai: lv_quai_number.toString(), transport: lv_numtransport }               
+           this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEndMotifsNchEvent", data);
+          this.dialogMotifsNoCharg.open();
+         }
+
+      public onconfirmMotifsNch(event: Button$PressEvent): void {
+        // console.log("LOT13 P1 HIGH POST des motifs de non chargement");
+        // let  lv_source_id_length = event.getSource().getId().length;
+        // let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
+        // let  lv_indicejson_quai: number = lv_quai_number-8;
+        // let lv_numtransport:string = this.getOwnerComponent()?.getModel("chargementModelJson")?.getProperty("/results/" + lv_indicejson_quai.toString() + "/numtransport", undefined)
+        // console.log("P1 HIGH LOT 13 POST Motifs non chargement Valeur du transport= " +  lv_numtransport+  "/QUAI=" + lv_quai_number); 
+        //let data : {quai:string, transport:string} = { quai: lv_quai_number.toString(), transport: lv_numtransport }               
+        this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEndMotifsNchPostEvent");
+      }
+
+
+       public onMotifNchCmbBoxSelectionChange(event: ComboBox$SelectionChangeEvent): void 
+        {
+          console.log("LOT13 P1 Handler onMotifNchCmbBoxSelectionChange() ITEM:" + event.getParameter("selectedItem")?.getKey());
+          console.log("LOT13 P1 Handler onMotifNchCmbBoxSelectionChange() Binding path:" + event.getSource().getParent()?.getBindingContext("finChargementQuaiModelJSON"));
+           // Récupération du modèle de notifications des quais (Messages de validation par quai)
+          // let context : Context = event.getSource().getParent()?.getBindingContext("finChargementQuaiModelJSON");
+           let finChargementQuaiModelJSON : JSONModel = this.getOwnerComponent()?.getModel("finChargementQuaiModelJSON") as JSONModel;
+           finChargementQuaiModelJSON.setProperty( event.getSource().getParent()?.getBindingContext("finChargementQuaiModelJSON") + "/codmot", event.getParameter("selectedItem")?.getKey());
+           finChargementQuaiModelJSON.setProperty( event.getSource().getParent()?.getBindingContext("finChargementQuaiModelJSON") + "/libmot", event.getParameter("selectedItem")?.getProperty("text"));
+        }
+
+        public onMotifNchCmbBoxChange(event: ComboBox$ChangeEvent): void 
+        {
+          // let item  = event.getParameter("itemPressed");
+          //           console.log("LOT13 P1 Handler onMotifNchCmbBoxSelectionChange() ITEM:" + item);
+        }
+
      async onOpenDialog(): Promise<void> {
           this.dialog ??= await this.loadFragment({
              name: "clf.logistique.chargementquais.view.fragment.DialogUmFaucam"
@@ -100,4 +174,11 @@ export default class ChargementQuais extends Controller {
           }) as Dialog;
           //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
         }  
+        async onLoadFragmentMotifsNonChargement(): Promise<void> {
+          this.dialogMotifsNoCharg ??= await this.loadFragment({
+             name: "clf.logistique.chargementquais.view.fragment.DialogMotifsNonCharg"                               //TODO LOT13  Créer un nouveau fragment pour la boîte de dialogue de saisie des motifs de non chargement
+          }) as Dialog;
+          //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
+        }   
+
 }
