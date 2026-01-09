@@ -190,7 +190,7 @@ export default class Component extends BaseComponent {
      //                                                                                                                            //  
      //----------------------------------------------------------------------------------------------------------------------------//
 
-     //this.open_websocket_NotificationUM();            //LOt 12-> Rest déploiement phm -> A REMETTRE
+     this.open_websocket_NotificationUM();            //LOt 12-> Rest déploiement phm -> A REMETTRE
      // Abonnement à l'eventing
      //----------------------------------------------------------------------------------------------------------------------------//
      //               TODO -> Mettre tous les listeners dans une  méthode                                                            //  
@@ -279,7 +279,8 @@ export default class Component extends BaseComponent {
     this.getEventBus().subscribe("Default","notificationWebSocketEvent",(channel:string,event:string,data: Object) => {           
     // EVOL : Notification en fin de chargementTODO ajout de l'action en paramètre
     console.log("-----------------------------------notificationWebSocketEvent Event----------------------------------------------");
-    console.log("P1 LOT 7 Valeur du paramètre de notification time: " + Object.values(data)[7] + " CHECK_ID: " + Object.values(data)[8]);
+    console.log("P1 LOT 13 Notification Web socket: " + Object.values(data)[7] + " CHECK_ID: " + Object.values(data)[8]);
+    console.log("P1 LOT 1 Valeur du paramètre de notification time: " + Object.values(data)[7] + " CHECK_ID: " + Object.values(data)[8]);
 
         this.notificationWebSocketHandler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5]
         , Object.values(data)[6], Object.values(data)[7], Object.values(data)[8]);  
@@ -976,11 +977,13 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
          const router = this.getRouter();
         let lv_target_quai : string;
         lv_target_quai = "TargetChargementquai" + input_data.quai1;
+
          MessageToast.show("Fin de chargement sur quai : " + input_data.quai1 + " et navigation sur Target:" +  lv_target_quai,{ duration: 4000, width : '50%' })
-        router.getTargets()?.display(lv_target_quai);           // TODO -> Remis après refonte du modèle de notification car manquant
-                                                                                                                      },reason=>{  console.log("P1 REJECTED PROMISE POST StartChargment" + finChargementQuaiModelJSON.getJSON.toString());
+        this.getEventBus().publish("Default", "finChargementEvent", {});
+         router.getTargets()?.display(lv_target_quai);           // TODO -> Remis après refonte du modèle de notification car manquant
+        },reason=>{  console.log("P1 REJECTED PROMISE POST StartChargement" + finChargementQuaiModelJSON.getJSON.toString());
+                     MessageToast.show("Veuillez saisir l'ensemble des motifs de  non chargement : " + reason ,{ duration: 3000, width : '50%' })
                                                                                                              });  
-     
     }
 
      //----------------------------------------------------------------------------------------------------------------------------//
@@ -1186,7 +1189,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
          var that = this;
          v_webSocket.attachMessage(data_Socket, function (e: WebSocket$MessageEvent) {
             let params = e.getParameters();
-            console.log("e.getParameters() " + e.getParameters() );  
+            console.log("LOT 13 Popup Motifs chargement/Régression notifications " + e.getParameters() );  
             let content : any = params.data;
             let content_json : {type_msg:String, msg_txt:String,quai:String,um:string,action:string,statut: string,transport:string,user:string,  time : Date, checknumber:number, checkid:string} = JSON.parse(content);   
              let data : {type_msg:String, msg_txt:String,transport:String, um:String, quai:String,action:String,user:string, time : Date, checkid:string} = {

@@ -5,10 +5,11 @@ import Dialog from "sap/m/Dialog";
 import Context from "sap/ui/model/Context";
 import Button, { Button$PressEvent } from "sap/m/Button";
 import ManagedObject from "sap/ui/base/ManagedObject";
-import { ComboBox$ChangeEvent, ComboBox$SelectionChangeEvent } from "sap/m/ComboBox";
+import ComboBox, { ComboBox$ChangeEvent, ComboBox$SelectionChangeEvent } from "sap/m/ComboBox";
 import Item from "sap/ui/core/Item";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import ContextBinding from "sap/ui/model/ContextBinding";
+import Target from "sap/ui/core/routing/Target";
 
 /**
  * @namespace clf.logistique.chargementquais.controller
@@ -65,6 +66,48 @@ export default class ChargementQuais extends Controller {
      // LOT 13: Fin de chargement    // Attention ne pas forcement mettre le load fragment de le init du controller mais plutôt dans le handler du bouton
      //------------------------------------------
      this.onLoadFragmentMotifsNonChargement();
+
+     //------------------------------------------
+     // LOT 13: Fin de chargement    Handler de target sur les quais [utile pour supprimer la popup de fin chargement ]
+     //------------------------------------------
+      //  const router = this.getOwnerComponent()?.getComponentData().getRouter();
+
+      //   let target_quai08: Target = router.getTarget("targetchargementquai08") as Target;
+      //    let target_quai09: Target = router.getTarget("targetchargementquai09") as Target;
+      //    let target_quai10: Target = router.getTarget("targetchargementquai10") as Target;
+      //    let target_quai11: Target = router.getTarget("targetchargementquai11") as Target;
+      //    let target_quai12: Target = router.getTarget("targetchargementquai12") as Target;
+      //    let target_quai13: Target = router.getTarget("targetchargementquai13") as Target;
+      //    let target_quai14: Target = router.getTarget("targetchargementquai14") as Target;
+      //    let target_quai15: Target = router.getTarget("targetchargementquai15") as Target;
+
+         
+      //      target_quai08.attachDisplay(()=>{ this.dialogMotifsNoCharg.close()}                //Stockage du nom de l'application en cours d'utilisation
+      //                                 );
+      //      target_quai09.attachDisplay(()=>{ this.dialogMotifsNoCharg.close()}
+      //                                 );  
+      //      target_quai10.attachDisplay(()=>{ this.dialogMotifsNoCharg.close()}
+      //                                 );   
+      //      target_quai11.attachDisplay(()=>{ this.dialogMotifsNoCharg.close()}
+      //                                 );  
+      //      target_quai12.attachDisplay(()=>{ this.dialogMotifsNoCharg.close()}
+      //                                 );   
+      //      target_quai13.attachDisplay(()=>{ this.dialogMotifsNoCharg.close()}
+      //                                 );    
+      //      target_quai14.attachDisplay(()=>{ this.dialogMotifsNoCharg.close()}
+      //                                 ); 
+      //      target_quai15.attachDisplay(()=>{ this.dialogMotifsNoCharg.close()}
+      //                                 ); 
+
+
+            //----------------------------------------------------------------------------------------------------------------------------//
+              //             HANDLER validationDialogEvent  [LOT 8 : Validation des messages de chargement]                                 //  
+              //----------------------------------------------------------------------------------------------------------------------------//
+             this.getOwnerComponent()?.getEventBus().subscribe("Default","finChargementEvent",(channel:string,event:string,data: Object) => {           
+                this.dialogMotifsNoCharg.close();
+                console.log("LOT13 Handler fin de chargment dans le controlleur Chargementquai [pour femer boîte de dialogue motifs de chargement] ")
+                 },this);
+
       }
 
     public onAfterRendering(): void {
@@ -144,23 +187,29 @@ export default class ChargementQuais extends Controller {
         this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEndMotifsNchPostEvent");
       }
 
+      
+
 
        public onMotifNchCmbBoxSelectionChange(event: ComboBox$SelectionChangeEvent): void 
         {
+          console.log("LOT13 P1 Handler onMotifNchCmbBoxSelectionChange() event.getSource() = " + event.getSource());
+          console.log("LOT13 P1 Handler onMotifNchCmbBoxSelectionChange() event.getParameter('selectedItem') = " + event.getParameter("selectedItem"));
           console.log("LOT13 P1 Handler onMotifNchCmbBoxSelectionChange() ITEM:" + event.getParameter("selectedItem")?.getKey());
           console.log("LOT13 P1 Handler onMotifNchCmbBoxSelectionChange() Binding path:" + event.getSource().getParent()?.getBindingContext("finChargementQuaiModelJSON"));
            // Récupération du modèle de notifications des quais (Messages de validation par quai)
           // let context : Context = event.getSource().getParent()?.getBindingContext("finChargementQuaiModelJSON");
            let finChargementQuaiModelJSON : JSONModel = this.getOwnerComponent()?.getModel("finChargementQuaiModelJSON") as JSONModel;
            finChargementQuaiModelJSON.setProperty( event.getSource().getParent()?.getBindingContext("finChargementQuaiModelJSON") + "/codmot", event.getParameter("selectedItem")?.getKey());
-           finChargementQuaiModelJSON.setProperty( event.getSource().getParent()?.getBindingContext("finChargementQuaiModelJSON") + "/libmot", event.getParameter("selectedItem")?.getProperty("text"));
-        }
+           finChargementQuaiModelJSON.setProperty( event.getSource().getParent()?.getBindingContext("finChargementQuaiModelJSON") + "/libmot", event.getParameter("selectedItem")?.getText());
+          let cmbbox = event.getParameter("selectedItem")?.getParent() as ComboBox;
+          cmbbox.setValueState("Success");
+          }
 
-        public onMotifNchCmbBoxChange(event: ComboBox$ChangeEvent): void 
-        {
-          // let item  = event.getParameter("itemPressed");
-          //           console.log("LOT13 P1 Handler onMotifNchCmbBoxSelectionChange() ITEM:" + item);
-        }
+        // public onMotifNchCmbBoxChange(event: ComboBox$ChangeEvent): void 
+        // {
+        //   // let item  = event.getParameter("itemPressed");
+        //   //           console.log("LOT13 P1 Handler onMotifNchCmbBoxSelectionChange() ITEM:" + item);
+        // }
 
      async onOpenDialog(): Promise<void> {
           this.dialog ??= await this.loadFragment({
@@ -174,6 +223,12 @@ export default class ChargementQuais extends Controller {
           }) as Dialog;
           //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
         }  
+
+         
+       public onDialogMotifsClose(): void {
+         this.dialogMotifsNoCharg.close();
+       }
+
         async onLoadFragmentMotifsNonChargement(): Promise<void> {
           this.dialogMotifsNoCharg ??= await this.loadFragment({
              name: "clf.logistique.chargementquais.view.fragment.DialogMotifsNonCharg"                               //TODO LOT13  Créer un nouveau fragment pour la boîte de dialogue de saisie des motifs de non chargement

@@ -28,6 +28,7 @@
 							visible = "true"
 							class="sapUiNoMarginBottom sapUiNoMarginBegin">
 						</MessageStrip>
+						 
 						<Button
 					id="ButtonOK"
 					class="sapUiTinyMarginBeginEnd"
@@ -48,15 +49,17 @@
 					press=".onConfirmValidationMsgChargement"
 					>
 				       </Button>
+					    
                 </FlexBox>
 					</CustomListItem>
 	            </List>
 				
 		  </content>		
      </Panel>
-	 <beginButton>
+		 <beginButton>
     <Button text = "Fermer" press=".onValidationClose"> </Button>
-	</beginButton>	 
+			 </beginButton>
+
  
 </Dialog>
 

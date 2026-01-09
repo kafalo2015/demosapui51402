@@ -1,35 +1,73 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
- <!--	
-<Dialog title="Motifs non chargement" 	contentWidth = "50%" contentHeight = "25%" resizable ="true">
+ 
+<Dialog title="Motifs non chargement" 	contentWidth = "70%" contentHeight = "50%" resizable ="true">
 
-	 <Panel  headerText ="" id = "PanelMotifsChargement" stickyHeader="true" height="100%" width = "100%">
-	      <content>  
-				<List   headerText="" mode="" items="{ path : 'finChargementQuaiModelJSON>/tMotifNocharg'}"
-						growing="false"
-						growingThreshold="1"
-						growingScrollToLoad="false">
-					<CustomListItem>
-						<FlexBox type = "Horizontal">
-							<MessageStrip 
-								text="{finChargementQuaiModelJSON>codmot}  {finChargementQuaiModelJSON>libmot}"
-								type="Warning"
-								showIcon="true"
-								visible = "true"
-								class="sapUiNoMarginBottom sapUiNoMarginBegin">
-							</MessageStrip>
-                       </FlexBox>
-					</CustomListItem>
-	            </List> 
-		  </content>		
-     </Panel>
+		    <Table id="tableMotifsNcharg" class="sapSmallMargin" width="auto" noDataText="Pas de motifs de non chargement, vous pourvez valider le chargement" enableBusyIndicator = "true"
+		items="{
+				path : 'finChargementQuaiModelJSON>/tMotifNocharg'			
+			}">
+		
+		<columns>
+		     <Column  hAlign="Center" width="20%">  <Text text="Motif"/>                </Column>
+			 <Column  hAlign="Center" width="5%">  <Text text="Code Motif"/>                </Column>
+			<Column  hAlign="Center" width="10%">  <Text text="Lib. Motif"/>                </Column>
+			<Column  hAlign="Center" width="10%">  <Text text="Transport"/>                </Column> 
+		    <Column  hAlign="Center" width="10%">  <Text text="Livraison"/>                </Column>
+			<Column  hAlign="Center" width="10%">  <Text text="Poste liv."/>                     </Column>
+			<Column  hAlign="Center" width="5%">  <Text text="Type UM"/>                </Column>
+			<Column  hAlign="Center" width="10%">  <Text text="N° Cde"/>                </Column>
+			<Column  hAlign="Center" width="10%">  <Text text="Pst Cde"/>                     </Column>
+			<Column  hAlign="Center" width="10%">  <Text text="Article"/>                     </Column>
+		</columns>
+		<items>
+			<ColumnListItem type="Inactive" press=".onPress">
+				<cells>
+				    
+			        	<ComboBox
+				id = "MotifNchCmbBox"		
+				showSecondaryValues= "true"
+				change = ".onMotifNchCmbBoxChange"
+				selectionChange = ".onMotifNchCmbBoxSelectionChange"
+				valueState="Error"
+				items="{
+					path: 'finChargementQuaiModelJSON>/tCodelib',
+					sorter: { path: 'zcdlib' }
+				}">
+				<core:ListItem key="{finChargementQuaiModelJSON>zcdlib}" text="{finChargementQuaiModelJSON>zlib25}" additionalText = "{finChargementQuaiModelJSON>zcdlib}"/>
+			</ComboBox>
+				    <ObjectIdentifier title="{finChargementQuaiModelJSON>codmot}" />
+					<ObjectIdentifier title="{finChargementQuaiModelJSON>libmot}" />
+					<ObjectIdentifier title="{finChargementQuaiModelJSON>numtra}" />  
+				    <ObjectIdentifier title="{finChargementQuaiModelJSON>numliv}" />
+					<ObjectIdentifier title="{finChargementQuaiModelJSON>pstliv}" />
+					<ObjectIdentifier title="{finChargementQuaiModelJSON>typum}" />
+					<ObjectIdentifier title="{finChargementQuaiModelJSON>numcde}" />
+					<ObjectIdentifier title="{finChargementQuaiModelJSON>pstcde}" />
+					<ObjectIdentifier title="{finChargementQuaiModelJSON>codart}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+			
 	
-	 <beginButton>
-        <Button text = "Fermer" press=".onValidationClose"> </Button>
-	</beginButton> 	 
+		<beginButton>
+					<Button type="Accept"
+							text="Terminer le chargement"
+							press=".onconfirmMotifsNch" />
+		</beginButton>					
+			<endButton>		    
+					<Button id="Reject"
+						text="Refuser"
+						type="Reject"
+						press=".onDialogMotifsClose"
+						ariaHasPopup="Dialog" />
+		</endButton>						
+		 
 </Dialog>
--->
+
+<!--
 			<TableSelectDialog
 		id="TableSelectDialogMotifNch"
 		noDataText="Pas de motifs de non chargement "
@@ -91,7 +129,7 @@
 			</cells>
 		</ColumnListItem>
 	</TableSelectDialog>
- 
+-->
 
 
 </core:FragmentDefinition>
