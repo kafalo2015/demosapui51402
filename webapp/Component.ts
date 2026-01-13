@@ -763,8 +763,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
 
        }
 
-
-        
        if ( this.gv_environment == 'bas')
 
        {
@@ -822,28 +820,19 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
            var mHeader = {     
              "Authorization": auth,
              "Content-Type":"application/json",
-           
            }
 
 
         // TESTS DEPMOIEMENT PHP
-
-        
 //  var mHeader = {
             
 //             "Access-Control-Allow-Origin": ["*"],
 //             "Content-Type":"application/json"
 //           }
 
-
-     
-
-
-
          //-----------------------------------------------------------------------------------------
         // Essai envoi de requête simples pour ne pas générer de préflight
         //----------------------------------------------------------------------------------------
-
 
 // On instancie le modèle que s'il n'est pas déja défini au niveau du composant (premier chargement/rechargement)
      let  chargementQuaiModel: JSONModel;
@@ -871,11 +860,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     //            LOT10:  Méthode d'appel à l'API  REST des messages de validation des chargements sur les quais                  //  
     //----------------------------------------------------------------------------------------------------------------------------//
     public get_validation_msg_chargements():void {
-
-        // LOT 12
-
-        //LOT 12 -> Déploiement PHP
-        
         // ancienne verssion des paramètres de header pour déploiement PHP 
         //    var mHeader = {
         //     "Access-Control-Allow-Origin": "*",
@@ -886,10 +870,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
                var mHeader = {
              "Content-Type":"application/json",
               }
-
-
-                //LOT 12 -> Déploiement PHP
-
 
     //  let  validationMsgChargementQuaiModelJSON: JSONModel;
     //  if ( this.getModel("validationMsgChargementQuaiModelJSON") == undefined)
@@ -910,13 +890,13 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
      (this.getModel("validationMsgChargementQuaiModelJSON") as JSONModel).loadData(this.gv_validation_msg_chargementquais_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {     });
     }
 
-
     //----------------------------------------------------------------------------------------------------------------------------//
     //            LOT13:  Méthode d'appel à l'API  REST des messages de validation des chargements sur les quais                  //  
     //----------------------------------------------------------------------------------------------------------------------------//
     public get_motifs_nonchargement(i_quai:string,i_numtransport:string):void {
-              console.log("P1 HIGH/ Méthode Get_motifs_nonchargement QUAI=" + i_quai + " TRANSPORT= "  + i_numtransport )
-               var mHeader = {
+    console.log("P1 HIGH/ Méthode Get_motifs_nonchargement QUAI=" + i_quai + " TRANSPORT= "  + i_numtransport )
+              
+              var mHeader = {
              "Content-Type":"application/json",
               "X-Requested-With":"X",
                "tknum": i_numtransport,    // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
@@ -930,59 +910,35 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     
      console.log("P1 URL API ZCL_PCF_CHARGEMENT_END_RESOUR: " + this.gv_endchargement_api_url ); 
      (this.getModel("finChargementQuaiModelJSON") as JSONModel).loadData(this.gv_endchargement_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {     });
+   
     }
 
-     //----------------------------------------------------------------------------------------------------------------------------//
-    //            LOT13:  Méthode d'appel à l'API  REST des messages de validation des chargements sur les quais                  //  
     //----------------------------------------------------------------------------------------------------------------------------//
+    //            LOT13:  Méthode d'appel à l'API  REST de fin de chargement                                                       //  
+    //-----------------------------------------------------------------------------------------------------------------------------//
     public post_motifs_nonchargement():void {
-     // TODO -> Reprendre l'exemple du post de démarrage du chargement des quais
         let finChargementQuaiModelJSON: JSONModel =  this.getModel( "finChargementQuaiModelJSON") as JSONModel;
+       // Récupération des données du modèle
         let input_data:any =  finChargementQuaiModelJSON.getData(); 
-        
-        
-        //TODO=> A capitaliser 
 
-    //----------------------------------------------------------------------------------------------------------------
-    // LOT 13 : Deux possibilitées  => Passer les motifs de chargement [input_data.tMotifNocharg] dans le header ou dans le body du post
-    //--------------------------------------------------------------------------------------------------------------
-
-     console.log("LOT13 P1 HIGH Valeur des motifs de chargements à poster à l'API= " +  input_data.tMotifNocharg[0] + "/" +   input_data.tMotifNocharg[1] ); 
-     console.log("LOT13 P1 HIGH Valeur du transport/Quai à poster à l'API= " +  input_data.tknum + "/" +   input_data.quai1 ); 
-    //-----------------------------------------------------------------------------------------
-    // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
-   //----------------------------------------------------------------------------------------
           let mHeader = {
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",  
             "X-Requested-With":"X",
-            "tmotifnocharg": input_data.tMotifNocharg,    // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
+            //"tmotifnocharg": input_data.tMotifNocharg,    // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
             "tknum": input_data.tknum,    // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
             "quai1":  input_data.quai1,   
         }
 
-    //-----------------------------------------------------------------------------------------
-    // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
-   //----------------------------------------------------------------------------------------
-        //finChargementQuaiModelJSON.loadData(this.gv_endchargement_api_url ,"",true,  "POST", false, true, mHeader)?.then(result=>{
-        finChargementQuaiModelJSON.loadData(this.gv_endchargement_api_url , JSON.stringify(input_data.tMotifNocharg)    ,true,  "POST", false, true, mHeader)?.then(result=>{
-    //     let lv_target_quai : string; 
-    //    // MessageToast.show("Chargement démarré sur le quai : " + i_quai ,{ duration: 3000, width : '50%' })
-    //     i_quai = i_quai.toLowerCase();
-    //     i_quai = i_quai.replace(/^\w/, (c) => c.toUpperCase());
-    //     lv_target_quai = "TargetChargement" + i_quai; 
-    //     const router = this.getRouter();
-    //     console.log("P1 Navigation vers le quai avec target " + lv_target_quai); 
-    //      this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});
-         const router = this.getRouter();
-        let lv_target_quai : string;
-        lv_target_quai = "TargetChargementquai" + input_data.quai1;
-
-         MessageToast.show("Fin de chargement sur quai : " + input_data.quai1 + " et navigation sur Target:" +  lv_target_quai,{ duration: 4000, width : '50%' })
+   // Appel de l'api de fin de chargement    
+   finChargementQuaiModelJSON.loadData(this.gv_endchargement_api_url , JSON.stringify(input_data.tMotifNocharg)    ,true,  "POST", false, true, mHeader)?.then(result=>{
+        const router = this.getRouter();
+         let lv_target_quai : string = "TargetChargementquai" + input_data.quai1;
+        MessageToast.show("Fin de chargement sur quai : " + input_data.quai1 + " et navigation sur Target:" +  lv_target_quai,{ duration: 4000, width : '50%' })
         this.getEventBus().publish("Default", "finChargementEvent", {});
-         router.getTargets()?.display(lv_target_quai);           // TODO -> Remis après refonte du modèle de notification car manquant
-        },reason=>{  console.log("P1 REJECTED PROMISE POST StartChargement" + finChargementQuaiModelJSON.getJSON.toString());
-                     MessageToast.show("Veuillez saisir l'ensemble des motifs de  non chargement : " + reason ,{ duration: 3000, width : '50%' })
+        router.getTargets()?.display(lv_target_quai);           
+        },reason=>{  console.log("P1 LOT13 Rejectec Promise POST FinChargement" + finChargementQuaiModelJSON.getJSON.toString());
+                     MessageToast.show("Veuillez saisir un motif de non chargement pour chaque poste: " + reason ,{ duration: 5000, width : '50%' })
                                                                                                              });  
     }
 
@@ -1036,24 +992,16 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     //---------------------------------------------------------------------------------------- --------------------------------------------------------------                    
            let mHeader = {
             "Content-Type":"application/json",  
-           
-            
         }
      //-----------------------------------------------------------------------------------------
     // END LOT 12 : Déploiement PHP
     //----------------------------------------------------------------------------------------
-
        ChargementStartModel.loadData(this.gv_startchargement_api_url,"",true,  "GET", false, true, mHeader);
     }
 
      //---------------------------------------------------------------------------------------------------------------------------------//
      //               Méthode d'appel à l'API  REST de lancement du chargement d'un quai  [ZCL_PCF_START_CHARG_RESOURCE/Méthode POST ]                                       //  
      //---------------------------------------------------------------------------------------------------------------------------------//
-    
-
-     
-
-
     public startchargementquai_post(i_quai:string):void{
         let ChargementStartModel: JSONModel;
         let lv_chargement_url : string;

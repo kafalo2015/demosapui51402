@@ -2,134 +2,60 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
  
-<Dialog title="Motifs non chargement" 	contentWidth = "70%" contentHeight = "50%" resizable ="true">
-
-		    <Table id="tableMotifsNcharg" class="sapSmallMargin" width="auto" noDataText="Pas de motifs de non chargement, vous pourvez valider le chargement" enableBusyIndicator = "true"
+<Dialog title="Motifs de non chargement" 	contentWidth = "70%" contentHeight = "50%" resizable ="true">
+		    <Table id="tableMotifsNcharg" class="sapSmallMargin" width="auto" noDataText="Pas de motifs de non chargement, vous pouvez valider le chargement" enableBusyIndicator = "true"
 		items="{
 				path : 'finChargementQuaiModelJSON>/tMotifNocharg'			
 			}">
 		
 		<columns>
 		     <Column  hAlign="Center" width="20%">  <Text text="Motif"/>                </Column>
-			 <Column  hAlign="Center" width="5%">  <Text text="Code Motif"/>                </Column>
-			<Column  hAlign="Center" width="10%">  <Text text="Lib. Motif"/>                </Column>
-			<Column  hAlign="Center" width="10%">  <Text text="Transport"/>                </Column> 
-		    <Column  hAlign="Center" width="10%">  <Text text="Livraison"/>                </Column>
-			<Column  hAlign="Center" width="10%">  <Text text="Poste liv."/>                     </Column>
-			<Column  hAlign="Center" width="5%">  <Text text="Type UM"/>                </Column>
-			<Column  hAlign="Center" width="10%">  <Text text="N° Cde"/>                </Column>
-			<Column  hAlign="Center" width="10%">  <Text text="Pst Cde"/>                     </Column>
-			<Column  hAlign="Center" width="10%">  <Text text="Article"/>                     </Column>
+			 <Column  hAlign="Center" width="5%">   <Text text="Code Motif"/>           </Column>
+			 <Column  hAlign="Center" width="10%">  <Text text="Lib. Motif"/>           </Column>
+			 <Column  hAlign="Center" width="10%">  <Text text="Transport"/>            </Column> 
+		     <Column  hAlign="Center" width="10%">  <Text text="Livraison"/>            </Column>
+			 <Column  hAlign="Center" width="10%">  <Text text="Poste liv."/>           </Column>
+			 <Column  hAlign="Center" width="5%">   <Text text="Type UM"/>              </Column>
+			 <Column  hAlign="Center" width="10%">  <Text text="N° Cde"/>               </Column>
+			 <Column  hAlign="Center" width="10%">  <Text text="Pst Cde"/>              </Column>
+			 <Column  hAlign="Center" width="10%">  <Text text="Article"/>              </Column>
 		</columns>
 		<items>
 			<ColumnListItem type="Inactive" press=".onPress">
 				<cells>
-				    
-			        	<ComboBox
-				id = "MotifNchCmbBox"		
-				showSecondaryValues= "true"
-				change = ".onMotifNchCmbBoxChange"
-				selectionChange = ".onMotifNchCmbBoxSelectionChange"
-				valueState="Error"
-				items="{
-					path: 'finChargementQuaiModelJSON>/tCodelib',
-					sorter: { path: 'zcdlib' }
-				}">
-				<core:ListItem key="{finChargementQuaiModelJSON>zcdlib}" text="{finChargementQuaiModelJSON>zlib25}" additionalText = "{finChargementQuaiModelJSON>zcdlib}"/>
-			</ComboBox>
-				    <ObjectIdentifier title="{finChargementQuaiModelJSON>codmot}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>libmot}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>numtra}" />  
-				    <ObjectIdentifier title="{finChargementQuaiModelJSON>numliv}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>pstliv}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>typum}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>numcde}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>pstcde}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>codart}" />
+					<ComboBox
+						id = "MotifNchCmbBox"		
+						showSecondaryValues= "true"
+						change = ".onMotifNchCmbBoxChange"
+						selectionChange = ".onMotifNchCmbBoxSelectionChange"
+						valueState="Error"
+						items="{
+							path: 'finChargementQuaiModelJSON>/tCodelib',
+							sorter: { path: 'zcdlib' }
+					}">
+						<core:ListItem key="{finChargementQuaiModelJSON>zcdlib}" text="{finChargementQuaiModelJSON>zlib25}" additionalText = "{finChargementQuaiModelJSON>zcdlib}"/>
+					</ComboBox>
+						<ObjectIdentifier title="{finChargementQuaiModelJSON>codmot}" />
+						<ObjectIdentifier title="{finChargementQuaiModelJSON>libmot}" />
+						<ObjectIdentifier title="{finChargementQuaiModelJSON>numtra}" />  
+						<ObjectIdentifier title="{finChargementQuaiModelJSON>numliv}" />
+						<ObjectIdentifier title="{finChargementQuaiModelJSON>pstliv}" />
+						<ObjectIdentifier title="{finChargementQuaiModelJSON>typum}" />
+						<ObjectIdentifier title="{finChargementQuaiModelJSON>numcde}" />
+						<ObjectIdentifier title="{finChargementQuaiModelJSON>pstcde}" />
+						<ObjectIdentifier title="{finChargementQuaiModelJSON>codart}" />
 				</cells>
 			</ColumnListItem>
 		</items>
 	</Table>
-			
-	
-		<beginButton>
-					<Button type="Accept"
-							text="Terminer le chargement"
-							press=".onconfirmMotifsNch" />
-		</beginButton>					
-			<endButton>		    
-					<Button id="Reject"
-						text="Refuser"
-						type="Reject"
-						press=".onDialogMotifsClose"
-						ariaHasPopup="Dialog" />
-		</endButton>						
-		 
+	<beginButton>
+		<Button  id="MotifsnchAccept" type="Accept" text="Terminer le chargement"
+				press=".onconfirmMotifsNch" />
+	</beginButton>					
+	<endButton>		    
+		<Button id="MotifsnchReject"  type="Reject" text="Refuser"
+				press=".onDialogMotifsClose" />
+	</endButton>						
 </Dialog>
-
-<!--
-			<TableSelectDialog
-		id="TableSelectDialogMotifNch"
-		noDataText="Pas de motifs de non chargement "
-		title="Motifs non chargement"
-		contentWidth = "60%"
-		contentHeight = "45%"
-		multiSelect = "true"
-		draggable ="true"
-		resizable ="true"
-		search=""
-		confirm=".onconfirmMotifsNch"
-		confirmButtonText = "Confirmer Motifs"
-		cancel=".onconfirmMotifsNch"
-		items="{
-			path : 'finChargementQuaiModelJSON>/tMotifNocharg',
-			sorter : {
-				path : 'numtra',
-				descending : false
-			}
-		}">
-	<columns>
-	        <Column  hAlign="Center" width="20%">  <Text text="Motif"/>                </Column>
-			 <Column  hAlign="Center" width="5%">  <Text text="Code Motif"/>                </Column>
-			<Column  hAlign="Center" width="10%">  <Text text="Lib. Motif"/>                </Column>
-			<Column  hAlign="Center" width="10%">  <Text text="Transport"/>                </Column> 
-		    <Column  hAlign="Center" width="10%">  <Text text="Livraison"/>                </Column>
-			<Column  hAlign="Center" width="10%">  <Text text="Poste liv."/>                     </Column>
-			<Column  hAlign="Center" width="5%">  <Text text="Type UM"/>                </Column>
-			<Column  hAlign="Center" width="10%">  <Text text="N° Cde"/>                </Column>
-			<Column  hAlign="Center" width="10%">  <Text text="Pst Cde"/>                     </Column>
-			<Column  hAlign="Center" width="10%">  <Text text="Article"/>                     </Column>
-		
-		</columns>
-		<ColumnListItem vAlign="Middle">
-			<cells>
-
-			        	<ComboBox
-				id = "MotifNchCmbBox"		
-				showSecondaryValues= "true"
-				change = ".onMotifNchCmbBoxChange"
-				selectionChange = ".onMotifNchCmbBoxSelectionChange"
-				items="{
-					path: 'finChargementQuaiModelJSON>/tCodelib',
-					sorter: { path: 'zcdlib' }
-				}">
-				<core:ListItem key="{finChargementQuaiModelJSON>zcdlib}" text="{finChargementQuaiModelJSON>zlib25}" additionalText = "{finChargementQuaiModelJSON>zcdlib}"/>
-			</ComboBox>
-
-			        <ObjectIdentifier title="{finChargementQuaiModelJSON>codmot}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>clibmot}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>numtra}" />  
-				    <ObjectIdentifier title="{finChargementQuaiModelJSON>numliv}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>pstliv}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>typum}" />
-					   <ObjectIdentifier title="{finChargementQuaiModelJSON>numcde}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>pstcde}" />
-					<ObjectIdentifier title="{finChargementQuaiModelJSON>codart}" />
-					
-			</cells>
-		</ColumnListItem>
-	</TableSelectDialog>
--->
-
 
 </core:FragmentDefinition>

@@ -132,13 +132,13 @@
 	</Table>
 	</ScrollContainer>
 
-			<Button id="FinChargQuai12" text="Fin Chargement"
-							press=".onPressButtonFinCharg"
-							ariaDescribedBy="defaultButtonDescription genericButtonDescription">
-						<layoutData>
-							<FlexItemData growFactor="1" />
-						</layoutData>
-					</Button>
+	<Button id="FinChargQuai12" text="Fin Chargement" type= "Accept" icon= "sap-icon://complete"
+			press=".onPressButtonFinCharg"
+			ariaDescribedBy="defaultButtonDescription genericButtonDescription">
+			<layoutData>
+				<FlexItemData growFactor="1" />
+			</layoutData>
+	</Button>
 
 	<MessageStrip id = "messageStripInformationV2"
 				text="{notificationsQuaisModel>/quais/4/notifs/notifsuccess/msg_txt}"
@@ -146,7 +146,7 @@
 				showIcon="true"
 				visible = "{notificationsQuaisModel>/quais/4/notifs/notifsuccess/visible}"
 				class="sapUiNoMarginBottom sapUiNoMarginBegin">
-			</MessageStrip>  
+	</MessageStrip>  
 
   
   <MessageStrip id = "messageStripWarningV2"

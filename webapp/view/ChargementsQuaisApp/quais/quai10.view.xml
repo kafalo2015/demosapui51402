@@ -136,7 +136,7 @@
 	</ScrollContainer>
 
 
-	<Button id="FinChargQuai10" text="Fin Chargement"
+	<Button id="FinChargQuai10" text="Fin Chargement" type= "Accept" icon= "sap-icon://complete"
 						press=".onPressButtonFinCharg"
 						ariaDescribedBy="defaultButtonDescription genericButtonDescription">
 					<layoutData>

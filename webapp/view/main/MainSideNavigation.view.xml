@@ -22,7 +22,7 @@
 				<tnt:NavigationList>
 					<tnt:NavigationListItem text="Statistiques" icon="sap-icon://bar-chart" />
 					<tnt:NavigationListItem  href="https://sap.com" target="_blank" text="Liens externes" icon="sap-icon://attachment" />
-					<tnt:NavigationListItem  text="Comparaison" icon="sap-icon://compare" />
+					<tnt:NavigationListItem  text="Comparaison" icon="ccompare" />
 				</tnt:NavigationList>
 			</tnt:fixedItem>
 		</tnt:SideNavigation>

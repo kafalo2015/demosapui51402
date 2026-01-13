@@ -132,13 +132,13 @@
 	</ScrollContainer>
 
 
-	<Button  id="FinChargQuai15" text="Fin Chargement"
-						press=".onPressButtonFinCharg"
-						ariaDescribedBy="defaultButtonDescription genericButtonDescription">
-					<layoutData>
-						<FlexItemData growFactor="1" />
-					</layoutData>
-				</Button>
+	<Button  id="FinChargQuai15" text="Fin Chargement" type= "Accept" icon= "sap-icon://complete"
+			press=".onPressButtonFinCharg"
+			ariaDescribedBy="defaultButtonDescription genericButtonDescription">
+			<layoutData>
+				<FlexItemData growFactor="1" />
+			</layoutData>
+	</Button>
 
 
 		<MessageStrip id = "messageStripInformationV2"
