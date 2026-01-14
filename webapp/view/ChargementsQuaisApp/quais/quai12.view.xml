@@ -133,6 +133,7 @@
 	</ScrollContainer>
 
 	<Button id="FinChargQuai12" text="Fin Chargement" type= "Accept" icon= "sap-icon://complete"
+	        enabled ="{= %{chargementModelJson>/results/4/tChargItem}.length === 0?false:true}" 
 			press=".onPressButtonFinCharg"
 			ariaDescribedBy="defaultButtonDescription genericButtonDescription">
 			<layoutData>

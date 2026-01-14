@@ -933,12 +933,12 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
    // Appel de l'api de fin de chargement    
    finChargementQuaiModelJSON.loadData(this.gv_endchargement_api_url , JSON.stringify(input_data.tMotifNocharg)    ,true,  "POST", false, true, mHeader)?.then(result=>{
         const router = this.getRouter();
-         let lv_target_quai : string = "TargetChargementquai" + input_data.quai1;
-        MessageToast.show("Fin de chargement sur quai : " + input_data.quai1 + " et navigation sur Target:" +  lv_target_quai,{ duration: 4000, width : '50%' })
+         let lv_target_quai : string = "targetstartchargementquai" + input_data.quai1;
+       // MessageToast.show("Fin de chargement sur quai : " + input_data.quai1 + " et navigation sur Target:" +  lv_target_quai,{ duration: 4000, width : '50%' })
         this.getEventBus().publish("Default", "finChargementEvent", {});
         router.getTargets()?.display(lv_target_quai);           
-        },reason=>{  console.log("P1 LOT13 Rejectec Promise POST FinChargement" + finChargementQuaiModelJSON.getJSON.toString());
-                     MessageToast.show("Veuillez saisir un motif de non chargement pour chaque poste: " + reason ,{ duration: 5000, width : '50%' })
+        },reason=>{  console.log("P1 LOT13 Rejected Promise POST FinChargement" + finChargementQuaiModelJSON.getJSON.toString());
+                     //MessageToast.show("Veuillez saisir un motif de non chargement pour chaque poste: " + reason ,{ duration: 5000, width : '50%' })
                                                                                                              });  
     }
 
