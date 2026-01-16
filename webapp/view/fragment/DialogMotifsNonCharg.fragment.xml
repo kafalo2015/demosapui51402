@@ -3,7 +3,7 @@
 	xmlns:core="sap.ui.core">
  
 <Dialog title="Motifs de non chargement" 	contentWidth = "70%" contentHeight = "50%" resizable ="true">
-		    <Table id="tableMotifsNcharg" class="sapSmallMargin" width="auto" noDataText="Pas de motifs de non chargement, vous pouvez valider le chargement" enableBusyIndicator = "true"
+		    <Table id="tableMotifsNcharg" class="sapSmallMargin" width="auto" noDataText="L'ensemble des postes ont été chargés, vous pouvez terminer le chargement" sticky="{'sap.m.Sticky.ColumnHeaders'}" enableBusyIndicator = "true"
 		items="{
 				path : 'finChargementQuaiModelJSON>/tMotifNocharg'			
 			}">

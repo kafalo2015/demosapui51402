@@ -118,6 +118,7 @@ export default class ChargementQuais extends Controller {
          public onPressButtonFinCharg(event: Button$PressEvent): void {
           // BEGIN Récupération du numméro de quai et de l'indice json du quai
           let  lv_source_id_length = event.getSource().getId().length;
+          let  lv_quai: string = "quai" + event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length);
           let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
           let  lv_indicejson_quai: number = lv_quai_number-8;
           // END  Récupération du numméro de quai et de l'indice json du quai
@@ -126,7 +127,7 @@ export default class ChargementQuais extends Controller {
         let lv_numtransport:string = this.getOwnerComponent()?.getModel("chargementModelJson")?.getProperty("/results/" + lv_indicejson_quai.toString() + "/numtransport", undefined)
 
         console.log("P1 HIGH LOT 13 POPUP Motifs non chargement Valeur du transport= " +  lv_numtransport+  "/QUAI=" + lv_quai_number); 
-        let data : {quai:string, transport:string} = { quai: lv_quai_number.toString(), transport: lv_numtransport } 
+        let data : {quai:string, transport:string} = { quai:  lv_quai, transport: lv_numtransport } 
         // Récupération des motifs de non chargement dans l'API REST              
         this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEndMotifsNchEvent", data);
         // Ouverture de la boîte de dialogue de saisie des motifs de non chargement

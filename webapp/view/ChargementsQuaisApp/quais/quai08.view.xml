@@ -132,9 +132,10 @@
 	</Table>
 	</ScrollContainer>
 
-
+<!--enabled="{= %{chargementModelJson>/results/0/tChargItem}.length > 0  &&  %{chargementModelJson>/results/0/nbUmTotalFaucam} === 0?true:false}"-->
 	<Button id="FinChargQuai08" text="Fin Chargement" type= "Accept" icon= "sap-icon://complete"
 						press=".onPressButtonFinCharg"
+						enabled="{= (%{chargementModelJson>/results/0/nbUmTotalFaucam} > 0) || (%{chargementModelJson>/results/0/tChargItem}.length === 0)?false:true}"
 						ariaDescribedBy="defaultButtonDescription genericButtonDescription">
 					<layoutData>
 						<FlexItemData growFactor="1" />

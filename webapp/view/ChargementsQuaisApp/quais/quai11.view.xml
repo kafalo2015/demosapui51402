@@ -137,7 +137,7 @@
 
 	<Button id="FinChargQuai11" text="Fin Chargement" type= "Accept" icon= "sap-icon://complete"
 						press=".onPressButtonFinCharg"
-						enabled =" {= %{chargementModelJson>/results/3/tChargItem}.length === 0?false:true}"
+						enabled="{= (%{chargementModelJson>/results/3/nbUmTotalFaucam} > 0) || (%{chargementModelJson>/results/3/tChargItem}.length === 0)?false:true}"
 			 			ariaDescribedBy="defaultButtonDescription genericButtonDescription">
 					<layoutData>
 						<FlexItemData growFactor="1" />
