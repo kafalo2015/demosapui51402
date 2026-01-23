@@ -26,7 +26,7 @@ builder:
           name: ZUI5_CHARGQUAIS  
           description: Application UI5 chargement des quais
           package: Z_CF_DEMO
-          transport: DEVK917215
+          transport: DEVK918349
       exclude:
         - /test/
   resources:

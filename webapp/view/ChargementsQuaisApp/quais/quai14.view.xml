@@ -10,8 +10,8 @@
 			   titleAlignment = "Begin"
 			   width = "75"
 			   class="sapUiContentPadding sapUiNoMarginBegin sapUiNoMarginBottom"
-			   backgroundColorSet="ColorSet9"
-			   backgroundColorShade="ShadeE">
+			backgroundColorSet="{notificationsQuaisModel>/quais/6/header/backgroundcolorset}"
+			   backgroundColorShade="{notificationsQuaisModel>/quais/6/header/backgroundcolorshade}">
 					<FlexBox
 				     direction="Row"
 				     justifyContent="Start"

@@ -90,6 +90,11 @@ export default class Component extends BaseComponent {
     "quais": [
         {
             "quai": "quai08",
+             "header": {
+                "backgroundcolorset" : "ColorSet9",
+                "backgroundcolorshade" : "ShadeE"
+              
+            },
             "um" : "",
             "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
@@ -100,6 +105,10 @@ export default class Component extends BaseComponent {
         },
         {
             "quai": "quai09",
+             "header": {
+                "backgroundcolorset" : "ColorSet9",
+                "backgroundcolorshade" : "ShadeE"
+            },
             "um" : "",
             "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
@@ -110,6 +119,10 @@ export default class Component extends BaseComponent {
         },
         {
             "quai": "quai10",
+             "header": {
+                "backgroundcolorset" : "ColorSet9",
+                "backgroundcolorshade" : "ShadeE"
+            },
             "um" : "",
             "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
@@ -120,6 +133,10 @@ export default class Component extends BaseComponent {
         },
         {
             "quai": "quai11",
+              "header": {
+                "backgroundcolorset" : "ColorSet9",
+                "backgroundcolorshade" : "ShadeE"
+            },
             "um" : "",
             "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
@@ -130,6 +147,10 @@ export default class Component extends BaseComponent {
         },
         {
             "quai": "quai12",
+              "header": {
+                "backgroundcolorset" : "ColorSet9",
+                "backgroundcolorshade" : "ShadeE"
+            },
             "um" : "",
             "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
@@ -140,6 +161,10 @@ export default class Component extends BaseComponent {
         },
         {
             "quai": "quai13",
+            "header": {
+                "backgroundcolorset" : "ColorSet9",
+                "backgroundcolorshade" : "ShadeE"
+            },
             "um" : "",
             "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
@@ -150,6 +175,10 @@ export default class Component extends BaseComponent {
         },
         {
             "quai": "quai14",
+            "header": {
+                "backgroundcolorset" : "ColorSet9",
+                "backgroundcolorshade" : "ShadeE"
+            },
             "um" : "",
              "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
@@ -160,6 +189,10 @@ export default class Component extends BaseComponent {
         },
         {
         "quai": "quai15",
+        "header": {
+                "backgroundcolorset" : "ColorSet9",
+                "backgroundcolorshade" : "ShadeE"
+            },
          "um" : "",
            "notifs": {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
@@ -570,6 +603,29 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
 
         notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt","");
         notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",false);
+       
+        //  LOT 14 BEGIN RECETTE JANVIER 2026 -> EVOL  Faire cliqnoter le header du chargement lors du chargement d'une UM
+
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorset","ColorSet8");
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorshade","ShadeE");
+              setTimeout(() => {
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorset","ColorSet9");
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorshade","ShadeE");
+            
+         }, 4000);
+        
+          setTimeout(() => {
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorset","ColorSet8");
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorshade","ShadeE");
+            
+         }, 5000);
+        //  setTimeout(() => {
+        // notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorset","ColorSet9");
+        // notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorshade","ShadeE");
+            
+        //  }, 1500); 
+    // LOT 14 END RECETTE JANVIER 2026 -> EVOL  Faire cliqnoter le header du chargement lors du chargement d'une UM
+
         }
 
     if ( type_msg == 'W' )          // Si la notificatios est de type Warning alors il faut cacher la notificdtion  de type erreur
@@ -591,6 +647,29 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
         notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess/visible",false);
         notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/msg_txt","");
         notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/visible",false);
+
+         //  LOT 14 BEGIN RECETTE JANVIER 2026 -> EVOL  Faire cliqnoter le header du chargement lors du chargement d'une UM
+
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorset","ColorSet2");
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorshade","ShadeE");
+         setTimeout(() => {
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorset","ColorSet9");
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorshade","ShadeE");
+            
+         }, 4000);
+          setTimeout(() => {
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorset","ColorSet2");
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorshade","ShadeE");
+            
+         }, 5000);
+        //  setTimeout(() => {
+        // notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorset","ColorSet9");
+        // notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorshade","ShadeE");
+            
+        //  }, 1500); 
+        
+
+    // LOT 14 END RECETTE JANVIER 2026 -> EVOL  Faire cliqnoter le header du chargement lors du chargement d'une UM
         }
     
 // END EVOLUTION -> Affichage de plusieurs messsages strip en même temps sur le quai
