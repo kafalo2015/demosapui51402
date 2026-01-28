@@ -897,7 +897,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
         // TESTS PHP->DEV
         //----------------------------------------------------------------------------------------
            var mHeader = {     
-             "Authorization": auth,
+            // "Authorization": auth,                           // Essai pas d'autorisation
              "Content-Type":"application/json",
            }
 
