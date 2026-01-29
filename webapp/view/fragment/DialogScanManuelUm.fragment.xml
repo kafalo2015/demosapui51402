@@ -1,0 +1,24 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+ 
+<Dialog title="Motifs de non chargement" 	contentWidth = "70%" contentHeight = "50%" resizable ="true">
+		  
+    <Input
+			id="UMscan"
+			placeholder="Scannez un UM"
+			showSuggestion="false"
+			showValueHelp="false">
+			
+		</Input>
+	<beginButton>
+		<Button  id="ScanUMAccept" type="Accept" text="Terminer le chargement"
+				press=".onconfirmMotifsNch" />
+	</beginButton>					
+	<endButton>		    
+		<Button id="ScanUMReject"  type="Reject" text="Refuser"
+				press=".onDialogMotifsClose" />
+	</endButton>						
+</Dialog>
+
+</core:FragmentDefinition>

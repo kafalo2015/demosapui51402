@@ -110,6 +110,17 @@
 		items="{
 				path : 'chargementModelJson>/results/4/tChargItem'			
 			}">
+			<headerToolbar>
+					<OverflowToolbar id="otbSubheader">
+					<Text text="UMs Chargées" />
+						<ToolbarSpacer/>
+					
+						<Button text="Scan Manuel UM" type="Transparent" press=".onScanManuelUm" icon= "sap-icon://bar-code"/>
+						<!--<OverflowToolbarButton tooltip="Sort" type="Transparent" text="Sort" icon="sap-icon://sort" press="onSort"/>
+						<OverflowToolbarButton tooltip="Group" type="Transparent" text="Group" icon="sap-icon://group-2" press="onGroup"/>-->
+						
+					</OverflowToolbar>
+				</headerToolbar>	
 		<columns>
 			<Column hAlign="Begin" width="17%"> <Text text="Um" />          </Column>
 			<Column hAlign="Begin" width="10%">  <Text text="Livraison" />  </Column>
@@ -129,6 +140,7 @@
 				</cells>
 			</ColumnListItem>
 		</items>
+	
 	</Table>
 	</ScrollContainer>
 

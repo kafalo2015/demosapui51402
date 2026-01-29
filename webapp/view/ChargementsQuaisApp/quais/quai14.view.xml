@@ -107,6 +107,7 @@
 		items="{
 				path : 'chargementModelJson>/results/6/tChargItem'			
 			}">
+				
 		<columns>
 			<Column hAlign="Begin" width="17%"> <Text text="Um" />          </Column>
 			<Column hAlign="Begin" width="10%">  <Text text="Livraison" />  </Column>
@@ -126,6 +127,7 @@
 				</cells>
 			</ColumnListItem>
 		</items>
+		
 	</Table>
 	</ScrollContainer>
 

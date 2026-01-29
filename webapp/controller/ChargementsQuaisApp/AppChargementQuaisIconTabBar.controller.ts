@@ -430,4 +430,30 @@ target_quai15.attachDisplay(()=>{
      { quai: lv_quai, codum : validation_msg_codum,  msgid: validation_msg_msgid, aenam : validation_msg_aenam, errdt: validation_msg_errdt, errzt: validation_msg_errzt, choice : lv_choice}
     this.getOwnerComponent()?.getEventBus().publish("Default", "ValidationWarningUMEvent", data);
  }
+
+
+ //----------------------------------------------------------------------------------------------------------------------------------------------------//
+  //------------------- LOT 15 BEGIN SCAN MANUEL DES UMS    
+  //      Attention Réfléchir à s'il faut coder dans ce controlleur ou dans le controlleur des quais
+  //     + Voir comment récupérer l'UM saisit                                                                                ------------------------//
+  //----------------------------------------------------------------------------------------------------------------------------------------------------//
+ public onValidScanUm(event:Button$PressEvent):void {
+  console.log("------------------------------------------------------P1 HIGH LOT15 onValidScanUm: --------------------------------------------------------------");
+  // Anomalie 18/11/2025 BEGIN [Quai au format attendu par l'API]
+  let lv_quai:string;
+  // Fournir à l'API (Chargement UM) le quai sous forme 'QUAI09','QUAI10" (Si le numéro de quai  <10 alors il faut rajouter un "O" entre QU et le numéro de quai)
+  if ( this.gv_current_quai_number < 10 )
+      { lv_quai = "QUAI" + "0" + this.gv_current_quai_number; }
+  else{ lv_quai = "QUAI" + this.gv_current_quai_number; }
+// Anomalie 18/11/2025 END
+
+  let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string} =
+     { quai: lv_quai, codum : '',  msgid: '', aenam : '', errdt: '', errzt: '', choice : ''}
+    this.getOwnerComponent()?.getEventBus().publish("Default", "ValidationWarningUMEvent", data);
+ }
+
+  //----------------------------------------------------------------------------------------------------------------------------------------------------//
+  //------------------- LOT 15 END SCAN MANUEL DES UMS                                                                                    ------------------------//
+  //----------------------------------------------------------------------------------------------------------------------------------------------------/
+
 }

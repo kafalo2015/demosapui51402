@@ -22,7 +22,8 @@ import { Targets$DisplayEvent } from "sap/ui/core/routing/Targets";
 // LOT 10-16/10/2025- GILLES CAMILLERI => Problématique Authentification RESTAPI -> Essai pas d'authentification
 // LOT 11-14/11/2025- GILLES CAMILLERI => Anomalie Popup de validation des quais s'affiche dans liste des chargements + Anomalie synchronisation routing/selected key de l'IconTabBar
 // LOt 12-10/12/2025- GILLES CAMILLERI => Test déploiement php -> A REMETTRE LES APPELS AUX APIS RETIRES POUR TESTS
-// LOt 13-300/12/2025-GILLES CAMILLERI => API + Popup Motif de non chargement + fin chargement
+// LOt 13-30/12/2025-GILLES CAMILLERI => API + Popup Motif de non chargement + fin chargement
+// LOt 15-29/11/2026-GILLES CAMILLERI => Scan Manuel des UMS
 /**
  * @namespace clf.logistique.chargementquais
  */

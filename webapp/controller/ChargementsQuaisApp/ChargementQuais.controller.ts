@@ -22,6 +22,7 @@ export default class ChargementQuais extends Controller {
   // LOT 13: Fin de chargement    // Attention ne pas forcement mettre le load fragment de le init du controller mais plutôt dans le handler du bouton
   //------------------------------------------
   private dialogMotifsNoCharg: Dialog;
+  private dialogScanManuelUm : Dialog;;
 
     /*eslint-disable @typescript-eslint/no-empty-function*/
     public onInit(): void {         
@@ -66,6 +67,7 @@ export default class ChargementQuais extends Controller {
      // LOT 13: Fin de chargement    // Attention ne pas forcement mettre le load fragment de le init du controller mais plutôt dans le handler du bouton
      //------------------------------------------
      this.onLoadFragmentMotifsNonChargement();
+     this.onLoadFragmentScanManuelUm();
 
     //------------------------------------------------------------------------------------------------------------------------------//
     //             HANDLER fin de chargement  => Pour fermer la boîte de dialogue de saisie des motifs de non chargeemnt            //                                                                                    //  
@@ -147,6 +149,30 @@ export default class ChargementQuais extends Controller {
           let cmbbox = event.getParameter("selectedItem")?.getParent() as ComboBox;
           cmbbox.setValueState("Success");
           }
+      //---------------------------------------------------------------------
+         //LOT 13 : Handler du bouton de validation de fin de chargement
+         //---------------------------------------------------------------------
+         public onScanManuelUm(event: Button$PressEvent): void {
+          // BEGIN Récupération du numméro de quai et de l'indice json du quai
+        //   let  lv_source_id_length = event.getSource().getId().length;
+        //   let  lv_quai: string = "quai" + event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length);
+        //   let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
+        //   let  lv_indicejson_quai: number = lv_quai_number-8;
+        //   // END  Récupération du numméro de quai et de l'indice json du quai
+        
+        // // Récupération du numéro de transport du quai à partir de l'index json du quai  
+        // let lv_numtransport:string = this.getOwnerComponent()?.getModel("chargementModelJson")?.getProperty("/results/" + lv_indicejson_quai.toString() + "/numtransport", undefined)
+
+        // console.log("P1 HIGH LOT 13 POPUP Motifs non chargement Valeur du transport= " +  lv_numtransport+  "/QUAI=" + lv_quai_number); 
+        // let data : {quai:string, transport:string} = { quai:  lv_quai, transport: lv_numtransport } 
+        // // Récupération des motifs de non chargement dans l'API REST              
+        // this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEndMotifsNchEvent", data);
+        // Ouverture de la boîte de dialogue de saisie des motifs de non chargement
+        this.dialogScanManuelUm.open();
+         }
+
+         
+
 
      async onOpenDialog(): Promise<void> {
           this.dialog ??= await this.loadFragment({
@@ -167,6 +193,15 @@ export default class ChargementQuais extends Controller {
           }) as Dialog;
           //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
         }   
+
+
+        //DialogScanManuelUm
+         public  async onLoadFragmentScanManuelUm(): Promise<void> {
+          this.dialogScanManuelUm ??= await this.loadFragment({
+             name: "clf.logistique.chargementquais.view.fragment.DialogScanManuelUm"                               //TODO LOT13  Créer un nouveau fragment pour la boîte de dialogue de saisie des motifs de non chargement
+          }) as Dialog;
+          //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
+        }  
 
         //----------- Fermeture de la boîte de dialogue de saisie des motifs de non chargement---------------------------------/   
        public onDialogMotifsClose(): void {
