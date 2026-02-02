@@ -278,23 +278,46 @@ export default class Component extends BaseComponent {
      }, this ); 
 
 
+      //----------------------------------------------------------------------------------------------------------------//
+     //               HANDLER pour Chargement_UM_get     LOT15 -> Scan Manuel UM                                                                //  
      //----------------------------------------------------------------------------------------------------------------//
-     //               HANDLER pour Validation UM                                                                       //  
-     //----------------------------------------------------------------------------------------------------------------//
-    this.getEventBus().subscribe("Default","ValidationWarningUMEvent", (channel:string,event:string,data: Object) => { 
+    this.getEventBus().subscribe("Default","ChargementUMGetEvent", (channel:string,event:string,data: Object) => { 
        console.log("chargementStartEvent"); 
       //----------------------------------------------------------------------------------------------------------------//
       //---- LOT 9 Validation des messages de Warning TODO )                                                            //
       //----------------------------------------------------------------------------------------------------------------//
-       let quai :number    = Object.values(data)[0];  
+        let lv_quai :string    = Object.values(data)[0];  
+    //    let codum :string   = Object.values(data)[1];  
+    //    let msgid :string   = Object.values(data)[2];
+    //    let aenam :string   = Object.values(data)[3];
+    //    let errdt :string   = Object.values(data)[4];
+    //    let errzt :string   = Object.values(data)[5];
+    //    let choice :boolean = Object.values(data)[6];
+        
+       this.api_chargement_um_get(lv_quai);
+     }, this );
+
+
+     //----------------------------------------------------------------------------------------------------------------//
+     //               HANDLER pour Validation UM                                                                       //  
+     //----------------------------------------------------------------------------------------------------------------//
+    this.getEventBus().subscribe("Default","ChargementUmPostEvent", (channel:string,event:string,data: Object) => { 
+       console.log("chargementStartEvent"); 
+      //----------------------------------------------------------------------------------------------------------------//
+      //---- LOT 9 Validation des messages de Warning TODO )                                                            //
+      //----------------------------------------------------------------------------------------------------------------//
+       let quai :string    = Object.values(data)[0];              // LOT 14 Attention : retester la validation du chargement car j'ai changé ce paramètre de number à string
        let codum :string   = Object.values(data)[1];  
        let msgid :string   = Object.values(data)[2];
        let aenam :string   = Object.values(data)[3];
        let errdt :string   = Object.values(data)[4];
        let errzt :string   = Object.values(data)[5];
        let choice :boolean = Object.values(data)[6];
-        
-       this.api_chargement_um_post(quai,codum,msgid,aenam,errdt,errzt,choice);
+       let validation_charg_um :boolean = Object.values(data)[7];
+       
+       
+       console.log("P1 LOt15 Chargement manuel scan EVENT ChargementUmPostEvent");
+       this.api_chargement_um_post(quai,codum,msgid,aenam,errdt,errzt,choice,validation_charg_um);
      }, this );
 
      //----------------------------------------------------------------------------------------------------------------         //
@@ -1132,12 +1155,47 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
                                                                                                              }); 
     }
 
+
+ //----------------------------------------------------------------------------------------------------------------------------//
+     //               Méthode d'appel de l'API  ZCL_PCF_START_CHARG_RESOURCE/ Méthode GET                                          //  
+     //----------------------------------------------------------------------------------------------------------------------------//
+      public api_chargement_um_get(i_quai:string):void{
+
+        let ChargementUmModel: JSONModel;
+        console.log("-------------------------------METHODE  api_chargement_um_post---------------------------------------------------------------------------------------- "); 
+        if ( this.getModel("ChargementUmModel") == undefined)
+        {
+            ChargementUmModel = new JSONModel();
+            this.setModel(ChargementUmModel, "ChargementUmModel");
+            ChargementUmModel.setDefaultBindingMode("TwoWay");   // TODO => vérifier si c'est nécessaire d'activer  le two way binding
+        }else
+        {  
+            ChargementUmModel =   this.getModel( "ChargementUmModel") as JSONModel;
+        } 
+  
+
+
+    //------------------------------------------------------------------------------------------------------------------------------------------------------
+    // BEGIN LOT 12 : Déploiement PHP  -> Vérifier s'il ne faut pas remettre le paramètre "X-Requested-With":"X" et l'autoriser au niveau de UCONCOCKPIT
+    //---------------------------------------------------------------------------------------- --------------------------------------------------------------                    
+           let mHeader = {
+            "Content-Type":"application/json", 
+            "quai1":  i_quai 
+        }
+     //-----------------------------------------------------------------------------------------
+    // END LOT 12 : Déploiement PHP
+    //----------------------------------------------------------------------------------------
+         ChargementUmModel.loadData(this.gv_chargement_um_api_url,"",true,  "GET", false, true, mHeader);
+    }
+
      //---------------------------------------------------------------------------------------------------------------------------------//
      //               Méthode d'appel à l'API  REST de lancement du chargement d'un quai  [ZCL_PCF_START_CHARG_RESOURCE/Méthode POST ]  //  
      //---------------------------------------------------------------------------------------------------------------------------------//
-    public api_chargement_um_post(i_quai:number,i_codum:string, i_msgid :string, i_aenam:string , i_errdt:string, i_errzt:string, i_choice:boolean) :void{
+    public api_chargement_um_post(i_quai:string,i_codum:string, i_msgid :string, i_aenam:string , i_errdt:string, i_errzt:string, i_choice:boolean, i_validation_charg_um :boolean) :void{
        
         let ChargementUmModel: JSONModel;
+         let lv_target_quai : string; 
+             
         console.log("-------------------------------METHODE  api_chargement_um_post---------------------------------------------------------------------------------------- "); 
         if ( this.getModel("ChargementUmModel") == undefined)
         {
@@ -1175,8 +1233,18 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     //----------------------------------------------------------------------------------------   
         ChargementUmModel.loadData(this.gv_chargement_um_api_url,"",true,  "POST", false, true, mHeader)?.then(result=>{  
     //------------------- TODO LOT9  Validation des messages de Warning->Mettre le code de suppression du Warning de la promise de l'API POST--------------------------------------------------
-    // TODO => Rappel de l'API de récupération des messages de Validation de chargement
-     this.getEventBus().publish("Default", "validationMsgChargementEvent", {});
+     console.log("P1 LOt15 Valeur de i_validation_charg_um :" + i_validation_charg_um);
+      if ( i_validation_charg_um == false ) // Si c'est un chargement manuel on déclenche la navigation. Si c'est une validation de chargement on ne déclenche pas la navigation
+      {
+        lv_target_quai = "targetchargement" + i_quai.toLowerCase();
+        const router = this.getRouter();
+        console.log("P1 Navigation vers le quai avec target " + lv_target_quai);
+         
+        //router.getTargets()?.display(lv_target_quai); // La navigation n'est pas forcément utile -> A tester
+        this.getEventBus().publish("Default", "CloseManualScanPopupEvent", {}); 
+        this.getEventBus().publish("Default", "validationMsgChargementEvent", {});  // LOT15 Rappel du modèle de validation de chargment -> Réfléchir si c'est nécessaire ou le mettre dans le handler du routing
+      }
+
                                                                                                                       },reason=>{ 
                                                                                                              }); 
     }

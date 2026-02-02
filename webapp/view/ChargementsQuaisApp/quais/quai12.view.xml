@@ -115,7 +115,7 @@
 					<Text text="UMs Chargées" />
 						<ToolbarSpacer/>
 					
-						<Button text="Scan Manuel UM" type="Transparent" press=".onScanManuelUm" icon= "sap-icon://bar-code"/>
+						<Button id="ScanManuelQuai12" text="Scan Manuel UM" type="Transparent" press=".onScanManuelUm" icon= "sap-icon://bar-code"/>
 						<!--<OverflowToolbarButton tooltip="Sort" type="Transparent" text="Sort" icon="sap-icon://sort" press="onSort"/>
 						<OverflowToolbarButton tooltip="Group" type="Transparent" text="Group" icon="sap-icon://group-2" press="onGroup"/>-->
 						

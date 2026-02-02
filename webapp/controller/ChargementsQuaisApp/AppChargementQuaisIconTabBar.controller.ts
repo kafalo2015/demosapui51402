@@ -21,6 +21,7 @@ export default class AppChargementQuaisIconTabBar extends Controller {
     private gv_current_quai_number : number;
     private gv_current_quai : string;
     private gv_dialog_validation_charg: Dialog;
+    // private dialogScanManuelUm : Dialog;   // LOT15 : Chargement manuel Scan
     
     /*eslint-disable @typescript-eslint/no-empty-function*/
     public onInit(): void {
@@ -426,10 +427,41 @@ target_quai15.attachDisplay(()=>{
   else{ lv_quai = "QUAI" + this.gv_current_quai_number; }
 // Anomalie 18/11/2025 END
 
-  let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string} =
-     { quai: lv_quai, codum : validation_msg_codum,  msgid: validation_msg_msgid, aenam : validation_msg_aenam, errdt: validation_msg_errdt, errzt: validation_msg_errzt, choice : lv_choice}
-    this.getOwnerComponent()?.getEventBus().publish("Default", "ValidationWarningUMEvent", data);
+
+// LOT15 BEGIN 
+// Vérifier qu'il n'y a pas de régression au niveau de la validation du chargement J'ai rajouté le paramètre validation_charg_um pour différencier validation de chargement UM et chargement UM
+// J'ai également modifié le nom de l'évènement pour l'appel de l'aAPI post de l'UM  (ChargementUmEvent au de validWarningUMEvent)
+let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string, validation_charg_um : boolean} =
+     { quai: lv_quai, codum : validation_msg_codum,  msgid: validation_msg_msgid, aenam : validation_msg_aenam, errdt: validation_msg_errdt, errzt: validation_msg_errzt, choice : lv_choice, validation_charg_um : true}
+    this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUmPostEvent", data);
  }
+
+
+
+
+//---------------------------------------------------------------------
+//LOT 15 : Chargement manuel scan
+//---------------------------------------------------------------------
+        //  public onScanManuelUm(event: Button$PressEvent): void {
+        //   console.log("P1 HIGH LOT15 Scan Manuel"); 
+        // this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUMGetEvent");
+        // this.dialogScanManuelUm.open();
+        //  }
+
+
+         // LOT15 BEGIN Chargement manuel scan 
+        //  public  async onLoadFragmentScanManuelUm(): Promise<void> {
+        //   this.dialogScanManuelUm ??= await this.loadFragment({
+        //      name: "clf.logistique.chargementquais.view.fragment.DialogScanManuelUm"                               //TODO LOT13  Créer un nouveau fragment pour la boîte de dialogue de saisie des motifs de non chargement
+        //   }) as Dialog;
+        //   //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
+        // }  
+      
+// LOT15 BEGIN Chargement manuel scan 
+      // public onDialogValidScanUMClose(): void {
+      //    this.dialogScanManuelUm.close();
+      //  }
+      //  // LOT15 BEGIN Chargement manuel scan 
 
 
  //----------------------------------------------------------------------------------------------------------------------------------------------------//
@@ -437,20 +469,26 @@ target_quai15.attachDisplay(()=>{
   //      Attention Réfléchir à s'il faut coder dans ce controlleur ou dans le controlleur des quais
   //     + Voir comment récupérer l'UM saisit                                                                                ------------------------//
   //----------------------------------------------------------------------------------------------------------------------------------------------------//
- public onValidScanUm(event:Button$PressEvent):void {
-  console.log("------------------------------------------------------P1 HIGH LOT15 onValidScanUm: --------------------------------------------------------------");
-  // Anomalie 18/11/2025 BEGIN [Quai au format attendu par l'API]
-  let lv_quai:string;
-  // Fournir à l'API (Chargement UM) le quai sous forme 'QUAI09','QUAI10" (Si le numéro de quai  <10 alors il faut rajouter un "O" entre QU et le numéro de quai)
-  if ( this.gv_current_quai_number < 10 )
-      { lv_quai = "QUAI" + "0" + this.gv_current_quai_number; }
-  else{ lv_quai = "QUAI" + this.gv_current_quai_number; }
-// Anomalie 18/11/2025 END
+//  public onValidScanUm(event:Button$PressEvent):void {
+//   console.log("------------------------------------------------------P1 HIGH LOT15 onValidScanUm: --------------------------------------------------------------");
+//   // Anomalie 18/11/2025 BEGIN [Quai au format attendu par l'API]
+//   let lv_quai:string;
+//   // Fournir à l'API (Chargement UM) le quai sous forme 'QUAI09','QUAI10" (Si le numéro de quai  <10 alors il faut rajouter un "O" entre QU et le numéro de quai)
+//   if ( this.gv_current_quai_number < 10 )
+//       { lv_quai = "QUAI" + "0" + this.gv_current_quai_number; }
+//   else{ lv_quai = "QUAI" + this.gv_current_quai_number; }
+// // Anomalie 18/11/2025 END
 
-  let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string} =
-     { quai: lv_quai, codum : '',  msgid: '', aenam : '', errdt: '', errzt: '', choice : ''}
-    this.getOwnerComponent()?.getEventBus().publish("Default", "ValidationWarningUMEvent", data);
- }
+// let ChargementUmModel: JSONModel =   this.getOwnerComponent()?.getModel( "ChargementUmModel") as JSONModel;
+// let input_data:any = ChargementUmModel.getData();
+
+
+//   let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string} =
+//      { quai: lv_quai, codum : input_data.codum,  msgid: '', aenam : '', errdt: '', errzt: '', choice : ''}
+
+//     console.log("----------P1 HIGH LOT 15 Appel du post de chargement UM-----VALEUR DU QUAI= " + lv_quai + "Valeur de l'UM= " + input_data.codum);
+//     this.getOwnerComponent()?.getEventBus().publish("Default", "ValidationWarningUMEvent", data);
+//  }
 
   //----------------------------------------------------------------------------------------------------------------------------------------------------//
   //------------------- LOT 15 END SCAN MANUEL DES UMS                                                                                    ------------------------//

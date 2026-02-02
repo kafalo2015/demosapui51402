@@ -113,6 +113,13 @@
 		items="{
 				path : 'chargementModelJson>/results/1/tChargItem'			
 			}">
+				<headerToolbar>
+					<OverflowToolbar id="otbSubheader">
+					<Text text="UMs Chargées" />
+						<ToolbarSpacer/>
+						<Button id="ScanManuelQuai09" text="Scan Manuel UM" type="Transparent" press=".onScanManuelUm" icon= "sap-icon://bar-code"/>
+					</OverflowToolbar>
+				</headerToolbar>	
 		
 		<columns>
 		 	<Column hAlign="Begin" width="17%"> <Text text="Um" />          </Column>

@@ -2,22 +2,31 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
  
-<Dialog title="Motifs de non chargement" 	contentWidth = "70%" contentHeight = "50%" resizable ="true">
-		  
+<Dialog title="Scan UM " showHeader= "true" 	contentWidth = "30%" contentHeight = "20%" resizable ="true" draggable="true">
+	<FlexBox
+				     direction="Row"
+				     justifyContent="Start"
+				     alignItems="Left">
+
+	<Label id= "LabelScanUm" class="sapUiTinyMarginEnd" text="Veuillez saisir ou scanner UM"  design="Bold" />
     <Input
-			id="UMscan"
+			id="UMScan"
+			value=   "{ChargementUmModel>/codum}" 
 			placeholder="Scannez un UM"
 			showSuggestion="false"
 			showValueHelp="false">
 			
 		</Input>
+	</FlexBox>
+	
+	
 	<beginButton>
-		<Button  id="ScanUMAccept" type="Accept" text="Terminer le chargement"
-				press=".onconfirmMotifsNch" />
+		<Button  id="ScanUMAccept" type="Accept" text="Charger UM"
+				press=".onValidScanUm" />
 	</beginButton>					
 	<endButton>		    
-		<Button id="ScanUMReject"  type="Reject" text="Refuser"
-				press=".onDialogMotifsClose" />
+		<Button id="ScanUMReject"  type="Reject" text="Fermer"
+				press=".onDialogValidScanUMClose" />
 	</endButton>						
 </Dialog>
 
