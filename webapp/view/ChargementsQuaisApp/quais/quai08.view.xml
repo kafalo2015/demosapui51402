@@ -71,6 +71,12 @@
 		items="{
 				path : 'chargementModelJson>/results/0/tPosteNocharge'	  		
 			}">
+			<headerToolbar>
+					<OverflowToolbar id="SubheaderTablePostenoChargQuai08">
+					<Text text="Postes restants" />
+						<ToolbarSpacer/>
+					</OverflowToolbar>
+				</headerToolbar>
 	    <columns>
             <Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
 			<Column hAlign="Begin" width="6%"> <Text text="Poste Livr."/> </Column>
@@ -105,7 +111,7 @@
 	</Table>	
 		</ScrollContainer>
 			<ScrollContainer height='250px' vertical='true'>
-	    <Table id="tableChargementUM_quai08" class="sapSmallMargin" width="auto" headerText="UMs Chargées" enableBusyIndicator = "true"
+	    <Table id="tableChargementUM_quai08" class="sapSmallMargin"  backgroundDesign="Solid" width="auto" headerText="UMs Chargées" enableBusyIndicator = "true"
 		items="{
 				path : 'chargementModelJson>/results/0/tChargItem'			
 			}">

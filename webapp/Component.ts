@@ -86,6 +86,12 @@ export default class Component extends BaseComponent {
      //               TODO -> Faire une méthode séparée pour enregistrement du modèle de notifications                              //  
      //----------------------------------------------------------------------------------------------------------------------------//
             let notificationsQuaisModel = new JSONModel();
+            
+
+            //TODO LOT15 Scan Manuel  -> Dans le modèle JSON Faire une notification de Succès/Error séparée pour la boîte de dialogue de Scan Manuel
+
+
+
             let json_object : object = 
               {
     "quais": [
@@ -101,6 +107,8 @@ export default class Component extends BaseComponent {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
+                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
              
         },
@@ -115,6 +123,8 @@ export default class Component extends BaseComponent {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
+                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
             
         },
@@ -129,6 +139,8 @@ export default class Component extends BaseComponent {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
+                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
             
         },
@@ -143,6 +155,8 @@ export default class Component extends BaseComponent {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror"   : {"msg_txt": "","visible": false    },
+                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
             
         },
@@ -157,6 +171,8 @@ export default class Component extends BaseComponent {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
+                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
             
         },
@@ -171,6 +187,8 @@ export default class Component extends BaseComponent {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
+                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
             
         },
@@ -185,6 +203,8 @@ export default class Component extends BaseComponent {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
+                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
             
         },
@@ -199,6 +219,8 @@ export default class Component extends BaseComponent {
                 "notifsuccess" : {"msg_txt": "","visible": false    },
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
+                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
             
         }
@@ -620,6 +642,9 @@ if ( (notificationsQuaisModel.getProperty("/quais/" + current_quai_index_json + 
 notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um", um);    // On stocke le dernier UM traité dans le modèle des notifications 
 }
 
+
+// TODO BEGIN LOT15 Scan Manuel -> Il faut également alimenter les propriétées d'erreur et de Succès de scan Manuel
+
     if ( type_msg == 'information' )   // Si la notificaiton est de type information (succès) alors il faut cacher la notification de type erreur
         {
         notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess/msg_txt",msg_txt);
@@ -627,6 +652,15 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
 
         notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt","");
         notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",false);
+
+
+            //LOT 15 BEGIN Scan Manuel UM
+        notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess_scanmanuelum/msg_txt",msg_txt);
+        notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess_scanmanuelum/visible",true);
+
+        notificationsQuaisModel.setProperty(model_root_path + "/notiferror_scanmanuelum/msg_txt","");
+        notificationsQuaisModel.setProperty(model_root_path + "/notiferror_scanmanuelum/visible",false);
+            //LOT 15 END Scan Manuel UM
        
         //  LOT 14 BEGIN RECETTE JANVIER 2026 -> EVOL  Faire cliqnoter le header du chargement lors du chargement d'une UM
 
@@ -660,6 +694,23 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
 
         notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt","");
         notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",false);
+
+          //  LOT 14 BEGIN RECETTE JANVIER 2026 -> EVOL  Faire cliqnoter le header du chargement lors du chargement d'une UM
+
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorset","ColorSet1");
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorshade","ShadeD");
+         setTimeout(() => {
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorset","ColorSet9");
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorshade","ShadeE");
+            
+         }, 4000);
+          setTimeout(() => {
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorset","ColorSet1");
+        notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json  + "/header/backgroundcolorshade","ShadeD");
+            
+         }, 5000);
+
+    // LOT 14 END RECETTE JANVIER 2026 -> EVOL  Faire cliqnoter le header du chargement lors du chargement d'une UM
         }
 
     if ( type_msg == 'E' )             // Si la notification est de type erreur alors il faut cacher les notifications de warning ou d'information(Succès)
@@ -671,6 +722,16 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
         notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess/visible",false);
         notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/msg_txt","");
         notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/visible",false);
+
+
+       //LOT 15 BEGIN Scan Manuel UM
+       notificationsQuaisModel.setProperty(model_root_path + "/notiferror_scanmanuelum/msg_txt",msg_txt);
+       notificationsQuaisModel.setProperty(model_root_path + "/notiferror_scanmanuelum/visible",true)
+
+        notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess_scanmanuelum/msg_txt","");
+        notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess_scanmanuelum/visible",false);
+       //LOT 15 END Scan Manuel UM
+
 
          //  LOT 14 BEGIN RECETTE JANVIER 2026 -> EVOL  Faire cliqnoter le header du chargement lors du chargement d'une UM
 
@@ -921,7 +982,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
         // TESTS PHP->DEV
         //----------------------------------------------------------------------------------------
            var mHeader = {     
-            // "Authorization": auth,                           // Essai pas d'autorisation
+            // "Authorization": auth,                           // Essai pas d'autorisation         //LOt15 -> Je vois pas comment ca peut marcher en localhost sans autorisaiton?
              "Content-Type":"application/json",
            }
 
@@ -1180,7 +1241,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     //---------------------------------------------------------------------------------------- --------------------------------------------------------------                    
            let mHeader = {
             "Content-Type":"application/json", 
-            "quai1":  i_quai 
+            "quai1":  i_quai                             //LOT15 [Scan Manuel UM]-> Rajouter le paramètre quai1 dans le paramétrage CORS UCONCOCKPIT
         }
      //-----------------------------------------------------------------------------------------
     // END LOT 12 : Déploiement PHP
@@ -1236,14 +1297,16 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
      console.log("P1 LOt15 Valeur de i_validation_charg_um :" + i_validation_charg_um);
       if ( i_validation_charg_um == false ) // Si c'est un chargement manuel on déclenche la navigation. Si c'est une validation de chargement on ne déclenche pas la navigation
       {
-        lv_target_quai = "targetchargement" + i_quai.toLowerCase();
-        const router = this.getRouter();
-        console.log("P1 Navigation vers le quai avec target " + lv_target_quai);
-         
+        // 04-02-2026 BEGIN La navigation a été retirée
+        //lv_target_quai = "targetchargement" + i_quai.toLowerCase();
+        //const router = this.getRouter();
+        //console.log("P1 Navigation vers le quai avec target " + lv_target_quai);
         //router.getTargets()?.display(lv_target_quai); // La navigation n'est pas forcément utile -> A tester
-        this.getEventBus().publish("Default", "CloseManualScanPopupEvent", {}); 
-        this.getEventBus().publish("Default", "validationMsgChargementEvent", {});  // LOT15 Rappel du modèle de validation de chargment -> Réfléchir si c'est nécessaire ou le mettre dans le handler du routing
+        // 04-02-2026 END La navigation a été retirée
+        //this.getEventBus().publish("Default", "CloseManualScanPopupEvent", {}); 
       }
+      console.log("P1 HIGH LOt15 Rappel de l'API des messages de validation");
+      this.getEventBus().publish("Default", "validationMsgChargementEvent", {});  // LOT15 Rappel du modèle de validation de chargment -> Réfléchir si c'est nécessaire ou le mettre dans le handler du routing
 
                                                                                                                       },reason=>{ 
                                                                                                              }); 

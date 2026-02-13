@@ -70,6 +70,12 @@
 		items="{
 				path : 'chargementModelJson>/results/5/tPosteNocharge'	  		
 			}">
+			<headerToolbar>
+					<OverflowToolbar id="SubheaderTablePostenoChargQuai13">
+					<Text text="Postes restants" />
+						<ToolbarSpacer/>
+					</OverflowToolbar>
+				</headerToolbar>
 	     <columns>
 		    <Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
 			<Column hAlign="Begin" width="6%"> <Text text="Poste Livr."/> </Column>

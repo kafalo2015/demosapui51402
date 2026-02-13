@@ -68,13 +68,13 @@
 		items="{
 				path : 'chargementModelJson>/results/6/tPosteNocharge'	  		
 			}">
-				<headerToolbar>
-					<OverflowToolbar id="otbSubheader">
-					<Text text="UMs Chargées" />
+			<headerToolbar>
+					<OverflowToolbar id="SubheaderTablePostenoChargQuai14">
+					<Text text="Postes restants" />
 						<ToolbarSpacer/>
-						<Button id="ScanManuelQuai14" text="Scan Manuel UM" type="Transparent" press=".onScanManuelUm" icon= "sap-icon://bar-code"/>
 					</OverflowToolbar>
-				</headerToolbar>	
+				</headerToolbar>
+				
 		<columns>
             <Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
 			<Column hAlign="Begin" width="6%"> <Text text="Poste Livr."/> </Column>
@@ -110,10 +110,18 @@
 
 </ScrollContainer>
 <ScrollContainer height='250px' vertical='true'>
-	  <Table id="tableChargementUM_quai14" class="sapSmallMargin" width="auto" headerText="UMs Chargées"
+	  <Table id="tableChargementUM_quai14" class="sapSmallMargin" backgroundDesign="Solid" width="auto" headerText="UMs Chargées"
 		items="{
 				path : 'chargementModelJson>/results/6/tChargItem'			
 			}">
+
+				<headerToolbar>
+					<OverflowToolbar id="otbSubheader">
+					<Text text="UMs Chargées" />
+						<ToolbarSpacer/>
+						<Button id="ScanManuelQuai14" text="Scan Manuel UM" type="Transparent" press=".onScanManuelUm" icon= "sap-icon://bar-code"/>
+					</OverflowToolbar>
+				</headerToolbar>
 				
 		<columns>
 			<Column hAlign="Begin" width="17%"> <Text text="Um" />          </Column>
