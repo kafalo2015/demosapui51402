@@ -7,12 +7,12 @@
  
 	 <Panel  headerText ="" id = "PanelValidationChargement" stickyHeader="true" height="100%" width = "100%">
 	      <content>  
-				<List   headerText="" mode="" items="{ path : 'validationMsgChargementQuaiModelJSON>tValidationMsg'}"
+				<List   headerText=""  items="{ path : 'validationMsgChargementQuaiModelJSON>tValidationMsg'}"
 						growing="false"
 						growingThreshold="1"
 						growingScrollToLoad="false">
 					<CustomListItem>
-					<FlexBox type = "Horizontal">
+					<FlexBox>
 						<!--    INFOS SUPPLEMENTAIRES DANS LE TEXTE DU MSG_STRIP POUR DES TESTS LOT8/LOT9 VALDATION DES QUAIS
 						<MessageStrip 
 							text="{notificationsQuaisModel>validationtxt} Check id : {notificationsQuaisModel>checkid} Numéro d'UM : {notificationsQuaisModel>codum} Numéro de check : {notificationsQuaisModel>checknumber}"

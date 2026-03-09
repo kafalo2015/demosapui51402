@@ -1,5 +1,5 @@
 import BaseComponent from "sap/ui/core/UIComponent";
-import WebSocket, { WebSocket$MessageEvent } from "sap/ui/core/ws/WebSocket";
+import WebSocket, { WebSocket$MessageEvent,WebSocket$ErrorEvent } from "sap/ui/core/ws/WebSocket";
 import { createDeviceModel } from "./model/models";
 import DateFormat from "sap/ui/core/format/DateFormat";
 import JSONModel from "sap/ui/model/json/JSONModel";
@@ -13,7 +13,9 @@ import UIComponent from "sap/ui/core/UIComponent";
  import Fragment from "sap/ui/core/Fragment"; 
 import Target from "sap/ui/core/routing/Target";
 import { Targets$DisplayEvent } from "sap/ui/core/routing/Targets";
- 
+import ElementBase from "sap/suite/ui/commons/networkgraph/ElementBase";
+
+
 // LOT/DATE/AUTEUR/DECRIPTION
 // LOT 6 => Lancement du démarrage du chargemnet à partir du quai
 // LOT 7- 18/09/2025- GILLES CAMILLERI LOT 7 => Modèle de Notifications au niveau du component 
@@ -24,6 +26,17 @@ import { Targets$DisplayEvent } from "sap/ui/core/routing/Targets";
 // LOt 12-10/12/2025- GILLES CAMILLERI => Test déploiement php -> A REMETTRE LES APPELS AUX APIS RETIRES POUR TESTS
 // LOt 13-30/12/2025-GILLES CAMILLERI => API + Popup Motif de non chargement + fin chargement
 // LOt 15-29/11/2026-GILLES CAMILLERI => Scan Manuel des UMS
+// LOt 16-27/02/2026-GILLES CAMILLERI => Déploiement HTTPS sur Web OPC
+// LOt 17-27/02/2026-GILLES CAMILLERI => amélioration code
+
+     enum environment_enum {
+  dev = "dev",
+  test = "exc",
+  preprod = "prod",
+  prod = "prod",
+}
+ 
+
 /**
  * @namespace clf.logistique.chargementquais
  */
@@ -35,18 +48,13 @@ export default class Component extends BaseComponent {
         ]
 	};
     
-    // public g_const_dev_environment :string = "dev";
-    // public g_const_bas_environment :string = "bas";
-    // public g_const_pre_environment :string = "pre";
-    // public g_const_prod_environment :string = "prod";
-
-    public gv_environment :string;
-    
+    public gv_environment :environment_enum;
+    // TODO LOT 17 Mettre les chemins de serveur dans une énumération
     public  sap_server_dev  :string  = "sapdev.exaclair.eu";    // ADRESSE UI5 YAML SHDS-SAPDEV.exaclair.clairefontaine.local:1080
-    public  sap_server_bas  :string  = "sapbas.exaclair.eu";  
+    public  sap_server_bas  :string  = "sapbas.exaclair.eu"; 
+    public  sap_server_test  :string  = "sap.exaclair.eu";   // TODO A vérifier 
     public  sap_server_pre  :string  = "sappre.exaclair.eu";
     public  sap_server_prod :string  = "sapprod.exaclair.eu";
-
     public gv_chargement_url : string;
     public gv_chargement_um_api_url: string;                    // URL API startchargement
     public gv_startchargement_api_url: string;                  // URL API startchargement
@@ -55,6 +63,7 @@ export default class Component extends BaseComponent {
     public gv_validation_msg_chargementquais_api_url: string;                                                                     //gv_validation_msg_chargementquais_api_url
     public gv_chargementprevus_api_url: string;                  // URL API Chargement prévus
     public gv_material_umstock_api_url: string;                  // URL material_umstock_list
+    public gv_websocket_url: string;                             // URL Web Socket    LOT16
     public const_chargementsPrevusApp = "ChargementsPrevusApp";  // Application Chargement prévues
     public const_chargementsQuaisApp = "ChargementsQuaisApp";    // Application Chargement des quais
     public gv_current_application: string;                       // Stocke le nom de l'application actuellement affiché (Liste des chargmentn ou Chargement des quais)
@@ -64,17 +73,17 @@ export default class Component extends BaseComponent {
 		// call the base component's init function
 		super.init();
         // Changemment de variable environnement (dev ou qual) pour appeler les API de la qual ou de la dev
-         this.gv_environment = 'dev';
+         this.gv_environment = environment_enum.test;
       // this.gv_environment = this.getManifestEntry("/sap.ui5/config/api_env");
-       console.log("P1 HIGH Lecture de la variable de configuraiton du manifest /sap.ui5/config/api_env : " +    this.gv_environment )
+       console.log("P1 HIGH Lecture de la variable de configuration du manifest /sap.ui5/config/api_env : " +    this.gv_environment )
 
         //this.initchargementquaiModel();                                 //LOT 4 Lancement chargement des quais
         // set the device model
         this.setModel(createDeviceModel(), "device");
          // set i18n model
-         //const i18nModel = new ResourceModel({
-         //   bundleName: "clf.logistique.chargementquais.i18n.i18n"
-        //});
+  //       const i18nModel = new ResourceModel({
+  //          bundleName: "clf.logistique.chargementquais.i18n.i18n"
+  //  });
         //this.setModel(i18nModel, "i18n"); 
  // ----------------------EXEMPLE  TYPE DE MESSAGEs---------------------------------------------------
 /*		Information : "Information",
@@ -86,12 +95,7 @@ export default class Component extends BaseComponent {
      //               TODO -> Faire une méthode séparée pour enregistrement du modèle de notifications                              //  
      //----------------------------------------------------------------------------------------------------------------------------//
             let notificationsQuaisModel = new JSONModel();
-            
-
             //TODO LOT15 Scan Manuel  -> Dans le modèle JSON Faire une notification de Succès/Error séparée pour la boîte de dialogue de Scan Manuel
-
-
-
             let json_object : object = 
               {
     "quais": [
@@ -126,7 +130,6 @@ export default class Component extends BaseComponent {
                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
-            
         },
         {
             "quai": "quai10",
@@ -142,7 +145,6 @@ export default class Component extends BaseComponent {
                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
-            
         },
         {
             "quai": "quai11",
@@ -158,7 +160,6 @@ export default class Component extends BaseComponent {
                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
-            
         },
         {
             "quai": "quai12",
@@ -174,7 +175,6 @@ export default class Component extends BaseComponent {
                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
-            
         },
         {
             "quai": "quai13",
@@ -190,7 +190,6 @@ export default class Component extends BaseComponent {
                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
-            
         },
         {
             "quai": "quai14",
@@ -206,7 +205,6 @@ export default class Component extends BaseComponent {
                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
-            
         },
         {
         "quai": "quai15",
@@ -222,7 +220,6 @@ export default class Component extends BaseComponent {
                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
-            
         }
     ],
     "notif_txt_all": [
@@ -233,7 +230,6 @@ export default class Component extends BaseComponent {
                 "notifwarning" : {"msg_txt": "","visible": false    },
                 "notiferror" :   {"msg_txt": "","visible": false    },
             },                      
-
 };
             notificationsQuaisModel.setData(json_object);
             this.setModel(notificationsQuaisModel, "notificationsQuaisModel");
@@ -245,8 +241,9 @@ export default class Component extends BaseComponent {
       //----------------------------------------------------------------------------------------------------------------------------//
      //                                                                                                                            //  
      //----------------------------------------------------------------------------------------------------------------------------//
-
-     this.open_websocket_NotificationUM();            //LOt 12-> Rest déploiement phm -> A REMETTRE
+      
+     // LOT16 DEPLOIEME?NT PHP -> Mettre l'ouverture du Web socket en dernier
+     //this.open_websocket_NotificationUM();            //LOt 12-> Rest déploiement phm -> A REMETTRE
      // Abonnement à l'eventing
      //----------------------------------------------------------------------------------------------------------------------------//
      //               TODO -> Mettre tous les listeners dans une  méthode                                                            //  
@@ -288,7 +285,6 @@ export default class Component extends BaseComponent {
        this.get_motifs_nonchargement(lv_quai,lv_numtransport);
      }, this ); 
 
-
      //----------------------------------------------------------------------------------------------------------------//
      //         LOT13 ->  HANDLER pour ENd Chargment des quais                                                         //  
      //----------------------------------------------------------------------------------------------------------------//
@@ -299,7 +295,6 @@ export default class Component extends BaseComponent {
        this.post_motifs_nonchargement();
      }, this ); 
 
-
       //----------------------------------------------------------------------------------------------------------------//
      //               HANDLER pour Chargement_UM_get     LOT15 -> Scan Manuel UM                                                                //  
      //----------------------------------------------------------------------------------------------------------------//
@@ -309,16 +304,8 @@ export default class Component extends BaseComponent {
       //---- LOT 9 Validation des messages de Warning TODO )                                                            //
       //----------------------------------------------------------------------------------------------------------------//
         let lv_quai :string    = Object.values(data)[0];  
-    //    let codum :string   = Object.values(data)[1];  
-    //    let msgid :string   = Object.values(data)[2];
-    //    let aenam :string   = Object.values(data)[3];
-    //    let errdt :string   = Object.values(data)[4];
-    //    let errzt :string   = Object.values(data)[5];
-    //    let choice :boolean = Object.values(data)[6];
-        
        this.api_chargement_um_get(lv_quai);
      }, this );
-
 
      //----------------------------------------------------------------------------------------------------------------//
      //               HANDLER pour Validation UM                                                                       //  
@@ -336,7 +323,6 @@ export default class Component extends BaseComponent {
        let errzt :string   = Object.values(data)[5];
        let choice :boolean = Object.values(data)[6];
        let validation_charg_um :boolean = Object.values(data)[7];
-       
        
        console.log("P1 LOt15 Chargement manuel scan EVENT ChargementUmPostEvent");
        this.api_chargement_um_post(quai,codum,msgid,aenam,errdt,errzt,choice,validation_charg_um);
@@ -380,9 +366,14 @@ export default class Component extends BaseComponent {
      //----------------------------------------------------------------------------------------------------------------------------//
      // this.getEventBus().publish("Default", "chargementListEvent", {});           //LOt 12-> Rest déploiement phm -> A REMETTRE
       this.getEventBus().publish("Default", "chargementEvent", {});
-      this.getEventBus().publish("Default", "chargementListEvent", {});             // MODIF LOT13 =>Le chargement list après le chargement
-      this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});    //LOt 12-> Rest déploiement phm -> A REMETTRE
-      this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOt 12-> Rest déploiement phm -> A REMETTRE
+
+      // ATTENTIONN REMETTRE LES APIS APRES RESOLUTION LOT16 DEPLOIEMENT WEB OPC
+       this.getEventBus().publish("Default", "chargementListEvent", {});             // MODIF LOT13 =>Le chargement list après le chargement
+       this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});    //LOt 12-> Rest déploiement phm -> A REMETTRE
+       this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOt 12-> Rest déploiement phm -> A REMETTRE
+      // ATTENTIONN REMETTRE LES APIS APRES RESOLUTION LOT16 DEPLOIEMENT WEB OPC
+       // LOT16 DEPLOIEME?NT PHP -> Mettre l'ouverture du Web socket en dernier  // TODO rajouter de l'authentification dans le web socket
+        this.open_websocket_NotificationUM();            //LOt 12-> Rest déploiement phm -> A REMETTRE
    
       const router = this.getRouter().initialize();   
       
@@ -420,151 +411,50 @@ export default class Component extends BaseComponent {
 //     Méthode de récupération des URLS des API                                                                                    //  
 //---------------------------------------------------------------------------------------------------------------------------------//
   public getApiUrl() : void{
-
-    //  SAUVEGARDE Evolution déploiement sur PHP
-//     if ( location.hostname === 'localhost' ) {          
-//         if (this.environment === "dev") {
-//                 this.gv_chargementquais_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
-//                 this.gv_validation_msg_chargementquais_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
-//                 this.gv_chargementprevus_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
-//                 this.gv_startchargement_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
-//                 this.gv_material_umstock_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-//                 this.gv_chargement_um_api_url = "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
-//         }
-//         if (this.environment === "qual") {      
-//                 this.gv_chargementquais_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement"; 
-//                 this.gv_validation_msg_chargementquais_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";  
-//                 this.gv_chargementprevus_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";            
-//                 this.gv_startchargement_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; 
-//                 this.gv_material_umstock_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-//                 this.gv_chargement_um_api_url = "/rest_qual/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
-//         }
-//     }
-// else {          this.gv_chargementquais_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";  
-//                 this.gv_validation_msg_chargementquais_api_url  = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";   
-//                 this.gv_chargementprevus_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
-//                 this.gv_startchargement_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";   
-//                 this.gv_material_umstock_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-//                 this.gv_chargement_um_api_url = "https://" + location.host + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";            
-//     } 
- //  SAUVEGARDE Evolution déploiement sur PHP
-    
     let lv_location :string;
-   
-//  Evolution déploiement sur PHP BEGIN
-  if ( location.hostname === 'localhost' ) {                                 // Test en local host avec le proxy ui5 tooling     
-           console.log("P1 HIGH Exécution en localhost  pour appel sur environnement :" + this.gv_environment);
-           switch (this.gv_environment.toLowerCase()) {
-            case 'dev':
-               // lv_location = "rest_dev";    //LOT12 A Remettre   //Utilisation du proxy"
-                //lv_location = "http://sapdev.exaclair.eu";         //Pas d'utilisation du proxy 
-                // lv_location= "https://SHDS-SAPDEV.exaclair.clairefontaine.local:443";           // HTTPS  SHDS-SAPDEV.exaclair.clairefontaine.local:443
-                 lv_location= "http://shds-sapdev.exaclair.clairefontaine.local:1080";             // appel sans nunméro de port
-                 break;
-            case 'bas':
-                // TESTS CORS en localhost sur 'environnement BAS |Désactivation du chemin du proxy rest_bac pour désactiver le proxy
-              //     lv_location = "rest_bac";                                                  
-                lv_location = "https://sexa-sapoc-s4.exaclair.clairefontaine.local:44301";              //HTTPS 
-               // lv_location = "http://sexa-sapoc-s4.exaclair.clairefontaine.local:8001";                //HTTP
-                // TESTS CORS en localhost sur 'environnement BAS
-                 console.log("P1 HIGH Environnement BAS");
-                 break;    
-            case 'pre':
-                lv_location = "rest_qual";
-                break;
-                case 'prod':                                 // Rajouter le resource ROOT rest_prod dans le ui5.yaml
-                lv_location = "rest_prod";
-                break;    
-            default:
-                lv_location = "rest_dev";
-                break; 
+    let lv_socket_location :string;
+
+        // BEGIN SIMPLIFICATION CDOE
+        let lv_index: number =      location.hostname.search(/sap/);
+//         //------------------------------------  DEPLOIEMENT SUR SERVEUR SAP--------------------------------------------------------------------------------------------------
+        if (lv_index == -1 || location.hostname === 'localhost')
+             {
+                switch (this.gv_environment.toLowerCase()) {
+                case environment_enum.dev:
+                    lv_location         = "sapdev.exaclair.eu";     //   Vérifier s'il faut mettre le port ou pas
+                    lv_socket_location  = "sapdev.exaclair.eu:443"; //   Vérifier s'il est possible d'utiliser le même chemin que les API  
+                // Lien vers Web Socket Johann  wss://sclf-webopc:8080/sap/bc/apc/sap/ychargement_camion_poc
+                //lv_socket_location = "sclf-webopc:8080";
+                    break; 
+                case environment_enum.test:
+                    lv_location         = "sapqual.exaclair.eu";     //   Vérifier s'il faut mettre le port ou pas
+                    lv_socket_location  = "sapqual.exaclair.eu:443"; //   Vérifier s'il est possible d'utiliser le même chemin que les API  
+                    break; 
+                case environment_enum.prod:
+                    lv_location         = "sapprod.exaclair.eu";     //   Vérifier s'il faut mettre le port ou pas
+                    lv_socket_location  = "sapprod.exaclair.eu"; //   Vérifier s'il est possible d'utiliser le même chemin que les API  
+                    break; 
+                default:
+                    lv_location        = "sapdev.exaclair.eu";
+                    lv_socket_location = "sapdev.exaclair.eu:443";
+                    break; 
+                }
             }
-               
-    //   this.gv_chargementquais_api_url = "/" + lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";   //TEST CORS SUR EN BAS =>ATTENTION ->Peut être remettre le / après test CORS
-     //   this.gv_chargementquais_api_url =  lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";    //DEPLOIEMENT PHP
-          console.log("P1 HIGH API Chargement des quais: " +   this.gv_chargementquais_api_url);
+        else
+           {      
+             lv_location = location.host;
+             lv_socket_location = location.host;  
+            }  
+    this.gv_chargementquais_api_url = "https://" + lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";
+    this.gv_validation_msg_chargementquais_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
+    this.gv_chargementprevus_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
+    this.gv_startchargement_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
+    this.gv_endchargement_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/end_chargement";
+    this.gv_material_umstock_api_url =  "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+    this.gv_chargement_um_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
+    this.gv_websocket_url = "wss://" + lv_socket_location + "/sap/bc/apc/sap/ychargement_camion_poc"; 
 
-        //------------------------------------------------ ATTENTION Le / est retiré si on utilise pas le proxy ----------------------------------------------------
-        // this.gv_validation_msg_chargementquais_api_url = "/" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
-        // this.gv_chargementprevus_api_url = "/" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
-        // this.gv_startchargement_api_url = "/" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
-        // this.gv_material_umstock_api_url = "/" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-        // this.gv_chargement_um_api_url = "/" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
-        
-        //------------------------------------------------ ATTENTION Le / est retiré si on utilise pas le proxy ----------------------------------------------------
-
- //------------------------------------------------ DEPLOIEMENT PHP BEGIN ----------------------------------------------------
-            this.gv_chargementquais_api_url =  lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";
-            this.gv_validation_msg_chargementquais_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
-            this.gv_chargementprevus_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
-            this.gv_startchargement_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
-            this.gv_endchargement_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/end_chargement";
-            this.gv_material_umstock_api_url =  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-            this.gv_chargement_um_api_url = lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
- //------------------------------------------------ DEPLOIEMENT PHP END ----------------------------------------------------
-
-
-}
-else {         
-                let lv_index: number =      location.hostname.search(/sap/);
-        //------------------------------------  DEPLOIEMENT SUR SERVEUR SAP--------------------------------------------------------------------------------------------------
-                if (lv_index !== -1) {
-                     lv_location = location.host;
-              
-                 this.gv_chargementquais_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";  
-                this.gv_validation_msg_chargementquais_api_url  = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";   
-                this.gv_chargementprevus_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
-                this.gv_startchargement_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; 
-                this.gv_endchargement_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/end_chargement";  
-                this.gv_material_umstock_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-                this.gv_chargement_um_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";     
-                } else 
-           //------------------------------------  DEPLOIEMENT SUR SERVEUR PHP--------------------------------------------------------------------------------------------------            
-                {
-                // public  sap_server_dev  :string  = "sapdev.exaclair.eu";    // ADRESSE UI5 YAML SHDS-SAPDEV.exaclair.clairefontaine.local:1080
-                // public  sap_server_pre  :string  = "sappre.exaclair.eu";
-                // public  sap_server_prod :string  = "sapprod.exaclair.eu";
-                    console.log("P1 HIGH Host différent de sap et différent de localhost" +  location.host);
-                    // DEPLOIEMENT SUR PHP -> On pointe sur le serveur sAP spécifié dans la variable environnement gv_environement
-                     switch (this.gv_environment.toLowerCase()) {
-                        case 'dev':
-                            //lv_location ="shds-sapdev.exaclair.clairefontaine.local:443";   //s sapdev.exaclair.eu SHDS-SAPDEV.exaclair.clairefontaine.local:443
-                            lv_location ="shds-sapdev.exaclair.clairefontaine.local"      // APPEL SANS LE NUM PORT 
-                            break;
-                        case 'pre':
-                            lv_location = "sappre.exaclair.eu";
-                            break;
-                        case 'bas':
-                            //lv_location = "sexa-sapoc-s4.exaclair.clairefontaine.local:8001";
-                            lv_location = "sexa-sapoc-s4.exaclair.clairefontaine.local:44301";      //Déploiement en HTTPS
-                            break;    
-                        case 'prod':
-                            lv_location = "sapprod.exaclair.eu";
-                            break;    
-                        default:
-                            lv_location = "sexa-sapoc-s4.exaclair.clairefontaine.local:44301";
-                            break; 
-                        }
-                console.log("P1 HIGH  variable environnement  = " + this.gv_environment + " URL des API" +   lv_location);
-                  // TODO -> Essayer le HTTPs sur le serveur PHP  -
-                this.gv_chargementquais_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";  
-                this.gv_validation_msg_chargementquais_api_url  = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";   
-                this.gv_chargementprevus_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
-                this.gv_startchargement_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement"; 
-                this.gv_endchargement_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/end_chargement";    
-                this.gv_material_umstock_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-                this.gv_chargement_um_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
-                }   
-
-                //  console.log("P1 HIGH URL des API" +   lv_location);
-                // this.gv_chargementquais_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";  
-                // this.gv_validation_msg_chargementquais_api_url  = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";   
-                // this.gv_chargementprevus_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list";    
-                // this.gv_startchargement_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";   
-                // this.gv_material_umstock_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-                // this.gv_chargement_um_api_url = "https://" +  lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";         
-    }
-        //  SAUVEGARDE Evolution déploiement sur PHP END
+        // END SIMPLIFICATION CODE  
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 //                                                                                                                                 //  
@@ -607,19 +497,6 @@ else {
     }
       console.log("-----P1--------- LOT 7 Modèle root path :" + model_root_path  );
 
-// Code pour afficher qu'une seule notifications (Si Success alors warning est masqué)     
-//      if ( notificationsQuaisModel.setProperty(model_root_path +"/notifsuccess/msg_txt",type_msg == 'information' ? msg_txt : "") == true)
-// {
-//     console.log(" P1 LOT 7  MAJ de du message Strip de succès" +  msg_txt  );
-// }
-//       notificationsQuaisModel.setProperty(model_root_path +"/notifsuccess/visible",type_msg == 'information' ? true : true);   // false (Evol on affiche tous les types de notification)
-
-//       notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/msg_txt",type_msg == 'W' ? msg_txt : "");
-//       notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/visible",type_msg == 'W' ? true : true);
-
-//       notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt",type_msg == 'E' ? msg_txt : "");
-//       notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",type_msg == 'E' ? true : true);
-
 // BEGIN EVOLUTION -> Affichage de plusieurs messsages strip en même temps sur le quai
 // Code pour effacer les notifications d'erreur en cas de démarrage de chargement  
 if (action == 'startchargement' &&  (( type_msg == 'information' ) || ( type_msg == 'W' )) )
@@ -642,7 +519,6 @@ if ( (notificationsQuaisModel.getProperty("/quais/" + current_quai_index_json + 
 notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um", um);    // On stocke le dernier UM traité dans le modèle des notifications 
 }
 
-
 // TODO BEGIN LOT15 Scan Manuel -> Il faut également alimenter les propriétées d'erreur et de Succès de scan Manuel
 
     if ( type_msg == 'information' )   // Si la notificaiton est de type information (succès) alors il faut cacher la notification de type erreur
@@ -652,7 +528,6 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
 
         notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt","");
         notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",false);
-
 
             //LOT 15 BEGIN Scan Manuel UM
         notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess_scanmanuelum/msg_txt",msg_txt);
@@ -687,7 +562,6 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
         }
 
     if ( type_msg == 'W' )          // Si la notificatios est de type Warning alors il faut cacher la notificdtion  de type erreur
-        
         {
         notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/msg_txt",msg_txt);
         notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/visible",true);
@@ -723,7 +597,6 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
         notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/msg_txt","");
         notificationsQuaisModel.setProperty(model_root_path + "/notifwarning/visible",false);
 
-
        //LOT 15 BEGIN Scan Manuel UM
        notificationsQuaisModel.setProperty(model_root_path + "/notiferror_scanmanuelum/msg_txt",msg_txt);
        notificationsQuaisModel.setProperty(model_root_path + "/notiferror_scanmanuelum/visible",true)
@@ -731,7 +604,6 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
         notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess_scanmanuelum/msg_txt","");
         notificationsQuaisModel.setProperty(model_root_path + "/notifsuccess_scanmanuelum/visible",false);
        //LOT 15 END Scan Manuel UM
-
 
          //  LOT 14 BEGIN RECETTE JANVIER 2026 -> EVOL  Faire cliqnoter le header du chargement lors du chargement d'une UM
 
@@ -753,7 +625,6 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
             
         //  }, 1500); 
         
-
     // LOT 14 END RECETTE JANVIER 2026 -> EVOL  Faire cliqnoter le header du chargement lors du chargement d'une UM
         }
     
@@ -826,7 +697,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
           this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOT 13
         }
 
-
     if ( (action == 'startchargement') && (type_msg == 'information' ))
       {
       console.log("-----P1-----------------------Notification de fin de chargement ou de début de chargement// Rafraichissement des chargements-------------------------------------------");
@@ -854,11 +724,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
         //-----------------------------------------------------------------------------------------
         // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification
         //----------------------------------------------------------------------------------------
-        // var mHeader = {
-        //   c
-        //     "Access-Control-Allow-Origin": "*",
-        //     "Content-Type":"application/json",
-        // }
           var mHeader = {
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",
@@ -915,68 +780,9 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
      //----------------------------------------------------------------------------------------------------------------------------//
     public get_chargement_quais():void {
 // METHODE auhentification 1 - > Authorization : auth        (Retiré suite aux problématiques d'authentification d'Octobre 2025)
-       
-
-        let userName:string = "";                        
-        let password:string = "";
-       if ( this.gv_environment == 'dev')
-
-       {
-         userName = "GCAMILLERI";                           //TODO SEPTEMBER 2025 => ???
-         password = "*Malaga3043";
-
-       }
-
-       if ( this.gv_environment == 'bas')
-
-       {
-
-         userName = "GCAMILLERI";                           //TODO SEPTEMBER 2025 => ???
-         password = "*Malaga3043";
-         console.log("P1 VERY HIGH : userName:" + userName + "Password: " + password);
-       }
-        // let userName = "GCAMILLERI";                           //TODO SEPTEMBER 2025 => ???
-        // let password = "*Malaga3043";
-        let credentials = userName + ':' + password;
-        let hash = btoa(credentials);
-        let auth = 'Basic '+hash;
-
-//  //"Authorization": "Basic",
-//         var mHeader = {
-//             "Authorization": auth,
-//             "Access-Control-Allow-Origin": "*",
-//             "Content-Type":"application/json",
-//             "X-CSRF-Token" :  "Fetch"                                                                   //LOOT4
-//         }
-
-    //---------------------------------------------------------------------------------------------------------------------------
-    // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
-   //----------------------------------------------------------------------------------------------------------------------------
-
-        //    var mHeader = {
-        //     "Access-Control-Allow-Origin": "http://localhost",
-        //     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        //     "Access-Control-Allow-Headers" : "Authorization, Content-Type, Access-Control-Allow-Methods, Access-Control-Allow-Origin, Access-Control-Allow-Credentials ",
-        //     "Access-Control-Allow-Credentials" : true,
-        //     "Content-Type":"application/json",
-        //     "X-CSRF-Token" :  "Fetch"                                                                   //LOOT4
-        // }
-        //-----------------------------------------------------------------------------------------
-        // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification
-        //----------------------------------------------------------------------------------------
-
-       //-----------------------------------------------------------------------------------------
-        // Essai envoi de requête simples pour ne pas générer de préflight   + TEst allow-origin explicite
-        //----------------------------------------------------------------------------------------
-        //   var mHeader = {
-           
-        //     "Access-Control-Allow-Origin": "http://localhost",                                //"Access-Control-Allow-Origin": "*",  -> A essayer aussi https://sclf-webopc
-        //     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-        //     "Access-Control-Allow-Headers" : "Authorization, Content-Type, Access-Control-Allow-Methods, Access-Control-Allow-Origin, Access-Control-Allow-Credentials",
-
-        //     "Content-Type":"application/json"
-        //   }
-
+        // let credentials = userName + ':' + password;
+        // let hash = btoa(credentials);
+        // let auth = 'Basic '+hash;
 
         //-----------------------------------------------------------------------------------------
         // TESTS PHP->DEV
@@ -985,14 +791,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
             // "Authorization": auth,                           // Essai pas d'autorisation         //LOt15 -> Je vois pas comment ca peut marcher en localhost sans autorisaiton?
              "Content-Type":"application/json",
            }
-
-
-        // TESTS DEPMOIEMENT PHP
-//  var mHeader = {
-            
-//             "Access-Control-Allow-Origin": ["*"],
-//             "Content-Type":"application/json"
-//           }
 
          //-----------------------------------------------------------------------------------------
         // Essai envoi de requête simples pour ne pas générer de préflight
@@ -1024,26 +822,10 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     //            LOT10:  Méthode d'appel à l'API  REST des messages de validation des chargements sur les quais                  //  
     //----------------------------------------------------------------------------------------------------------------------------//
     public get_validation_msg_chargements():void {
-        // ancienne verssion des paramètres de header pour déploiement PHP 
-        //    var mHeader = {
-        //     "Access-Control-Allow-Origin": "*",
-        //     "Content-Type":"application/json",
-        //     "X-CSRF-Token" :  "Fetch"                                                                   
-        // }
-
                var mHeader = {
              "Content-Type":"application/json",
               }
 
-    //  let  validationMsgChargementQuaiModelJSON: JSONModel;
-    //  if ( this.getModel("validationMsgChargementQuaiModelJSON") == undefined)
-    //  {
-    //     validationMsgChargementQuaiModelJSON = new JSONModel();
-    //     this.setModel(validationMsgChargementQuaiModelJSON, "validationMsgChargementQuaiModelJSON");
-    //  }else
-    //  {  
-    //     validationMsgChargementQuaiModelJSON =   this.getModel( "validationMsgChargementQuaiModelJSON") as JSONModel;
-    //  }
 
       if ( this.getModel("validationMsgChargementQuaiModelJSON") == undefined)
      {
@@ -1074,7 +856,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     
      console.log("P1 URL API ZCL_PCF_CHARGEMENT_END_RESOUR: " + this.gv_endchargement_api_url ); 
      (this.getModel("finChargementQuaiModelJSON") as JSONModel).loadData(this.gv_endchargement_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {     });
-   
     }
 
     //----------------------------------------------------------------------------------------------------------------------------//
@@ -1089,7 +870,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",  
             "X-Requested-With":"X",
-            //"tmotifnocharg": input_data.tMotifNocharg,    // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
             "tknum": input_data.tknum,    // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
             "quai1":  input_data.quai1,   
         }
@@ -1137,19 +917,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
                             "Accept": "application/atom+xml,application/atomsvc+xml,application/xml",
                             "X-CSRF-Token": "0e855895-5023-4350-bd3e-5651beaadeae"
         } )*/  
-       
-    //-----------------------------------------------------------------------------------------
-    // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
-    //----------------------------------------------------------------------------------------                     
-        //    let mHeader = {
-        //     "Access-Control-Allow-Origin": "*",
-        //     "Content-Type":"application/json",  
-        //     "X-Requested-With":"X"
-            
-        // }
-     //-----------------------------------------------------------------------------------------
-    // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
-    //----------------------------------------------------------------------------------------
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------
     // BEGIN LOT 12 : Déploiement PHP  -> Vérifier s'il ne faut pas remettre le paramètre "X-Requested-With":"X" et l'autoriser au niveau de UCONCOCKPIT
@@ -1216,7 +983,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
                                                                                                              }); 
     }
 
-
  //----------------------------------------------------------------------------------------------------------------------------//
      //               Méthode d'appel de l'API  ZCL_PCF_START_CHARG_RESOURCE/ Méthode GET                                          //  
      //----------------------------------------------------------------------------------------------------------------------------//
@@ -1233,8 +999,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
         {  
             ChargementUmModel =   this.getModel( "ChargementUmModel") as JSONModel;
         } 
-  
-
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------
     // BEGIN LOT 12 : Déploiement PHP  -> Vérifier s'il ne faut pas remettre le paramètre "X-Requested-With":"X" et l'autoriser au niveau de UCONCOCKPIT
@@ -1271,10 +1035,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
   //-----------------------------------------------------------------------------------------
     // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
    //----------------------------------------------------------------------------------------
-
-    //    let mHeader = {
-    //         "Authorization": "Basic",                    
-
               let mHeader = {
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",  
@@ -1287,7 +1047,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
             "errzt": i_errzt,
             "choice": i_choice
         }
-
 
     //-----------------------------------------------------------------------------------------
     // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
@@ -1319,32 +1078,22 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
           //Ouverture des Web Sockets  
           console.log("Hostname du POC//Construire l'URL en fonction du Host:" + location.hostname);
           let lv_url: string;
-         
-        if ( location.hostname === 'localhost' ) {
-        console.log("Lancement des Web Socket en localhost : " + this.gv_environment);
-          if (this.gv_environment === "dev") {
-                lv_url = "odata_dev/sap/bc/apc/sap/ychargement_camion_poc"; 
-                console.log("Web Socket de la dev : odata_dev/sap/bc/apc/sap/ychargement_camion_poc");    
-           }
-          else {
-                    if (this.gv_environment === "qual") {
-                            console.log("Web Socket de la qual : : rest_qual/sap/bc/apc/sap/ychargement_camion_poc");    
-                            lv_url = "rest_qual/sap/bc/apc/sap/ychargement_camion_poc"; }  
-                    else {  console.log("Web Socket de la dev : odata_dev/sap/bc/apc/sap/ychargement_camion_poc");
-                            lv_url = "odata_dev/sap/bc/apc/sap/ychargement_camion_poc";   } 
-                }
-        }
-          else // Si pas en localhost => Possibilité de simplifier le code Mettre location + chemin du Websocket dans tous les cas
-         { 
-            lv_url = "https://" + location.host + "/sap/bc/apc/sap/ychargement_camion_poc";
-         } 
-         console.log("Instantiation du Web Socket avec url :" + lv_url);
-         let v_webSocket = new WebSocket(lv_url);
+        
+         // LOT END 16 Déploiement sur WEB OPC => Evolution gérer le déploiement en localhost, sur SAP et sur WEBOPC
+         console.log("Instantiation du Web Socket avec url :" + this.gv_websocket_url);
+         //["wss","ws","https","http"]
+         let v_webSocket = new WebSocket(this.gv_websocket_url);
          let data_Socket : Object = '';
  
          v_webSocket.attachOpen(function (e: Event) {
              console.log("Ouverture du Web Socket");
          });
+
+   v_webSocket.attachError(function (e: WebSocket$ErrorEvent) {
+            console.log("P1 hIGH  ERREUR OUVERTURE WEB SOCKET");
+             console.log(e);
+         });
+
          var that = this;
          v_webSocket.attachMessage(data_Socket, function (e: WebSocket$MessageEvent) {
             let params = e.getParameters();
@@ -1362,6 +1111,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
                 time: content_json.time,
                 checkid:  content_json.checkid                   
               };
+
              // On envoie une notification UM qui sera gérée dans la vue de Chargement
              // LOT Démarrage Chargement quai -> On va définir un handler notificationWebSocketEvent qui va redispatcher vers notificationUMEvent
              that.getEventBus().publish("Default", "notificationWebSocketEvent",  data);   // Il est possible d'essayer avec    that.getEventBus().publish("Default", "notificationUMEvent",  content_json)

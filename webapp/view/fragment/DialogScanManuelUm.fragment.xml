@@ -18,7 +18,7 @@
 	<FlexBox
 				     direction="Column"
 				     justifyContent="Start"
-				     alignItems="Left">
+				     alignItems="Center">
 
 	<Label id= "LabelScanUm" class="sapUiTinyMarginEnd" text="Veuillez saisir ou scanner UM"  design="Bold" />
     <Input

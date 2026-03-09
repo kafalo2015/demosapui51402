@@ -26,7 +26,7 @@ height = "100%">
 	 <Panel  headerText ="Messages" id = "PanelMessageAppChargementQuais" stickyHeader="true" height="120px" >
 			<content>
 
-				<List   headerText="" mode="" items="{ path : 'notificationsQuaisModel>/notif_txt_all',
+				<List   headerText=""  items="{ path : 'notificationsQuaisModel>/notif_txt_all',
 				                                       sorter: { path: 'time', descending: true    }}"
 						growing="false"
 						growingThreshold="1"

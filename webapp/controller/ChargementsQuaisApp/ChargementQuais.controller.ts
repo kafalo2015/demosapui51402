@@ -85,18 +85,9 @@ export default class ChargementQuais extends Controller {
         this.dialogScanManuelUm.close();
         console.log("LOT Handler Fermeture de la boîte de Dialogue de scan manuel d'UM");
           },this);
-
-
-
-
-
       }
 
-
-      
-
     public onAfterRendering(): void {
-       
     }
 
      public onSelectDialogUmFauxCam(event: Button$PressEvent): void {
@@ -128,7 +119,6 @@ export default class ChargementQuais extends Controller {
           this.getOwnerComponent()?.getEventBus().publish("Default", "LoadMaterialUmStockListEvent", data);
           this.dialogUmStock.open();
          }
-
 
          //---------------------------------------------------------------------
          //LOT 13 : Handler du bouton de validation de fin de chargement
@@ -171,28 +161,12 @@ export default class ChargementQuais extends Controller {
          //LOT 15 : Chargement manuel scan
          //---------------------------------------------------------------------
          public onScanManuelUm(event: Button$PressEvent): void {
-          // BEGIN Récupération du numméro de quai et de l'indice json du quai
-        //   let  lv_source_id_length = event.getSource().getId().length;
-        //   let  lv_quai: string = "quai" + event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length);
-        //   let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
-        //   let  lv_indicejson_quai: number = lv_quai_number-8;
-        //   // END  Récupération du numméro de quai et de l'indice json du quai
-        
-        // // Récupération du numéro de transport du quai à partir de l'index json du quai  
-        // let lv_numtransport:string = this.getOwnerComponent()?.getModel("chargementModelJson")?.getProperty("/results/" + lv_indicejson_quai.toString() + "/numtransport", undefined)
-
-        // console.log("P1 HIGH LOT 13 POPUP Motifs non chargement Valeur du transport= " +  lv_numtransport+  "/QUAI=" + lv_quai_number); 
-        // let data : {quai:string, transport:string} = { quai:  lv_quai, transport: lv_numtransport } 
-        // // Récupération des motifs de non chargement dans l'API REST              
-        // this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEndMotifsNchEvent", data);
-        // Ouverture de la boîte de dialogue de saisie des motifs de non chargement
-
        //TODO Envoyer le numéro de quai dans le get
        //A- Récupération du numéro de quai à partir de l'identifiant du boution
-       let  lv_source_id_length = event.getSource().getId().length;
-          let  lv_quai: string = "QUAI" + event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length);
-          let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
-          let  lv_indicejson_quai: number = lv_quai_number-8;
+        let  lv_source_id_length = event.getSource().getId().length;
+        let  lv_quai: string = "QUAI" + event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length);
+        let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
+        let  lv_indicejson_quai: number = lv_quai_number-8;
          //B- Envoi du numéro de  quai à l'API
 
         let data : {quai:string} = { quai:  lv_quai } 
@@ -224,7 +198,7 @@ export default class ChargementQuais extends Controller {
 
 //this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUMGetEvent");
   let ChargementUmModel: JSONModel =   this.getOwnerComponent()?.getModel( "ChargementUmModel") as JSONModel;
-let input_data:any = ChargementUmModel.getData();
+  let input_data:any = ChargementUmModel.getData();
 
 console.log("P1 LOT scan manuel Valeur du quai=" + input_data.quai1 );
 
@@ -234,46 +208,19 @@ console.log("P1 LOT scan manuel Valeur du quai=" + input_data.quai1 );
     console.log("----------P1 HIGH LOT 15 Appel du post de chargement UM-----VALEUR DU QUAI= " + input_data.quai1 + " Valeur de l'UM= " + input_data.codum);
     this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUmPostEvent", data);
 
-      let data2 : {quai:string} = { quai:  input_data.quai1 } 
+  let data2 : {quai:string} = { quai:  input_data.quai1 } 
         this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUMGetEvent",  data2);
  }
   //----------------------------------------------------------------------------------------------------------------------------------------------------//   
   
- 
  //----------------------------------------------------------------------------------------------------------------------------------------------------//
   //------------------- LOT 15 BEGIN SCAN MANUEL DES UMS    
   //      Attention Réfléchir à s'il faut coder dans ce controlleur ou dans le controlleur des quais
   //     + Voir comment récupérer l'UM saisit                                                                                ------------------------//
   //----------------------------------------------------------------------------------------------------------------------------------------------------//
  public onValidScanUm(event:Button$PressEvent):void {
-  console.log("------------------------------------------------------P1 HIGH LOT15 onValidScanUm: --------------------------------------------------------------");
-  // Anomalie 18/11/2025 BEGIN [Quai au format attendu par l'API]
-  // let lv_quai:string;
-  // // Fournir à l'API (Chargement UM) le quai sous forme 'QUAI09','QUAI10" (Si le numéro de quai  <10 alors il faut rajouter un "O" entre QU et le numéro de quai)
-  // if ( this.gv_current_quai_number < 10 )
-  //     { lv_quai = "QUAI" + "0" + this.gv_current_quai_number; }
-  // else{ lv_quai = "QUAI" + this.gv_current_quai_number; }
-// Anomalie 18/11/2025 END
-
-// TODO-> Récupérer le numéro de quai à partir du modèle
-
-          // let  lv_source_id_length = event.getSource().getId().length;
-          // let  lv_quai: string = "quai" + event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length);
-          // let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
-
-// this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUMGetEvent");
-// let ChargementUmModel: JSONModel =   this.getOwnerComponent()?.getModel( "ChargementUmModel") as JSONModel;
-// let input_data:any = ChargementUmModel.getData();
-
-
-//   let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string, validation_charg_um:boolean} =
-//      { quai: input_data.quai1, codum : input_data.codum,  msgid: '', aenam : '', errdt: '', errzt: '', choice : '', validation_charg_um : false}
-
-//     console.log("----------P1 HIGH LOT 15 Appel du post de chargement UM-----VALEUR DU QUAI= " + input_data.quai1 + " Valeur de l'UM= " + input_data.codum);
-//     this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUmPostEvent", data);
+ 
  }
-
-
      async onOpenDialog(): Promise<void> {
           this.dialog ??= await this.loadFragment({
              name: "clf.logistique.chargementquais.view.fragment.DialogUmFaucam"

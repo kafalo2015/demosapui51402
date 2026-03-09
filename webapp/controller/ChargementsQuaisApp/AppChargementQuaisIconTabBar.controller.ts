@@ -34,7 +34,6 @@ export default class AppChargementQuaisIconTabBar extends Controller {
   //               LOT 8/9 : Validation des messages de chargement // Instantiation du fragment du dialogue 
   //----------------------------------------------------------------------------------------------------------------------------//
   this.onOpenDialogValidCharg();
-
   //---------------------------------------------------------------------------------------------------------------------------------------------------------//
   //               LOT 8/9 : Validation des messages de chargement //Enregistrement de listeners sur les quais => Si message de validation, ouverture d'un popup//
   //---------------------------------------------------------------------------------------------------------------------------------------------------------//
@@ -102,7 +101,6 @@ target_quai11.attachDisplay(()=>{
   }                                               
                             });
 
-
 target_quai12.attachDisplay(()=>{ 
     this.gv_current_quai = 'QUAI12';
   let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/4/tValidationMsg");
@@ -111,7 +109,6 @@ target_quai12.attachDisplay(()=>{
   this.getOwnerComponent()?.getEventBus().publish("Default", "validationDialogEvent", data);
   }
                                 });
-
 
 target_quai13.attachDisplay(()=>{ 
     this.gv_current_quai = 'QUAI13';
@@ -181,107 +178,6 @@ target_quai15.attachDisplay(()=>{
      //               Affichage des notifications d'Erreur/Warning ou Succes dans les messages Strip du quaui  => METHODE OBSOLETE                                                                                   //  
      //----------------------------------------------------------------------------------------------------------------------------// 
     public notification_handler(type_msg:string, msg_txt: string,transport:string, um: String, current_quai: string, action :string, user:string ) : void{ 
-        //   let IconTabBarControl : IconTabBar = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
-        //   let message_chargementum_ok :string;
-        //   // Panel d'affichage des messages  
-        //   let panelMessage : Panel = this.byId("PanelMessageAppChargementQuais") as Panel;   // TODO=>Mettre le numéro de quai en dynamique
-        //   //let panelMessageQuai : Panel;
-        //   // Message Strip au niveau des vues de quai
-        //   let messageStrip_ref : MessageStrip;
-        //   let messageStripErrorQuai : MessageStrip;
-        //   let messageStripWarningQuai : MessageStrip;
-        //   let messageStripInformationQuai : MessageStrip;
-          
-        //   console.log("------------------ AppChargementQuaisIconTabBar.controller/NOTIFICATION HANDLER -----------------------------------------------------------------------------------------------------");
-        //   console.log("P1 Quai de la notification : " +  current_quai.toLowerCase() + " Quai affiché dans l'IconTabBar: " + IconTabBarControl.getSelectedKey());
-        // // Si la page courante correspond au quai de la notification alors on recharge (on teste le quai 10 dans un premier temps)
-        // // if ( IconTabBarControl.getSelectedKey() == current_quai){                 //TODO=>Evol LOT 4 : Ce test n''est pas nécessaire les messages strip
-        //                                                                            // doivent se mettre à jour meême si on ne se trouve pas sur le quai concerné
-        //                                                                            // par la notificaiotn
-        //        let tcontent : View[] = IconTabBarControl.getContent() as View[];
-        //        let tcontent_views : Control[]
-        //        tcontent.forEach((content) => {
-        //        tcontent_views = content.getContent() as Control[];
-        //         tcontent_views.forEach((control) => {
-        //         // code pour remplir le  messageStrip d'erreur et le messageStrip d'information du quai 
-        //             console.log(control.getId());
-        //           if ( control.getId() == "container-clf.logistique.chargementquais---" + current_quai.toLowerCase() + "--messageStripError" )
-        //           {
-        //             messageStripErrorQuai = control as MessageStrip;
-              
-        //            if ( type_msg == 'E' ){
-        //             messageStripErrorQuai.setText(msg_txt); 
-        //             messageStripErrorQuai.setVisible(true); 
-        //             } 
-        //           if  ( type_msg == 'W' ) {messageStripErrorQuai.setVisible(false);     }
-        //           if  ( type_msg == 'information' ) {messageStripErrorQuai.setVisible(false);     }
-        //           } 
-
-        //           if ( control.getId() == "container-clf.logistique.chargementquais---" + current_quai.toLowerCase() + "--messageStripWarning" )
-        //           {
-        //             messageStripWarningQuai = control as MessageStrip;
-        //            // if ( type_msg == 'error' ){
-
-        //            if ( type_msg == 'W' ){
-        //              messageStripWarningQuai.setText(msg_txt); 
-        //              messageStripWarningQuai.setVisible(true); 
-        //             } 
-        //           if  ( type_msg == 'E' ) { messageStripWarningQuai.setVisible(false);     }
-        //           if  ( type_msg == 'information' ) { messageStripWarningQuai.setVisible(false);     }
-        //           }  
-
-        //             if (  control.getId() == "container-clf.logistique.chargementquais---" + current_quai.toLowerCase() + "--messageStripInformation" )
-        //             {
-        //               messageStripInformationQuai = control as MessageStrip;
-        //               if ( type_msg == 'information' )
-        //               {
-        //               messageStripInformationQuai.setText(msg_txt); 
-        //               messageStripInformationQuai.setVisible(true); 
-        //               }
-        //               if ( type_msg == 'E' ){  messageStripInformationQuai.setVisible(false);     }
-        //               if ( type_msg == 'W' ){  messageStripInformationQuai.setVisible(false);   }
-        //             }
-        //         })
-        //       })
-        //       // LOT 4 : Chargement des quais  => Code erroné à changer
-        //       // Si le quai affiché est concerné par la notification et le message est de type information alors on affiche un Toast et on rafraichit le quai 
-        //       //if ( type_msg == 'information' )  //if ( IconTabBarControl.getSelectedKey() == current_quai){
-        //        // {
-        //         //  MessageToast.show(msg_txt);
-        //          // this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {}); 
-        //        // }
-        //        // LOT 4 : Chargement des quais  => Code erroné à changer
-        // //}
-        //         // LOT 4 : Chargement des quais 
-        //       // Si le quai affiché est concerné par la notification et le message est de type information alors on affiche un Toast et on rafraichit le quai 
-        //       if ((action == 'chargement') && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
-        //         {
-        //           MessageToast.show(msg_txt);
-        //           this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {}); 
-        //           this.getOwnerComponent()?.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
-        //         }
-        //        // LOT 4 : Chargement des quais  =  
-
-        //        // Affichage de tous les messages (Information et Erreur) relatifs à l'ensemble des quais
-        //         messageStrip_ref = new MessageStrip();
-        //         messageStrip_ref.setText(msg_txt);       // Correctif++ 14/08/2025 Correctifs notifications
-        //                                                  // Toujours afficher le message dans  la zone Messages quel que soit le type de message (E, W ou S)
-        //          // msgStrip.setType(MessageType.Error);
-        //          messageStrip_ref.setShowIcon(true);
-        //          messageStrip_ref.setShowCloseButton(true);  
-        //          console.log("P1 AJOUT d'un message dans la zone MEssages multi quai");
-        //          panelMessage.addAggregation("content",messageStrip_ref);
-
-        //          // TODO Notification fin de chargement 
-        //          //Si l'action est fin de chargement alors il faut recharger le chargement des quais quel que soit le quai affiché
-        //          // Modification LOT 4 'Lancement début de chargementnt'
-        //          //if ( action = 'finchargement' )
-        //          if ( action == 'finchargement'  ||  action == 'startchargement')
-        //          {
-        //          console.log("Notification de fin de chargement");
-        //          MessageToast.show(msg_txt);
-        //          this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {});  //Notification fin de chargement"
-        //          }
     }
      //----------------------------------------------------------------------------------------------------------------------------//
      //   Handler clic sur le quai      -> A VERIFIER SI C'EST UTILISE  (serait utilisé pour le lien vers le quai dans l'application 'Chargement prévus" )                                               //  
@@ -365,8 +261,6 @@ target_quai15.attachDisplay(()=>{
                   chargementStartModel.setProperty("/results/matri",""); 
                   notificationsQuaisModel.setProperty("/chargementstartnotifs/notiferror/msg_txt",""); 
                   notificationsQuaisModel.setProperty("/chargementstartnotifs/notiferror/visible",false); 
-
-
             }
             // Evolution Anomalie Synchroniszation routing et selected key   
             if ( key == "QUAI08" )  {  router.getTargets()?.display("targetstartchargementquai08"); }
@@ -435,63 +329,5 @@ let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string
      { quai: lv_quai, codum : validation_msg_codum,  msgid: validation_msg_msgid, aenam : validation_msg_aenam, errdt: validation_msg_errdt, errzt: validation_msg_errzt, choice : lv_choice, validation_charg_um : true}
     this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUmPostEvent", data);
  }
-
-
-
-
-//---------------------------------------------------------------------
-//LOT 15 : Chargement manuel scan
-//---------------------------------------------------------------------
-        //  public onScanManuelUm(event: Button$PressEvent): void {
-        //   console.log("P1 HIGH LOT15 Scan Manuel"); 
-        // this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUMGetEvent");
-        // this.dialogScanManuelUm.open();
-        //  }
-
-
-         // LOT15 BEGIN Chargement manuel scan 
-        //  public  async onLoadFragmentScanManuelUm(): Promise<void> {
-        //   this.dialogScanManuelUm ??= await this.loadFragment({
-        //      name: "clf.logistique.chargementquais.view.fragment.DialogScanManuelUm"                               //TODO LOT13  Créer un nouveau fragment pour la boîte de dialogue de saisie des motifs de non chargement
-        //   }) as Dialog;
-        //   //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
-        // }  
-      
-// LOT15 BEGIN Chargement manuel scan 
-      // public onDialogValidScanUMClose(): void {
-      //    this.dialogScanManuelUm.close();
-      //  }
-      //  // LOT15 BEGIN Chargement manuel scan 
-
-
- //----------------------------------------------------------------------------------------------------------------------------------------------------//
-  //------------------- LOT 15 BEGIN SCAN MANUEL DES UMS    
-  //      Attention Réfléchir à s'il faut coder dans ce controlleur ou dans le controlleur des quais
-  //     + Voir comment récupérer l'UM saisit                                                                                ------------------------//
-  //----------------------------------------------------------------------------------------------------------------------------------------------------//
-//  public onValidScanUm(event:Button$PressEvent):void {
-//   console.log("------------------------------------------------------P1 HIGH LOT15 onValidScanUm: --------------------------------------------------------------");
-//   // Anomalie 18/11/2025 BEGIN [Quai au format attendu par l'API]
-//   let lv_quai:string;
-//   // Fournir à l'API (Chargement UM) le quai sous forme 'QUAI09','QUAI10" (Si le numéro de quai  <10 alors il faut rajouter un "O" entre QU et le numéro de quai)
-//   if ( this.gv_current_quai_number < 10 )
-//       { lv_quai = "QUAI" + "0" + this.gv_current_quai_number; }
-//   else{ lv_quai = "QUAI" + this.gv_current_quai_number; }
-// // Anomalie 18/11/2025 END
-
-// let ChargementUmModel: JSONModel =   this.getOwnerComponent()?.getModel( "ChargementUmModel") as JSONModel;
-// let input_data:any = ChargementUmModel.getData();
-
-
-//   let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string} =
-//      { quai: lv_quai, codum : input_data.codum,  msgid: '', aenam : '', errdt: '', errzt: '', choice : ''}
-
-//     console.log("----------P1 HIGH LOT 15 Appel du post de chargement UM-----VALEUR DU QUAI= " + lv_quai + "Valeur de l'UM= " + input_data.codum);
-//     this.getOwnerComponent()?.getEventBus().publish("Default", "ValidationWarningUMEvent", data);
-//  }
-
-  //----------------------------------------------------------------------------------------------------------------------------------------------------//
-  //------------------- LOT 15 END SCAN MANUEL DES UMS                                                                                    ------------------------//
-  //----------------------------------------------------------------------------------------------------------------------------------------------------/
 
 }
