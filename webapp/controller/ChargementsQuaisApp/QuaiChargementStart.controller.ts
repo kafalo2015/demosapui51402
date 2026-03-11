@@ -11,17 +11,13 @@ import Input, { Input$SubmitEvent } from "sap/m/Input";
  * @namespace clf.logistique.chargementquais.controller
  */
 export default class QuaiChargementStart extends Controller {
-
-
     /*eslint-disable @typescript-eslint/no-empty-function*/
-    public onInit(): void {         
-  
+  public onInit(): void {         
       }
 
-    public onAfterRendering(): void {
-       
+  public onAfterRendering(): void {
     }
-    public onClickChargementQuai(event: Button$PressEvent): void {
+  public onClickChargementQuai(event: Button$PressEvent): void {
        // ----------TODO RAJOUTER Contrôle de saisie                   -------------------
       let lv_matriculeTabularInput : Input = this.getView()?.byId("MatriculeTabularInput") as Input;
       
@@ -41,21 +37,7 @@ export default class QuaiChargementStart extends Controller {
       this.getOwnerComponent()?.getEventBus().publish("Default", "chargementStartEvent", data);
     }
 
-      public onSuggestionItemSelected(event: Input$SubmitEvent): void {
-
-       let lv_matriculeTabularInput : Input = this.getView()?.byId("MatriculeTabularInput") as Input;
-      
-      if  (lv_matriculeTabularInput.getValue() == "") {  lv_matriculeTabularInput.setValueState("Error")    }
-      else                                            {  lv_matriculeTabularInput.setValueState("None")    }
-
-      let lv_tknumTabularInput : Input = this.getView()?.byId("tknumTabularInput") as Input;
-      
-      if  (lv_tknumTabularInput.getValue() == "") {  lv_tknumTabularInput.setValueState("Error")    }
-      else                                        {  lv_tknumTabularInput.setValueState("None")    }
-
-    }
-
-    public onSubmit(event: Input$SubmitEvent): void {
+  public onSuggestionItemSelected(event: Input$SubmitEvent): void {
 
        let lv_matriculeTabularInput : Input = this.getView()?.byId("MatriculeTabularInput") as Input;
       
@@ -68,5 +50,17 @@ export default class QuaiChargementStart extends Controller {
       else                                        {  lv_tknumTabularInput.setValueState("None")    }
     }
 
+ public onSubmit(event: Input$SubmitEvent): void {
+
+       let lv_matriculeTabularInput : Input = this.getView()?.byId("MatriculeTabularInput") as Input;
+      
+      if  (lv_matriculeTabularInput.getValue() == "") {  lv_matriculeTabularInput.setValueState("Error")    }
+      else                                            {  lv_matriculeTabularInput.setValueState("None")    }
+
+      let lv_tknumTabularInput : Input = this.getView()?.byId("tknumTabularInput") as Input;
+      
+      if  (lv_tknumTabularInput.getValue() == "") {  lv_tknumTabularInput.setValueState("Error")    }
+      else                                        {  lv_tknumTabularInput.setValueState("None")    }
+    }
     
 }

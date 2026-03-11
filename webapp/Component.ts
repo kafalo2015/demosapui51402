@@ -32,10 +32,9 @@ import ElementBase from "sap/suite/ui/commons/networkgraph/ElementBase";
      enum environment_enum {
   dev = "dev",
   test = "exc",
-  preprod = "prod",
+  preprod = "preprod",
   prod = "prod",
 }
- 
 
 /**
  * @namespace clf.logistique.chargementquais
@@ -67,34 +66,23 @@ export default class Component extends BaseComponent {
     public const_chargementsPrevusApp = "ChargementsPrevusApp";  // Application Chargement prévues
     public const_chargementsQuaisApp = "ChargementsQuaisApp";    // Application Chargement des quais
     public gv_current_application: string;                       // Stocke le nom de l'application actuellement affiché (Liste des chargmentn ou Chargement des quais)
-    //private gv_dialog_validation_charg: Dialog;
    
 	public init() : void {
 		// call the base component's init function
 		super.init();
         // Changemment de variable environnement (dev ou qual) pour appeler les API de la qual ou de la dev
-         this.gv_environment = environment_enum.test;
-      // this.gv_environment = this.getManifestEntry("/sap.ui5/config/api_env");
-       console.log("P1 HIGH Lecture de la variable de configuration du manifest /sap.ui5/config/api_env : " +    this.gv_environment )
-
-        //this.initchargementquaiModel();                                 //LOT 4 Lancement chargement des quais
+         this.gv_environment = environment_enum.dev;
+      
+         console.log("P1 HIGH Lecture de la variable de configuration du manifest /sap.ui5/config/api_env : " +    this.gv_environment )
         // set the device model
         this.setModel(createDeviceModel(), "device");
-         // set i18n model
+// set i18n model
   //       const i18nModel = new ResourceModel({
   //          bundleName: "clf.logistique.chargementquais.i18n.i18n"
   //  });
         //this.setModel(i18nModel, "i18n"); 
- // ----------------------EXEMPLE  TYPE DE MESSAGEs---------------------------------------------------
-/*		Information : "Information",
-	          	Warning : "Warning",
-		          Error : "Error",
-		          None : "None",
-		          Success : "Success"   */ 
-     //----------------------------------------------------------------------------------------------------------------------------//
-     //               TODO -> Faire une méthode séparée pour enregistrement du modèle de notifications                              //  
-     //----------------------------------------------------------------------------------------------------------------------------//
-            let notificationsQuaisModel = new JSONModel();
+        
+        let notificationsQuaisModel = new JSONModel();
             //TODO LOT15 Scan Manuel  -> Dans le modèle JSON Faire une notification de Succès/Error séparée pour la boîte de dialogue de Scan Manuel
             let json_object : object = 
               {
@@ -241,9 +229,6 @@ export default class Component extends BaseComponent {
       //----------------------------------------------------------------------------------------------------------------------------//
      //                                                                                                                            //  
      //----------------------------------------------------------------------------------------------------------------------------//
-      
-     // LOT16 DEPLOIEME?NT PHP -> Mettre l'ouverture du Web socket en dernier
-     //this.open_websocket_NotificationUM();            //LOt 12-> Rest déploiement phm -> A REMETTRE
      // Abonnement à l'eventing
      //----------------------------------------------------------------------------------------------------------------------------//
      //               TODO -> Mettre tous les listeners dans une  méthode                                                            //  
@@ -295,7 +280,7 @@ export default class Component extends BaseComponent {
        this.post_motifs_nonchargement();
      }, this ); 
 
-      //----------------------------------------------------------------------------------------------------------------//
+    //----------------------------------------------------------------------------------------------------------------//
      //               HANDLER pour Chargement_UM_get     LOT15 -> Scan Manuel UM                                                                //  
      //----------------------------------------------------------------------------------------------------------------//
     this.getEventBus().subscribe("Default","ChargementUMGetEvent", (channel:string,event:string,data: Object) => { 
@@ -364,16 +349,11 @@ export default class Component extends BaseComponent {
      //----------------------------------------------------------------------------------------------------------------------------//
      //               Appel des API de chargement quais, chargements prévu et matchcode de lancement de chargement                 //  
      //----------------------------------------------------------------------------------------------------------------------------//
-     // this.getEventBus().publish("Default", "chargementListEvent", {});           //LOt 12-> Rest déploiement phm -> A REMETTRE
-      this.getEventBus().publish("Default", "chargementEvent", {});
-
-      // ATTENTIONN REMETTRE LES APIS APRES RESOLUTION LOT16 DEPLOIEMENT WEB OPC
+       this.getEventBus().publish("Default", "chargementEvent", {});
        this.getEventBus().publish("Default", "chargementListEvent", {});             // MODIF LOT13 =>Le chargement list après le chargement
        this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});    //LOt 12-> Rest déploiement phm -> A REMETTRE
        this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOt 12-> Rest déploiement phm -> A REMETTRE
-      // ATTENTIONN REMETTRE LES APIS APRES RESOLUTION LOT16 DEPLOIEMENT WEB OPC
-       // LOT16 DEPLOIEME?NT PHP -> Mettre l'ouverture du Web socket en dernier  // TODO rajouter de l'authentification dans le web socket
-        this.open_websocket_NotificationUM();            //LOt 12-> Rest déploiement phm -> A REMETTRE
+       this.open_websocket_NotificationUM();            //LOt 12-> Rest déploiement phm -> A REMETTRE
    
       const router = this.getRouter().initialize();   
       
@@ -407,7 +387,7 @@ export default class Component extends BaseComponent {
                                       );                                                                                                          
 }
 
-    //---------------------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------------//
 //     Méthode de récupération des URLS des API                                                                                    //  
 //---------------------------------------------------------------------------------------------------------------------------------//
   public getApiUrl() : void{
@@ -453,7 +433,6 @@ export default class Component extends BaseComponent {
     this.gv_material_umstock_api_url =  "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
     this.gv_chargement_um_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
     this.gv_websocket_url = "wss://" + lv_socket_location + "/sap/bc/apc/sap/ychargement_camion_poc"; 
-
         // END SIMPLIFICATION CODE  
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
@@ -680,7 +659,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
 {
 // TODO -> Vérifier que la relance des API ne fait pas trop souvent- > Peut être relancer uniquement si l'utilisaeur se trouve sur le quai concerné
 // TODO-> En cas de notification de chargement relancer uniquement si c'est une notification de type 'S' et si le quai affiché est concerné par la notification
-
   if ((action == 'chargement') && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
         {
           MessageToast.show(msg_txt);
@@ -688,7 +666,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
           this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
           this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOT 13 
         }
-
       if ((action == 'dechargement') && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
         {
           MessageToast.show(msg_txt);
@@ -696,7 +673,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
           this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
           this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOT 13
         }
-
     if ( (action == 'startchargement') && (type_msg == 'information' ))
       {
       console.log("-----P1-----------------------Notification de fin de chargement ou de début de chargement// Rafraichissement des chargements-------------------------------------------");
@@ -704,8 +680,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
       this.getEventBus().publish("Default", "chargementEvent", {});  //Notification fin de chargement"
       this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
       }
-
-
       if ( (action == 'finchargement') )
       {
       console.log("-----P1-----------------------Notification de fin de chargement ou de début de chargement// Rafraichissement des chargements-------------------------------------------");
@@ -721,18 +695,10 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
   }    
 
     public get_chargements_prevus():void {
-        //-----------------------------------------------------------------------------------------
-        // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification
-        //----------------------------------------------------------------------------------------
           var mHeader = {
             "Access-Control-Allow-Origin": "*",
             "Content-Type":"application/json",
         }
-
-        //-----------------------------------------------------------------------------------------
-        // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification
-        //----------------------------------------------------------------------------------------
-
         let chargementsPrevusListModel: JSONModel;
         if ( this.getModel("chargementsPrevusListModel") == undefined)
         {
@@ -759,9 +725,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
             "Content-Type":"application/json",
             "material": material                                      
         }
-    //-----------------------------------------------------------------------------------------
-    // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
-    //----------------------------------------------------------------------------------------
         let MaterialUmStockListModel: JSONModel;
         if ( this.getModel("MaterialUmStockListModel") == undefined)
         {
@@ -784,17 +747,10 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
         // let hash = btoa(credentials);
         // let auth = 'Basic '+hash;
 
-        //-----------------------------------------------------------------------------------------
-        // TESTS PHP->DEV
-        //----------------------------------------------------------------------------------------
            var mHeader = {     
             // "Authorization": auth,                           // Essai pas d'autorisation         //LOt15 -> Je vois pas comment ca peut marcher en localhost sans autorisaiton?
              "Content-Type":"application/json",
            }
-
-         //-----------------------------------------------------------------------------------------
-        // Essai envoi de requête simples pour ne pas générer de préflight
-        //----------------------------------------------------------------------------------------
 
 // On instancie le modèle que s'il n'est pas déja défini au niveau du composant (premier chargement/rechargement)
      let  chargementQuaiModel: JSONModel;
@@ -826,7 +782,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
              "Content-Type":"application/json",
               }
 
-
       if ( this.getModel("validationMsgChargementQuaiModelJSON") == undefined)
      {
         this.setModel(new JSONModel(), "validationMsgChargementQuaiModelJSON");
@@ -848,7 +803,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
                "tknum": i_numtransport,    // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
                "quai1":  i_quai,   
               }
-
       if ( this.getModel("finChargementQuaiModelJSON") == undefined)
      {
         this.setModel(new JSONModel(), "finChargementQuaiModelJSON");
@@ -876,8 +830,8 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
 
    // Appel de l'api de fin de chargement    
    finChargementQuaiModelJSON.loadData(this.gv_endchargement_api_url , JSON.stringify(input_data.tMotifNocharg)    ,true,  "POST", false, true, mHeader)?.then(result=>{
-        const router = this.getRouter();
-         let lv_target_quai : string = "targetstartchargement" + input_data.quai1;
+       const router = this.getRouter();
+       let lv_target_quai : string = "targetstartchargement" + input_data.quai1;
        // MessageToast.show("Fin de chargement sur quai : " + input_data.quai1 + " et navigation sur Target:" +  lv_target_quai,{ duration: 4000, width : '50%' })
         this.getEventBus().publish("Default", "finChargementEvent", {});
         router.getTargets()?.display(lv_target_quai);           
@@ -903,20 +857,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
             ChargementStartModel =   this.getModel( "ChargementStartModel") as JSONModel;
         }
   
-        /* EXEMPLE DE POST
-            loadData("https://your url",  // sURL
-        {}, //oParameters
-        true, // bASync
-        "POST", // sType
-        true/false, // bMerge
-        true/false, // BCache?
-        { // mHeaders
-                            "X-Requested-With": "XMLHttpRequest",
-                            "Content-Type": "application/json",
-                            "DataServiceVersion": "2.0",
-                            "Accept": "application/atom+xml,application/atomsvc+xml,application/xml",
-                            "X-CSRF-Token": "0e855895-5023-4350-bd3e-5651beaadeae"
-        } )*/  
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------
     // BEGIN LOT 12 : Déploiement PHP  -> Vérifier s'il ne faut pas remettre le paramètre "X-Requested-With":"X" et l'autoriser au niveau de UCONCOCKPIT
@@ -943,7 +883,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
             ChargementStartModel = new JSONModel();
             this.setModel(ChargementStartModel, "ChargementStartModel");
             ChargementStartModel.setDefaultBindingMode("TwoWay");   // TODO => vérifier si c'est nécessaire d'activer  le two way binding
-            //ChargementStartModel.set
         }else
         {  
             ChargementStartModel =   this.getModel( "ChargementStartModel") as JSONModel;
@@ -1036,7 +975,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
    //----------------------------------------------------------------------------------------
               let mHeader = {
-            "Access-Control-Allow-Origin": "*",
+            //"Access-Control-Allow-Origin": "*",           // Pas ut
             "Content-Type":"application/json",  
             "X-Requested-With":"X",
             "codum":  i_codum,      // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
@@ -1079,7 +1018,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
           console.log("Hostname du POC//Construire l'URL en fonction du Host:" + location.hostname);
           let lv_url: string;
         
-         // LOT END 16 Déploiement sur WEB OPC => Evolution gérer le déploiement en localhost, sur SAP et sur WEBOPC
          console.log("Instantiation du Web Socket avec url :" + this.gv_websocket_url);
          //["wss","ws","https","http"]
          let v_webSocket = new WebSocket(this.gv_websocket_url);

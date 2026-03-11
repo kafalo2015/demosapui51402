@@ -49,7 +49,7 @@
 							 </suggestionItems>
 							
 							  </Input>
-						 <Button text="CHARGEMENT QUAI" 	press="onClickChargementQuai"/>
+						 <Button text="CHARGEMENT QUAI" 	press=".onClickChargementQuai"/>
                          </items>					
 				</FlexBox> 
 				 	

@@ -25,7 +25,7 @@
 			id="InputUmScan"
 			value=   "{ChargementUmModel>/codum}" 
 			placeholder="Scannez un UM"
-			submit="onSubmitUm"
+			submit=".onSubmitUm"
 			showSuggestion="false"
 			showValueHelp="false">
 			

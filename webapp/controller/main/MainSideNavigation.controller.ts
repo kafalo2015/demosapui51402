@@ -59,7 +59,6 @@ export default class MainSideNavigation extends Controller {
     if ( event.getParameter("item")?.getText() == "Chargements par quais" )           //TODO-> Utiliser plutôt l'ID 
     { 
       let indice_json : number = 0;                                                                             // Le quai 8 est affiché lorsque l'utilisateur clique sur Chargements par quais et l'indice json du quai 8 est 0
-      //ChargementQuaiModel  = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
       let encours : boolean = ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours");
        //-------------------- END On récupère dans le modèle si le quai 8 est cours de chargement -----------------------------------------------------------------------------------------------------------------------------//
        if (encours == true)                                                                                   // Si le quai 8 est en cours de chargement alors on affiche la vue du quai 8 sinon on affiche le formulaire de démarrage de chargement

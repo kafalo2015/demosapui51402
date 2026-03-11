@@ -17,7 +17,7 @@
 		title="Réactualisation des quais"
 		text="... les quais sont en cours de chargement..."
 		showCancelButton="false"
-		close="onDialogClosed" />
+		close=".onDialogClosed" />
 
        
       

@@ -79,7 +79,7 @@
 					<Text text="{chargementsPrevusListModel>fcam1}	" />	
 					<Text text="{chargementsPrevusListModel>nbumch}/{chargementsPrevusListModel>nbumac}" />	
 					<!--<Text text="{chargementsPrevusListModel>poidsprevu}" />	-->
-					<Link text="{chargementsPrevusListModel>quai}"  press="handleLinkPress" />				
+					<Link text="{chargementsPrevusListModel>quai}"  press=".handleLinkPress" />				
 				</cells>
 			</ColumnListItem>
 		</items>

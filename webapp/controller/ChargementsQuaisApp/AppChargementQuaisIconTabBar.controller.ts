@@ -21,7 +21,6 @@ export default class AppChargementQuaisIconTabBar extends Controller {
     private gv_current_quai_number : number;
     private gv_current_quai : string;
     private gv_dialog_validation_charg: Dialog;
-    // private dialogScanManuelUm : Dialog;   // LOT15 : Chargement manuel Scan
     
     /*eslint-disable @typescript-eslint/no-empty-function*/
     public onInit(): void {
@@ -173,7 +172,6 @@ target_quai15.attachDisplay(()=>{
       }
         },this);
       }
-
      //----------------------------------------------------------------------------------------------------------------------------//
      //               Affichage des notifications d'Erreur/Warning ou Succes dans les messages Strip du quaui  => METHODE OBSOLETE                                                                                   //  
      //----------------------------------------------------------------------------------------------------------------------------// 
@@ -199,7 +197,6 @@ target_quai15.attachDisplay(()=>{
            if ( selectedKeyQuaiNumber == "QUAI14" )  {  router.getTargets()?.display("targetchargementquai14");  }
            if ( selectedKeyQuaiNumber == "QUAI15" )  {  router.getTargets()?.display("targetchargementquai15");  }
         }
-
      //----------------------------------------------------------------------------------------------------------------------------//
      //               Handler clic sur le quai  (Pour synchroniser le routing avec le quai sélectionné)                                                                                   //  
      //----------------------------------------------------------------------------------------------------------------------------//
@@ -320,7 +317,6 @@ target_quai15.attachDisplay(()=>{
       { lv_quai = "QUAI" + "0" + this.gv_current_quai_number; }
   else{ lv_quai = "QUAI" + this.gv_current_quai_number; }
 // Anomalie 18/11/2025 END
-
 
 // LOT15 BEGIN 
 // Vérifier qu'il n'y a pas de régression au niveau de la validation du chargement J'ai rajouté le paramètre validation_charg_um pour différencier validation de chargement UM et chargement UM

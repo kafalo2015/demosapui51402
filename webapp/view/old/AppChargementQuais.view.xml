@@ -33,7 +33,7 @@ xmlns="sap.m">
 </VBox>
 </l:BlockLayoutCell>
 <l:BlockLayoutCell title="" width = "13" backgroundColorSet="ColorSet6" backgroundColorShade="ShadeA" class="sapUiNoContentPadding">
-<NavContainer navigationFinished ="navigationFinished"  id="navContainerHeader" width="98%" class="navContainerControl sapUiSmallMarginBottom">
+<NavContainer navigationFinished =".navigationFinished"  id="navContainerHeader" width="98%" class="navContainerControl sapUiSmallMarginBottom">
 <Page title="CHARGEMENT EN COURS QUAI 10" titleAlignment="Center" id = "QUAI10" enableScrolling = "false">
 <content>
 <mvc:XMLView viewName="clf.demo.sapui51402.demosapui51402.view.quai10" />
