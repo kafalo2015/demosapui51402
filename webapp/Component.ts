@@ -27,13 +27,38 @@ import ElementBase from "sap/suite/ui/commons/networkgraph/ElementBase";
 // LOt 13-30/12/2025-GILLES CAMILLERI => API + Popup Motif de non chargement + fin chargement
 // LOt 15-29/11/2026-GILLES CAMILLERI => Scan Manuel des UMS
 // LOt 16-27/02/2026-GILLES CAMILLERI => Déploiement HTTPS sur Web OPC
-// LOt 17-27/02/2026-GILLES CAMILLERI => amélioration code
+// LOt 17-27/02/2026-GILLES CAMILLERI => amélioration code (Enumérations environnement, url serveur sap, action_code)
 
+
+//TODO Enum -> Rajouter des Enum pour les types d'erreur, les actions (chargement/dechargement), les quais, les modèles
      enum environment_enum {
   dev = "dev",
   test = "exc",
   preprod = "preprod",
   prod = "prod",
+}
+
+    enum sapserver_url_enum {
+  dev_url = "sapdev.exaclair.eu",
+  test_url = "sapqual.exaclair.eu",
+  preprod_url = "sappreprod.exaclair.eu",                               //TODO => Récupérer URL de SAP PréProd
+  prod_url = "sapprod.exaclair.eu",
+}
+
+
+     enum application_names_enum {
+  chargementsPrevus = "ChargementsPrevusApp",
+  chargementsQuais = "ChargementsQuaisApp",
+  
+}
+
+
+     enum action_code_enum {
+  chargement = "chargement",
+  dechargement = "dechargement",
+  start_chargement ="startchargement",
+  fin_chargement = "finchargement",
+  
 }
 
 /**
@@ -49,11 +74,11 @@ export default class Component extends BaseComponent {
     
     public gv_environment :environment_enum;
     // TODO LOT 17 Mettre les chemins de serveur dans une énumération
-    public  sap_server_dev  :string  = "sapdev.exaclair.eu";    // ADRESSE UI5 YAML SHDS-SAPDEV.exaclair.clairefontaine.local:1080
-    public  sap_server_bas  :string  = "sapbas.exaclair.eu"; 
-    public  sap_server_test  :string  = "sap.exaclair.eu";   // TODO A vérifier 
-    public  sap_server_pre  :string  = "sappre.exaclair.eu";
-    public  sap_server_prod :string  = "sapprod.exaclair.eu";
+    // public  sap_server_dev  :string  = "sapdev.exaclair.eu";    // ADRESSE UI5 YAML SHDS-SAPDEV.exaclair.clairefontaine.local:1080   //LOT 17-- amélioration code
+    // public  sap_server_bas  :string  = "sapbas.exaclair.eu";                                                                         //LOT 17-- amélioration code
+    // public  sap_server_test  :string  = "sap.exaclair.eu";   // TODO A vérifier                                                      //LOT 17-- amélioration code
+    // public  sap_server_pre  :string  = "sappre.exaclair.eu";                                                                         //LOT 17-- amélioration code
+    // public  sap_server_prod :string  = "sapprod.exaclair.eu";                                                                        //LOT 17-- amélioration code
     public gv_chargement_url : string;
     public gv_chargement_um_api_url: string;                    // URL API startchargement
     public gv_startchargement_api_url: string;                  // URL API startchargement
@@ -63,15 +88,15 @@ export default class Component extends BaseComponent {
     public gv_chargementprevus_api_url: string;                  // URL API Chargement prévus
     public gv_material_umstock_api_url: string;                  // URL material_umstock_list
     public gv_websocket_url: string;                             // URL Web Socket    LOT16
-    public const_chargementsPrevusApp = "ChargementsPrevusApp";  // Application Chargement prévues
-    public const_chargementsQuaisApp = "ChargementsQuaisApp";    // Application Chargement des quais
+   // public const_chargementsPrevusApp = "ChargementsPrevusApp";  // Application Chargement prévues    //LOT17 amélioration code
+    //public const_chargementsQuaisApp = "ChargementsQuaisApp";    // Application Chargement des quais  //LOT17 Amélioration code
     public gv_current_application: string;                       // Stocke le nom de l'application actuellement affiché (Liste des chargmentn ou Chargement des quais)
    
 	public init() : void {
 		// call the base component's init function
 		super.init();
         // Changemment de variable environnement (dev ou qual) pour appeler les API de la qual ou de la dev
-         this.gv_environment = environment_enum.dev;
+         this.gv_environment = environment_enum.test;
       
          console.log("P1 HIGH Lecture de la variable de configuration du manifest /sap.ui5/config/api_env : " +    this.gv_environment )
         // set the device model
@@ -367,23 +392,23 @@ export default class Component extends BaseComponent {
          let target_quai14: Target = router.getTarget("targetchargementquai14") as Target;
          let target_quai15: Target = router.getTarget("targetchargementquai15") as Target;
 
-           target_chargement_list.attachDisplay(()=>{  this.gv_current_application = this.const_chargementsPrevusApp;}     //Stockage du nom de l'application en cours d'utilisation
+           target_chargement_list.attachDisplay(()=>{  this.gv_current_application = application_names_enum.chargementsPrevus;}     //Stockage du nom de l'application en cours d'utilisation  // LOT17 Amélioration code
                                              );    
-           target_quai08.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}                //Stockage du nom de l'application en cours d'utilisation
+           target_quai08.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                //Stockage du nom de l'application en cours d'utilisation  // LOT17 Amélioration code
                                       );
-           target_quai09.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+           target_quai09.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
                                       );  
-           target_quai10.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+           target_quai10.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
                                       );   
-           target_quai11.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+           target_quai11.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
                                       );  
-           target_quai12.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+           target_quai12.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
                                       );   
-           target_quai13.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+           target_quai13.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
                                       );    
-           target_quai14.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+           target_quai14.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
                                       ); 
-           target_quai15.attachDisplay(()=>{ this.gv_current_application = this.const_chargementsQuaisApp;}
+           target_quai15.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
                                       );                                                                                                          
 }
 
@@ -401,22 +426,26 @@ export default class Component extends BaseComponent {
              {
                 switch (this.gv_environment.toLowerCase()) {
                 case environment_enum.dev:
-                    lv_location         = "sapdev.exaclair.eu";     //   Vérifier s'il faut mettre le port ou pas
-                    lv_socket_location  = "sapdev.exaclair.eu:443"; //   Vérifier s'il est possible d'utiliser le même chemin que les API  
+                    lv_location         = sapserver_url_enum.dev_url;     //   Vérifier s'il faut mettre le port ou pas                              //LOT17 Amélioration code
+                    lv_socket_location  = sapserver_url_enum.dev_url;      //"sapdev.exaclair.eu:443"; //   Vérifier s'il faut spécifier ou pas le port pour les Web Socket 
                 // Lien vers Web Socket Johann  wss://sclf-webopc:8080/sap/bc/apc/sap/ychargement_camion_poc
                 //lv_socket_location = "sclf-webopc:8080";
                     break; 
                 case environment_enum.test:
-                    lv_location         = "sapqual.exaclair.eu";     //   Vérifier s'il faut mettre le port ou pas
-                    lv_socket_location  = "sapqual.exaclair.eu:443"; //   Vérifier s'il est possible d'utiliser le même chemin que les API  
+                    lv_location         = sapserver_url_enum.test_url + ":443";     //   Vérifier s'il faut mettre le port ou pas                             //LOT17 Amélioration code
+                    lv_socket_location  = sapserver_url_enum.test_url + ":443"; //   Vérifier s'il est possible d'utiliser le même chemin que les API  
+                    break; 
+                case environment_enum.preprod:
+                    lv_location         = sapserver_url_enum.preprod_url;     //   Vérifier s'il faut mettre le port ou pas                          //LOT17 Amélioration code
+                    lv_socket_location  = sapserver_url_enum.preprod_url;     //   Vérifier s'il est possible d'utiliser le même chemin que les API  
                     break; 
                 case environment_enum.prod:
-                    lv_location         = "sapprod.exaclair.eu";     //   Vérifier s'il faut mettre le port ou pas
-                    lv_socket_location  = "sapprod.exaclair.eu"; //   Vérifier s'il est possible d'utiliser le même chemin que les API  
+                    lv_location         = sapserver_url_enum.prod_url;     //   Vérifier s'il faut mettre le port ou pas                             //LOT17 Amélioration code
+                    lv_socket_location  = sapserver_url_enum.prod_url;     //   Vérifier s'il est possible d'utiliser le même chemin que les API  
                     break; 
                 default:
-                    lv_location        = "sapdev.exaclair.eu";
-                    lv_socket_location = "sapdev.exaclair.eu:443";
+                    lv_location        = sapserver_url_enum.dev_url;
+                    lv_socket_location = sapserver_url_enum.dev_url;
                     break; 
                 }
             }
@@ -458,10 +487,10 @@ export default class Component extends BaseComponent {
       //----------------- dans le  modèle de notifications le démarrage du chargement (Path /chargementstartnotifs)
 
     switch (action) {
-        case 'chargement':
+        case action_code_enum.chargement:
             model_root_path = "/quais/" + current_quai_index_json + "/notifs";
             break;
-        case 'startchargement':
+        case action_code_enum.start_chargement:
           if ( type_msg == 'E'  )
           {
             model_root_path = "/chargementstartnotifs";
@@ -478,7 +507,7 @@ export default class Component extends BaseComponent {
 
 // BEGIN EVOLUTION -> Affichage de plusieurs messsages strip en même temps sur le quai
 // Code pour effacer les notifications d'erreur en cas de démarrage de chargement  
-if (action == 'startchargement' &&  (( type_msg == 'information' ) || ( type_msg == 'W' )) )
+if (action == action_code_enum.start_chargement &&  (( type_msg == 'information' ) || ( type_msg == 'W' )) )
 {
  notificationsQuaisModel.setProperty(model_root_path + "/notiferror/msg_txt","");
  notificationsQuaisModel.setProperty(model_root_path + "/notiferror/visible",false);
@@ -614,9 +643,9 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
 
 // TODO Rappel de l'API REST des messages de validation de chargement + Ouverture de la boîte de dialogue de validation de chargement 
 // TODO-> Vérifier que le popup s'affiche uniquement que si on se trouve sur l'application de chargement des quais
-      if ( (action  == 'chargement') && ((type_msg == 'V') || (type_msg == 'C')) ) {                 // if ( (action  == 'chargement') && ((type_msg == 'W') || (type_msg == 'C')) ) {
+      if ( (action  == action_code_enum.chargement) && ((type_msg == 'V') || (type_msg == 'C')) ) {                 // if ( (action  == 'chargement') && ((type_msg == 'W') || (type_msg == 'C')) ) {
            this.getEventBus().publish("Default", "validationMsgChargementEvent", {});
-           if ( this.gv_current_application == this.const_chargementsQuaisApp )     // Anomalie ouverture de la popup de la validation - > La popup ne doit s'ouvrir que si l'utilisateur se trouve sur l'application 
+           if ( this.gv_current_application == application_names_enum.chargementsQuais )     // Anomalie ouverture de la popup de la validation - > La popup ne doit s'ouvrir que si l'utilisateur se trouve sur l'application 
                                                                                     // de chargement des quais
            {
            let data : {quai_number_popupdisplay:string} =  { quai_number_popupdisplay:  current_quai};
@@ -659,28 +688,28 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
 {
 // TODO -> Vérifier que la relance des API ne fait pas trop souvent- > Peut être relancer uniquement si l'utilisaeur se trouve sur le quai concerné
 // TODO-> En cas de notification de chargement relancer uniquement si c'est une notification de type 'S' et si le quai affiché est concerné par la notification
-  if ((action == 'chargement') && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
+  if ((action == action_code_enum.chargement) && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai    //LOT17 => Amélioration code
         {
           MessageToast.show(msg_txt);
           this.getEventBus().publish("Default", "chargementEvent", {}); 
           this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
           this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOT 13 
         }
-      if ((action == 'dechargement') && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
+      if ((action == action_code_enum.dechargement) && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
         {
           MessageToast.show(msg_txt);
           this.getEventBus().publish("Default", "chargementEvent", {}); 
           this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
           this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOT 13
         }
-    if ( (action == 'startchargement') && (type_msg == 'information' ))
+    if ( (action == action_code_enum.start_chargement) && (type_msg == 'information' ))
       {
       console.log("-----P1-----------------------Notification de fin de chargement ou de début de chargement// Rafraichissement des chargements-------------------------------------------");
       MessageToast.show(msg_txt);
       this.getEventBus().publish("Default", "chargementEvent", {});  //Notification fin de chargement"
       this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
       }
-      if ( (action == 'finchargement') )
+      if ( (action == action_code_enum.fin_chargement) )
       {
       console.log("-----P1-----------------------Notification de fin de chargement ou de début de chargement// Rafraichissement des chargements-------------------------------------------");
       MessageToast.show(msg_txt);

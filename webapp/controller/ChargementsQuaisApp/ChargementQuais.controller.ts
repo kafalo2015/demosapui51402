@@ -11,6 +11,7 @@ import JSONModel from "sap/ui/model/json/JSONModel";
 import ContextBinding from "sap/ui/model/ContextBinding";
 import Target from "sap/ui/core/routing/Target";
 import { Input$SubmitEvent } from "sap/m/Input";
+import IconTabBar from "sap/m/IconTabBar";
 
 /**
  * @namespace clf.logistique.chargementquais.controller
@@ -124,12 +125,23 @@ export default class ChargementQuais extends Controller {
   //LOT 13 : Handler du bouton de validation de fin de chargement
   //---------------------------------------------------------------------------------------------------------------------------
   public onPressButtonFinCharg(event: Button$PressEvent): void {
+    // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr  [C'est également possible de récupéer le quai à partir du ChargementUM_GEt]
+    // ANCIEND CODE BEGIN
     // BEGIN A- Récupération du numméro de quai et de l'indice json du quai
-      let  lv_source_id_length = event.getSource().getId().length;
-      let  lv_quai: string = "quai" + event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length);
-      let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
-      let  lv_indicejson_quai: number = lv_quai_number-8;
+    
+      // let  lv_source_id_length = event.getSource().getId().length;
+      // let  lv_quai: string = "quai" + event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length);
+      // let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
+      // let  lv_indicejson_quai: number = lv_quai_number-8;
       // END  Récupération du numméro de quai et de l'indice json du quai
+      // ANCIEN CODE END 
+         let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;
+          console.log("P1 LOT 17 SELECTED KEY OF QUAI : " + iconTahBar.getSelectedKey());
+        let  lv_quai: string = iconTahBar.getSelectedKey();
+         let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_quai.length-2, lv_quai.length));
+          console.log("P1 LOT 17 NUMERO DU QUAI : " + lv_quai_number)); 
+      let  lv_indicejson_quai: number = lv_quai_number-8;
+  // EVOL 12-03-2026
     
     // B-Récupération du numéro de transport du quai à partir de l'index json du quai  
     let lv_numtransport:string = this.getOwnerComponent()?.getModel("chargementModelJson")?.getProperty("/results/" + lv_indicejson_quai.toString() + "/numtransport", undefined)
@@ -165,14 +177,25 @@ export default class ChargementQuais extends Controller {
        //TODO Envoyer le numéro de quai dans le get
        //TODO -> Amélioration 10-03-2026 Récupérer le numéro de quai à partir du contrôlleur ou modèle dédié
        //A-Récupération du numéro de quai à partir de l'identifiant du bouton
-        let  lv_source_id_length = event.getSource().getId().length;
-        let  lv_quai: string = "QUAI" + event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length);
-        let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
+       // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr
+        // let  lv_source_id_length = event.getSource().getId().length;
+        // let  lv_quai: string = "QUAI" + event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length);
+        // let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
+        
+         let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;
+          console.log("P1 SELECTED KEY OF QUAI : " + iconTahBar.getSelectedKey());
+        let  lv_quai: string = iconTahBar.getSelectedKey();
+        let  lv_quai_number: number = Number(lv_quai.substring(lv_quai.length-2, lv_quai.length));
+         // EVOL 12-03-2026
+
         let  lv_indicejson_quai: number = lv_quai_number-8;
          
         //B- Envoi du numéro de  quai à l'API
+        // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr
         let data : {quai:string} = { quai:  lv_quai } 
+           console.log("P1 Appel du GetChargemntUM : " + lv_quai);
         this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUMGetEvent",  data);
+        // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr
 
         //C- Suppression des messages d'erreurs des scans manuels précédents
         let validationMsgChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("notificationsQuaisModel") as JSONModel;
@@ -195,18 +218,25 @@ export default class ChargementQuais extends Controller {
   //----------------------------------------------------------------------------------------------------------------------------------------------------//
  public onSubmitUm(event:Input$SubmitEvent):void {
   console.log("------------------------------------------------------P1 HIGH LOT15 Handler onSubmitUm: --------------------------------------------------------------");
+ // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr  [C'est également possible de récupéer le quai à partir du ChargementUM_GEt]
+         let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;
+          console.log("P1 SELECTED KEY OF QUAI : " + iconTahBar.getSelectedKey());
+        let  lv_quai: string = iconTahBar.getSelectedKey();
+  // EVOL 12-03-2026
+ 
   let ChargementUmModel: JSONModel =   this.getOwnerComponent()?.getModel( "ChargementUmModel") as JSONModel;
   let input_data:any = ChargementUmModel.getData();
-  console.log("P1 LOT scan manuel Valeur du quai=" + input_data.quai1 );
+  console.log("P1 LOT scan manuel Valeur du quai=" + lv_quai );
 
   let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string, validation_charg_um:boolean} =
      { quai: input_data.quai1, codum : input_data.codum,  msgid: '', aenam : '', errdt: '', errzt: '', choice : '', validation_charg_um : false}
-
-  console.log("----------P1 HIGH LOT 15 Appel du post de chargement UM-----VALEUR DU QUAI= " + input_data.quai1 + " Valeur de l'UM= " + input_data.codum);
+ //{ quai: lv_quai, codum : input_data.codum,  msgid: '', aenam : '', errdt: '', errzt: '', choice : '', validation_charg_um : false}
+  console.log("----------P1 HIGH LOT 15 Appel du post de chargement UM-----VALEUR DU QUAI= " + lv_quai + " Valeur de l'UM= " + input_data.codum);
   this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUmPostEvent", data);
-
-  let data2 : {quai:string} = { quai:  input_data.quai1 } 
+// EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr
+  let data2 : {quai:string} = { quai:  lv_quai } 
   this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUMGetEvent",  data2);
+  // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr
  }
   
   //------------------- LOT 15 BEGIN SCAN MANUEL DES UMS    --------------------------------------------------------------------------------------------//
