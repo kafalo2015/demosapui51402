@@ -332,10 +332,9 @@ export default class Component extends BaseComponent {
        let errdt :string   = Object.values(data)[4];
        let errzt :string   = Object.values(data)[5];
        let choice :boolean = Object.values(data)[6];
-       let validation_charg_um :boolean = Object.values(data)[7];
        
        console.log("P1 LOt15 Chargement manuel scan EVENT ChargementUmPostEvent");
-       this.api_chargement_um_post(quai,codum,msgid,aenam,errdt,errzt,choice,validation_charg_um);
+       this.api_chargement_um_post(quai,codum,msgid,aenam,errdt,errzt,choice);
      }, this );
 
      //----------------------------------------------------------------------------------------------------------------         //
@@ -860,7 +859,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
    // Appel de l'api de fin de chargement    
    finChargementQuaiModelJSON.loadData(this.gv_endchargement_api_url , JSON.stringify(input_data.tMotifNocharg)    ,true,  "POST", false, true, mHeader)?.then(result=>{
        const router = this.getRouter();
-       let lv_target_quai : string = "targetstartchargement" + input_data.quai1;
+       let lv_target_quai : string = "targetstartchargement" + input_data.quai1.toLowerCase();
        // MessageToast.show("Fin de chargement sur quai : " + input_data.quai1 + " et navigation sur Target:" +  lv_target_quai,{ duration: 4000, width : '50%' })
         this.getEventBus().publish("Default", "finChargementEvent", {});
         router.getTargets()?.display(lv_target_quai);           
@@ -984,7 +983,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
      //---------------------------------------------------------------------------------------------------------------------------------//
      //               Méthode d'appel à l'API  REST de lancement du chargement d'un quai  [ZCL_PCF_START_CHARG_RESOURCE/Méthode POST ]  //  
      //---------------------------------------------------------------------------------------------------------------------------------//
-    public api_chargement_um_post(i_quai:string,i_codum:string, i_msgid :string, i_aenam:string , i_errdt:string, i_errzt:string, i_choice:boolean, i_validation_charg_um :boolean) :void{
+    public api_chargement_um_post(i_quai:string,i_codum:string, i_msgid :string, i_aenam:string , i_errdt:string, i_errzt:string, i_choice:boolean) :void{
        
         let ChargementUmModel: JSONModel;
          let lv_target_quai : string; 
@@ -1021,17 +1020,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     //----------------------------------------------------------------------------------------   
         ChargementUmModel.loadData(this.gv_chargement_um_api_url,"",true,  "POST", false, true, mHeader)?.then(result=>{  
     //------------------- TODO LOT9  Validation des messages de Warning->Mettre le code de suppression du Warning de la promise de l'API POST--------------------------------------------------
-     console.log("P1 LOt15 Valeur de i_validation_charg_um :" + i_validation_charg_um);
-      if ( i_validation_charg_um == false ) // Si c'est un chargement manuel on déclenche la navigation. Si c'est une validation de chargement on ne déclenche pas la navigation
-      {
-        // 04-02-2026 BEGIN La navigation a été retirée
-        //lv_target_quai = "targetchargement" + i_quai.toLowerCase();
-        //const router = this.getRouter();
-        //console.log("P1 Navigation vers le quai avec target " + lv_target_quai);
-        //router.getTargets()?.display(lv_target_quai); // La navigation n'est pas forcément utile -> A tester
-        // 04-02-2026 END La navigation a été retirée
-        //this.getEventBus().publish("Default", "CloseManualScanPopupEvent", {}); 
-      }
+       console.log("P1 LOt15 Valeur de i_validation_charg_um :" + i_validation_charg_um);
       console.log("P1 HIGH LOt15 Rappel de l'API des messages de validation");
       this.getEventBus().publish("Default", "validationMsgChargementEvent", {});  // LOT15 Rappel du modèle de validation de chargment -> Réfléchir si c'est nécessaire ou le mettre dans le handler du routing
 

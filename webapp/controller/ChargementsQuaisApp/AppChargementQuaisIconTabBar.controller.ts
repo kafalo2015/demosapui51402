@@ -321,8 +321,8 @@ target_quai15.attachDisplay(()=>{
 // LOT15 BEGIN 
 // Vérifier qu'il n'y a pas de régression au niveau de la validation du chargement J'ai rajouté le paramètre validation_charg_um pour différencier validation de chargement UM et chargement UM
 // J'ai également modifié le nom de l'évènement pour l'appel de l'aAPI post de l'UM  (ChargementUmEvent au de validWarningUMEvent)
-let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string, validation_charg_um : boolean} =
-     { quai: lv_quai, codum : validation_msg_codum,  msgid: validation_msg_msgid, aenam : validation_msg_aenam, errdt: validation_msg_errdt, errzt: validation_msg_errzt, choice : lv_choice, validation_charg_um : true}
+let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string} =
+     { quai: lv_quai, codum : validation_msg_codum,  msgid: validation_msg_msgid, aenam : validation_msg_aenam, errdt: validation_msg_errdt, errzt: validation_msg_errzt, choice : lv_choice}
     this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUmPostEvent", data);
  }
 

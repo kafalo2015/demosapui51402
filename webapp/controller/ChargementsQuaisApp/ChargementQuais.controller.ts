@@ -135,11 +135,11 @@ export default class ChargementQuais extends Controller {
       // let  lv_indicejson_quai: number = lv_quai_number-8;
       // END  Récupération du numméro de quai et de l'indice json du quai
       // ANCIEN CODE END 
-         let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;
-          console.log("P1 LOT 17 SELECTED KEY OF QUAI : " + iconTahBar.getSelectedKey());
-        let  lv_quai: string = iconTahBar.getSelectedKey();
-         let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_quai.length-2, lv_quai.length));
-          console.log("P1 LOT 17 NUMERO DU QUAI : " + lv_quai_number)); 
+      let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;
+      console.log("P1 LOT 17 SELECTED KEY OF QUAI : " + iconTahBar.getSelectedKey());
+      let  lv_quai: string = iconTahBar.getSelectedKey();
+      let  lv_quai_number: number = Number(lv_quai.substring( lv_quai.length-2, lv_quai.length));
+      console.log("P1 LOT 17 NUMERO DU QUAI : " + lv_quai_number); 
       let  lv_indicejson_quai: number = lv_quai_number-8;
   // EVOL 12-03-2026
     
@@ -228,9 +228,9 @@ export default class ChargementQuais extends Controller {
   let input_data:any = ChargementUmModel.getData();
   console.log("P1 LOT scan manuel Valeur du quai=" + lv_quai );
 
-  let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string, validation_charg_um:boolean} =
+  let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string} =
      { quai: input_data.quai1, codum : input_data.codum,  msgid: '', aenam : '', errdt: '', errzt: '', choice : '', validation_charg_um : false}
- //{ quai: lv_quai, codum : input_data.codum,  msgid: '', aenam : '', errdt: '', errzt: '', choice : '', validation_charg_um : false}
+ //{ quai: lv_quai, codum : input_data.codum,  msgid: '', aenam : '', errdt: '', errzt: '', choice : ''}
   console.log("----------P1 HIGH LOT 15 Appel du post de chargement UM-----VALEUR DU QUAI= " + lv_quai + " Valeur de l'UM= " + input_data.codum);
   this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUmPostEvent", data);
 // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr
