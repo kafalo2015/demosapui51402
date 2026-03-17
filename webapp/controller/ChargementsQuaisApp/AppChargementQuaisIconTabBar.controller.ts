@@ -324,6 +324,11 @@ target_quai15.attachDisplay(()=>{
 let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string} =
      { quai: lv_quai, codum : validation_msg_codum,  msgid: validation_msg_msgid, aenam : validation_msg_aenam, errdt: validation_msg_errdt, errzt: validation_msg_errzt, choice : lv_choice}
     this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUmPostEvent", data);
+// LOT Scan Manuel Anomalie rescan après validation BEGIN
+ let data2 : {quai:string} = { quai:  lv_quai } 
+   this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUMGetEvent",  data2);
+// LOT Scan Manuel Anomalie rescan après validation END
+
  }
 
 }

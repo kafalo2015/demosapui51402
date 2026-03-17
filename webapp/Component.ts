@@ -1020,7 +1020,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     //----------------------------------------------------------------------------------------   
         ChargementUmModel.loadData(this.gv_chargement_um_api_url,"",true,  "POST", false, true, mHeader)?.then(result=>{  
     //------------------- TODO LOT9  Validation des messages de Warning->Mettre le code de suppression du Warning de la promise de l'API POST--------------------------------------------------
-       console.log("P1 LOt15 Valeur de i_validation_charg_um :" + i_validation_charg_um);
+       //console.log("P1 LOt15 Valeur de i_validation_charg_um :" + i_validation_charg_um);
       console.log("P1 HIGH LOt15 Rappel de l'API des messages de validation");
       this.getEventBus().publish("Default", "validationMsgChargementEvent", {});  // LOT15 Rappel du modèle de validation de chargment -> Réfléchir si c'est nécessaire ou le mettre dans le handler du routing
 
