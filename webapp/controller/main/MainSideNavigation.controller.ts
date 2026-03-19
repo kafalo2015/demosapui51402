@@ -23,7 +23,6 @@ export default class MainSideNavigation extends Controller {
   // Enregistrement d'un handler pour la fin d'un chargement   // TODO 11/25 -> Voir à quoi ce handler sert?
   this.getOwnerComponent()?.getEventBus().subscribe("Default","SidenavigationsetSelectedItemEvent",(channel:string,event:string,data: Object) => {           
            let SideNavigationControl : SideNavigation = this.getView()?.byId("sideNavigation") as SideNavigation;
-           console.log("sideNavigation Selected Key" + SideNavigationControl.getSelectedItem());
            SideNavigationControl.setSelectedItem("container-clf.logistique.chargementquais---App--item_quai_all");
     },this);  
 
@@ -52,24 +51,24 @@ export default class MainSideNavigation extends Controller {
     }
 
   public itemSelect(event:SideNavigation$ItemSelectEvent)  {
-     console.log("P1 VERY HIGH/------------------------------------------ Méthode Item select------------------------------------------------------ ");
+     console.log("P1 VERY HIGH/------------------------------------------ CONTROLLEUR MainSideNavigation->METHODE Item select------------------------------------------------------ ");
      const router = UIComponent.getRouterFor(this);
      let ChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
   
-    if ( event.getParameter("item")?.getText() == "Chargements par quais" )           //TODO-> Utiliser plutôt l'ID 
+    if ( event.getParameter("item")?.getKey() == "item_quai_all" )           //TODO-> Utiliser plutôt l'ID 
     { 
       let indice_json : number = 0;                                                                             // Le quai 8 est affiché lorsque l'utilisateur clique sur Chargements par quais et l'indice json du quai 8 est 0
       let encours : boolean = ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours");
        //-------------------- END On récupère dans le modèle si le quai 8 est cours de chargement -----------------------------------------------------------------------------------------------------------------------------//
        if (encours == true)                                                                                   // Si le quai 8 est en cours de chargement alors on affiche la vue du quai 8 sinon on affiche le formulaire de démarrage de chargement
-        { console.log("P1 VERY HIGH/ Méthode Item select/Appel du routing sur quai 8 ");
+        { 
           router.getTargets()?.display("targetchargementquai08"); 
         }   
        else
         { router.getTargets()?.display("targetstartchargementquai08");}
     }
       
-     if (  event.getParameter("item")?.getText() == "Suivi Chargement" ) { router.getTargets()?.display("targetchargementlist");}
+     if (  event.getParameter("item")?.getKey() == "item_chargement_list" ) { router.getTargets()?.display("targetchargementlist");}
     
   }
 

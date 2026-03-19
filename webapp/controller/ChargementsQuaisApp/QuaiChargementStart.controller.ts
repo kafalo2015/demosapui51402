@@ -10,6 +10,20 @@ import Input, { Input$SubmitEvent } from "sap/m/Input";
 /**
  * @namespace clf.logistique.chargementquais.controller
  */
+
+  enum application_events_enum {
+  chargement_quais_event = "chargementEvent",
+  chargement_prevus_event = "chargementListEvent",
+  validation_msg_chargement_event = "validationMsgChargementEvent",
+  chargement_um_get_event = "ChargementUMGetEvent",
+  chargement_um_post_event = "ChargementUmPostEvent",
+  chargement_start_get_event = "chargementStartModelGetEvent",
+  chargement_start_post_event = "chargementStartEvent",
+  chargement_end_event = "finChargementEvent",
+  notification_websocket_event = "notificationWebSocketEvent",
+  validation_dialog_event = "validationDialogEvent",
+}
+
 export default class QuaiChargementStart extends Controller {
     /*eslint-disable @typescript-eslint/no-empty-function*/
   public onInit(): void {         
@@ -29,12 +43,9 @@ export default class QuaiChargementStart extends Controller {
       if  (lv_tknumTabularInput.getValue() == "") {  lv_tknumTabularInput.setValueState("Error")    }
       else                                        {  lv_tknumTabularInput.setValueState("None")    }
 
-      console.log("CLICK SUR BOUTON CHARGEMENT QUAI:" +event.getSource().toString());
-      console.log("P1 Récupération du quai : "  + this.getView()?.getParent());
       let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;
-      console.log("P1 SELECTED KEY OF QUAI : " + iconTahBar.getSelectedKey());
       let data : {quai:String} = { quai: iconTahBar.getSelectedKey() }
-      this.getOwnerComponent()?.getEventBus().publish("Default", "chargementStartEvent", data);
+      this.getOwnerComponent()?.getEventBus().publish("Default",  application_events_enum.chargement_start_post_event, data);
     }
 
   public onSuggestionItemSelected(event: Input$SubmitEvent): void {

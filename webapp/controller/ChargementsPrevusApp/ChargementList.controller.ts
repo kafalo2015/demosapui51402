@@ -15,10 +15,6 @@ export default class chargementlist extends Controller {
      let chargementTable: Table = this.byId("chargementTable") as Table;
      let t_sticky: Sticky[] = new Array(Sticky.ColumnHeaders); 
      chargementTable.setSticky(t_sticky);
-
-
-    
-
     }
 
     public onAfterRendering(): void {
@@ -33,8 +29,8 @@ export default class chargementlist extends Controller {
        };
      // La navigation sur les vues de quais de fait dans le handler du event linkQuaiPressEvent
        const router = UIComponent.getRouterFor(this);
-      if ( lv_quai == "QUAI8" )  {  router.getTargets()?.display("TargetChargementQuai08");  }
-      if ( lv_quai == "QUAI9" )  {  router.getTargets()?.display("TargetChargementQuai09");  }
+      if ( lv_quai == "QUAI08" )  {  router.getTargets()?.display("TargetChargementQuai08");  }
+      if ( lv_quai == "QUAI09" )  {  router.getTargets()?.display("TargetChargementQuai09");  }
       if ( lv_quai == "QUAI10" )  {  router.getTargets()?.display("TargetChargementQuai10");  }
       if ( lv_quai == "QUAI11" )  {  router.getTargets()?.display("TargetChargementQuai11");  }
       if ( lv_quai == "QUAI12" )  {  router.getTargets()?.display("TargetChargementQuai12");  }

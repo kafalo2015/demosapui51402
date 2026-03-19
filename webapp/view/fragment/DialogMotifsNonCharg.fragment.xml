@@ -23,12 +23,13 @@
 		<items>
 			<ColumnListItem type="Inactive" press=".onPress">
 				<cells>
+				<!-- TODO ANO 16/03/2026 Le state n'est pas réinitialisé lorsqu'on rouvre la boîte de dialogue après l'avoir fermé. Il faut créer un viewModel dédié ou étendre le modèle finChargement-->
 					<ComboBox
 						id = "MotifNchCmbBox"		
 						showSecondaryValues= "true"
 						change = ".onMotifNchCmbBoxChange"
 						selectionChange = ".onMotifNchCmbBoxSelectionChange"
-						valueState="Error"
+						valueState="Error"            
 						items="{
 							path: 'finChargementQuaiModelJSON>/tCodelib',
 							sorter: { path: 'zcdlib' }

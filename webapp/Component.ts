@@ -32,6 +32,7 @@ import ElementBase from "sap/suite/ui/commons/networkgraph/ElementBase";
 
 //TODO Enum -> Rajouter des Enum pour les types d'erreur, les actions (chargement/dechargement), les quais, les modèles
      enum environment_enum {
+localhost = "localhost",       
   dev = "dev",
   test = "exc",
   preprod = "preprod",
@@ -45,20 +46,38 @@ import ElementBase from "sap/suite/ui/commons/networkgraph/ElementBase";
   prod_url = "sapprod.exaclair.eu",
 }
 
+   enum restapi_websocket_path_enum {
+  chargementquais = "/sap/bc/gui/sap/its/zpcf_chargement/chargement",
+  validation_chargement = "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement",
+  chargement_prevus = "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list",                               
+  start_chargement = "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement",
+  end_chargement = "/sap/bc/gui/sap/its/zpcf_chargement/end_chargement",
+  material_umstock_list = "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list",                               
+  chargement_um = "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um",
+  websocket_ychargement_camion_poc = "/sap/bc/apc/sap/ychargement_camion_poc",
+}
+
+
+   enum application_events_enum {
+  chargement_quais_event = "chargementEvent",
+  chargement_prevus_event = "chargementListEvent",
+  validation_msg_chargement_event = "validationMsgChargementEvent",
+  chargement_um_post_event = "ChargementUmPostEvent",
+  chargement_start_get_event = "chargementStartModelGetEvent",
+  chargement_end_event = "finChargementEvent",
+  notification_websocket_event = "notificationWebSocketEvent",
+}
 
      enum application_names_enum {
   chargementsPrevus = "ChargementsPrevusApp",
   chargementsQuais = "ChargementsQuaisApp",
-  
 }
-
 
      enum action_code_enum {
   chargement = "chargement",
   dechargement = "dechargement",
   start_chargement ="startchargement",
   fin_chargement = "finchargement",
-  
 }
 
 /**
@@ -73,12 +92,6 @@ export default class Component extends BaseComponent {
 	};
     
     public gv_environment :environment_enum;
-    // TODO LOT 17 Mettre les chemins de serveur dans une énumération
-    // public  sap_server_dev  :string  = "sapdev.exaclair.eu";    // ADRESSE UI5 YAML SHDS-SAPDEV.exaclair.clairefontaine.local:1080   //LOT 17-- amélioration code
-    // public  sap_server_bas  :string  = "sapbas.exaclair.eu";                                                                         //LOT 17-- amélioration code
-    // public  sap_server_test  :string  = "sap.exaclair.eu";   // TODO A vérifier                                                      //LOT 17-- amélioration code
-    // public  sap_server_pre  :string  = "sappre.exaclair.eu";                                                                         //LOT 17-- amélioration code
-    // public  sap_server_prod :string  = "sapprod.exaclair.eu";                                                                        //LOT 17-- amélioration code
     public gv_chargement_url : string;
     public gv_chargement_um_api_url: string;                    // URL API startchargement
     public gv_startchargement_api_url: string;                  // URL API startchargement
@@ -88,8 +101,6 @@ export default class Component extends BaseComponent {
     public gv_chargementprevus_api_url: string;                  // URL API Chargement prévus
     public gv_material_umstock_api_url: string;                  // URL material_umstock_list
     public gv_websocket_url: string;                             // URL Web Socket    LOT16
-   // public const_chargementsPrevusApp = "ChargementsPrevusApp";  // Application Chargement prévues    //LOT17 amélioration code
-    //public const_chargementsQuaisApp = "ChargementsQuaisApp";    // Application Chargement des quais  //LOT17 Amélioration code
     public gv_current_application: string;                       // Stocke le nom de l'application actuellement affiché (Liste des chargmentn ou Chargement des quais)
    
 	public init() : void {
@@ -127,7 +138,6 @@ export default class Component extends BaseComponent {
                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
             }
-             
         },
         {
             "quai": "quai09",
@@ -280,7 +290,7 @@ export default class Component extends BaseComponent {
      //               HANDLER pour Start Chargment des quais                                                           //  
      //----------------------------------------------------------------------------------------------------------------//
      this.getEventBus().subscribe("Default","chargementStartEvent", (channel:string,event:string,data: Object) => { 
-        console.log("chargementStartEvent"); 
+    console.log("chargementStartEvent"); 
        let quai :string = Object.values(data)[0];  
        this.startchargementquai_post(quai);
      }, this ); 
@@ -361,7 +371,7 @@ export default class Component extends BaseComponent {
 },this); 
 
      //----------------------------------------------------------------------------------------------------------------------------//
-     //                                                                                                                            //  
+     //     HANDLER pour Appel de matchcoes articles en stock                                                                                                                        //  
      //----------------------------------------------------------------------------------------------------------------------------//
       this.getEventBus().subscribe("Default","LoadMaterialUmStockListEvent",(channel:string,event:string,data: Object) => {           
             //this.notification_handler(Object.values(data)[0],Object.values(data)[1],Object.values(data)[2],Object.values(data)[3],Object.values(data)[4],Object.values(data)[5]);  
@@ -391,24 +401,24 @@ export default class Component extends BaseComponent {
          let target_quai14: Target = router.getTarget("targetchargementquai14") as Target;
          let target_quai15: Target = router.getTarget("targetchargementquai15") as Target;
 
-           target_chargement_list.attachDisplay(()=>{  this.gv_current_application = application_names_enum.chargementsPrevus;}     //Stockage du nom de l'application en cours d'utilisation  // LOT17 Amélioration code
-                                             );    
-           target_quai08.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                //Stockage du nom de l'application en cours d'utilisation  // LOT17 Amélioration code
-                                      );
-           target_quai09.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                      );  
-           target_quai10.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                      );   
-           target_quai11.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                      );  
-           target_quai12.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                      );   
-           target_quai13.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                      );    
-           target_quai14.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                      ); 
-           target_quai15.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                      );                                                                                                          
+        target_chargement_list.attachDisplay(()=>{  this.gv_current_application = application_names_enum.chargementsPrevus;}     //Stockage du nom de l'application en cours d'utilisation  // LOT17 Amélioration code
+                                            );    
+        target_quai08.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                //Stockage du nom de l'application en cours d'utilisation  // LOT17 Amélioration code
+                                    );
+        target_quai09.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+                                    );  
+        target_quai10.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+                                    );   
+        target_quai11.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+                                    );  
+        target_quai12.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+                                    );   
+        target_quai13.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+                                    );    
+        target_quai14.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+                                    ); 
+        target_quai15.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+                                    );                                                                                                          
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------//
@@ -421,7 +431,7 @@ export default class Component extends BaseComponent {
         // BEGIN SIMPLIFICATION CDOE
         let lv_index: number =      location.hostname.search(/sap/);
 //         //------------------------------------  DEPLOIEMENT SUR SERVEUR SAP--------------------------------------------------------------------------------------------------
-        if (lv_index == -1 || location.hostname === 'localhost')
+        if (lv_index == -1 || location.hostname === environment_enum.localhost)
              {
                 switch (this.gv_environment.toLowerCase()) {
                 case environment_enum.dev:
@@ -453,15 +463,26 @@ export default class Component extends BaseComponent {
              lv_location = location.host;
              lv_socket_location = location.host;  
             }  
-    this.gv_chargementquais_api_url = "https://" + lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";
-    this.gv_validation_msg_chargementquais_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
-    this.gv_chargementprevus_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
-    this.gv_startchargement_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
-    this.gv_endchargement_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/end_chargement";
-    this.gv_material_umstock_api_url =  "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-    this.gv_chargement_um_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
-    this.gv_websocket_url = "wss://" + lv_socket_location + "/sap/bc/apc/sap/ychargement_camion_poc"; 
-        // END SIMPLIFICATION CODE  
+
+    // LOT 17 Amélioration code (Enum)        
+    // this.gv_chargementquais_api_url = "https://" + lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";
+    // this.gv_validation_msg_chargementquais_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
+    // this.gv_chargementprevus_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
+    // this.gv_startchargement_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
+    // this.gv_endchargement_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/end_chargement";
+    // this.gv_material_umstock_api_url =  "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
+    // this.gv_chargement_um_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
+    // this.gv_websocket_url = "wss://" + lv_socket_location + "/sap/bc/apc/sap/ychargement_camion_poc"; 
+
+    this.gv_chargementquais_api_url = "https://" + lv_location  +  restapi_websocket_path_enum.chargementquais;
+    this.gv_validation_msg_chargementquais_api_url = "https://" + lv_location +  restapi_websocket_path_enum.validation_chargement;    
+    this.gv_chargementprevus_api_url = "https://" + lv_location +  restapi_websocket_path_enum.chargement_prevus; 
+    this.gv_startchargement_api_url = "https://" + lv_location +  restapi_websocket_path_enum.start_chargement;
+    this.gv_endchargement_api_url = "https://" + lv_location +  restapi_websocket_path_enum.end_chargement;
+    this.gv_material_umstock_api_url =  "https://" + lv_location +  restapi_websocket_path_enum.material_umstock_list;
+    this.gv_chargement_um_api_url = "https://" + lv_location +  restapi_websocket_path_enum.chargement_um;
+    this.gv_websocket_url = "wss://" + lv_socket_location +  restapi_websocket_path_enum.websocket_ychargement_camion_poc;
+// END SIMPLIFICATION CODE  
 }
 //---------------------------------------------------------------------------------------------------------------------------------//
 //                                                                                                                                 //  
@@ -690,30 +711,30 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
   if ((action == action_code_enum.chargement) && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai    //LOT17 => Amélioration code
         {
           MessageToast.show(msg_txt);
-          this.getEventBus().publish("Default", "chargementEvent", {}); 
-          this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
-          this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOT 13 
+          this.getEventBus().publish("Default", application_events_enum.chargement_quais_event, {}); 
+          this.getEventBus().publish("Default", application_events_enum.chargement_prevus_event, {}); "Rechargement de la liste des chargements prévus"
+          this.getEventBus().publish("Default", application_events_enum.validation_msg_chargement_event, {});    //LOT 13 
         }
       if ((action == action_code_enum.dechargement) && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
         {
           MessageToast.show(msg_txt);
-          this.getEventBus().publish("Default", "chargementEvent", {}); 
-          this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
-          this.getEventBus().publish("Default", "validationMsgChargementEvent", {});    //LOT 13
+          this.getEventBus().publish("Default", application_events_enum.chargement_quais_event, {}); 
+          this.getEventBus().publish("Default", application_events_enum.chargement_prevus_event, {}); "Rechargement de la liste des chargements prévus"
+          this.getEventBus().publish("Default", application_events_enum.validation_msg_chargement_event, {});    //LOT 13
         }
     if ( (action == action_code_enum.start_chargement) && (type_msg == 'information' ))
       {
       console.log("-----P1-----------------------Notification de fin de chargement ou de début de chargement// Rafraichissement des chargements-------------------------------------------");
       MessageToast.show(msg_txt);
-      this.getEventBus().publish("Default", "chargementEvent", {});  //Notification fin de chargement"
-      this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
+      this.getEventBus().publish("Default", application_events_enum.chargement_quais_event, {});  //Notification fin de chargement"
+      this.getEventBus().publish("Default", application_events_enum.chargement_prevus_event, {}); "Rechargement de la liste des chargements prévus"
       }
       if ( (action == action_code_enum.fin_chargement) )
       {
       console.log("-----P1-----------------------Notification de fin de chargement ou de début de chargement// Rafraichissement des chargements-------------------------------------------");
       MessageToast.show(msg_txt);
-      this.getEventBus().publish("Default", "chargementEvent", {});  //Notification fin de chargement"
-      this.getEventBus().publish("Default", "chargementListEvent", {}); "Rechargement de la liste des chargements prévus"
+      this.getEventBus().publish("Default", application_events_enum.chargement_quais_event, {});  //Notification fin de chargement"
+      this.getEventBus().publish("Default", application_events_enum.chargement_prevus_event, {}); "Rechargement de la liste des chargements prévus"
       }
 }
     onCloseDialog(): void {
@@ -734,7 +755,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
             this.setModel(chargementsPrevusListModel, "chargementsPrevusListModel");
         }else
         {  
-            console.log("Relance du chargement list"),
             chargementsPrevusListModel =   this.getModel( "chargementsPrevusListModel") as JSONModel;
         }
     
@@ -788,7 +808,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
         this.setModel(chargementQuaiModel, "chargementModelJson");
      }else
      {  
-         console.log("Relance du chargement list"),
          chargementQuaiModel =   this.getModel( "chargementModelJson") as JSONModel;
      }
     
@@ -799,7 +818,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
                              console.log("DATA DANS LE PROMISE DU GET" + data)       });
      
      chargementQuaiModel.attachRequestCompleted(function (evt) { console.log("PARAMETRES RESPONSE HEADER:" +evt); });
-     console.log("Fin Chargement de l'API : " + this.gv_chargementquais_api_url); 
     }
 
     //----------------------------------------------------------------------------------------------------------------------------//
@@ -861,7 +879,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
        const router = this.getRouter();
        let lv_target_quai : string = "targetstartchargement" + input_data.quai1.toLowerCase();
        // MessageToast.show("Fin de chargement sur quai : " + input_data.quai1 + " et navigation sur Target:" +  lv_target_quai,{ duration: 4000, width : '50%' })
-        this.getEventBus().publish("Default", "finChargementEvent", {});
+        this.getEventBus().publish("Default", application_events_enum.chargement_end_event, {});
         router.getTargets()?.display(lv_target_quai);           
         },reason=>{  console.log("P1 LOT13 Rejected Promise POST FinChargement" + finChargementQuaiModelJSON.getJSON.toString());
                      //MessageToast.show("Veuillez saisir un motif de non chargement pour chaque poste: " + reason ,{ duration: 5000, width : '50%' })
@@ -944,7 +962,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
        lv_target_quai = "targetchargement" + i_quai;
         const router = this.getRouter();
         console.log("P1 Navigation vers le quai avec target " + lv_target_quai); 
-         this.getEventBus().publish("Default", "chargementStartModelGetEvent", {});
+         this.getEventBus().publish("Default", application_events_enum.chargement_start_get_event, {});
          router.getTargets()?.display(lv_target_quai);           // TODO -> Remis après refonte du modèle de notification car manquant
                                                                                                                       },reason=>{  console.log("P1 REJECTED PROMISE POST StartChargment" + ChargementStartModel.getJSON.toString());
                                                                                                              }); 
@@ -1022,7 +1040,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     //------------------- TODO LOT9  Validation des messages de Warning->Mettre le code de suppression du Warning de la promise de l'API POST--------------------------------------------------
        //console.log("P1 LOt15 Valeur de i_validation_charg_um :" + i_validation_charg_um);
       console.log("P1 HIGH LOt15 Rappel de l'API des messages de validation");
-      this.getEventBus().publish("Default", "validationMsgChargementEvent", {});  // LOT15 Rappel du modèle de validation de chargment -> Réfléchir si c'est nécessaire ou le mettre dans le handler du routing
+      this.getEventBus().publish("Default", application_events_enum.validation_msg_chargement_event, {});  // LOT15 Rappel du modèle de validation de chargment -> Réfléchir si c'est nécessaire ou le mettre dans le handler du routing
 
                                                                                                                       },reason=>{ 
                                                                                                              }); 
@@ -1070,7 +1088,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
 
              // On envoie une notification UM qui sera gérée dans la vue de Chargement
              // LOT Démarrage Chargement quai -> On va définir un handler notificationWebSocketEvent qui va redispatcher vers notificationUMEvent
-             that.getEventBus().publish("Default", "notificationWebSocketEvent",  data);   // Il est possible d'essayer avec    that.getEventBus().publish("Default", "notificationUMEvent",  content_json)
+             that.getEventBus().publish("Default", application_events_enum.notification_websocket_event,  data);   // Il est possible d'essayer avec    that.getEventBus().publish("Default", "notificationUMEvent",  content_json)
          }); 
     }
     /*  La création du root Control peut se faire par le Manifest du composant

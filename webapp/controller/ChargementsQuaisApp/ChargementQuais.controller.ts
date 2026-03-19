@@ -16,6 +16,21 @@ import IconTabBar from "sap/m/IconTabBar";
 /**
  * @namespace clf.logistique.chargementquais.controller
  */
+
+  enum application_events_enum {
+  chargement_quais_event = "chargementEvent",
+  chargement_prevus_event = "chargementListEvent",
+  validation_msg_chargement_event = "validationMsgChargementEvent",
+  chargement_um_get_event = "ChargementUMGetEvent",
+  chargement_um_post_event = "ChargementUmPostEvent",
+  chargement_start_get_event = "chargementStartModelGetEvent",
+  chargemen_end_motifsNch_event ="chargementEndMotifsNchEvent",
+  chargemen_end_motifsNch_post_event = "chargementEndMotifsNchPostEvent",
+  chargement_end_event = "finChargementEvent",
+  notification_websocket_event = "notificationWebSocketEvent",
+  validation_dialog_event = "validationDialogEvent",
+  close_manualscanpopup_event = 'CloseManualScanPopupEvent'
+}
 export default class ChargementQuais extends Controller {
 
   private dialog: Dialog;
@@ -74,17 +89,15 @@ export default class ChargementQuais extends Controller {
   //------------------------------------------------------------------------------------------------------------------------------//
   //             HANDLER fin de chargement  => Pour fermer la boîte de dialogue de saisie des motifs de non chargeemnt            //                                                                                    //  
   //------------------------------------------------------------------------------------------------------------------------------//
-    this.getOwnerComponent()?.getEventBus().subscribe("Default","finChargementEvent",(channel:string,event:string,data: Object) => {           
+    this.getOwnerComponent()?.getEventBus().subscribe("Default",application_events_enum.chargement_end_event,(channel:string,event:string,data: Object) => {           
       this.dialogMotifsNoCharg.close();
-      console.log("LOT13 Handler fin de chargment dans le controlleur Chargementquai [pour femer boîte de dialogue motifs de chargement] ")
         },this);
 
-    //------------------------------------------------------------------------------------------------------------------------------//
+  //------------------------------------------------------------------------------------------------------------------------------//
   //           LOT15:  HANDLER pour fermer la boîte de dialogue de scan manuel d'UM                                                //                                                                                    //  
   //------------------------------------------------------------------------------------------------------------------------------//
-    this.getOwnerComponent()?.getEventBus().subscribe("Default","CloseManualScanPopupEvent",(channel:string,event:string,data: Object) => {           
+    this.getOwnerComponent()?.getEventBus().subscribe("Default", application_events_enum.close_manualscanpopup_event,(channel:string,event:string,data: Object) => {           
       this.dialogScanManuelUm.close();
-      console.log("LOT Handler Fermeture de la boîte de Dialogue de scan manuel d'UM");
         },this);
   }
 
@@ -92,29 +105,21 @@ export default class ChargementQuais extends Controller {
     }
 
   public onSelectDialogUmFauxCam(event: Button$PressEvent): void {
-    console.log("Event press UM postes non chargés :" + event.getSource());
-    let lv_quai:string = "01";
-    console.log("event onSelectDialogUmFauxCam .getSource().toString()" + event.getSource().toString());
-    // TODO => Créer un loop sur l'ensemble des quais pour remplir les indices de binding 
-    if (event.getSource().toString().includes("quai8") === true )  { lv_quai = '0' ;  
-                                                                      console.log("onSelectDialogUmFauxCam SOURCE BUTTON = QUAI8"); };
-    if (event.getSource().toString().includes("quai9") === true )  { lv_quai = '1'};
-    if (event.getSource().toString().includes("quai10") === true ) { lv_quai = '2'};
-    if (event.getSource().toString().includes("quai11") === true ) { lv_quai = '3'};
-    if (event.getSource().toString().includes("quai12") === true ) { lv_quai = '4'};
-    if (event.getSource().toString().includes("quai13") === true ) { lv_quai = '5'};
-    if (event.getSource().toString().includes("quai14") === true ) { lv_quai = '6'};
-    if (event.getSource().toString().includes("quai15") === true ) { lv_quai = '7'};
-
-    let lv_length : number = event.getSource().toString().length;
-    let postenocharge_indice = event.getSource().toString().charAt(lv_length-1);
+      let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;
+      console.log("P1 SELECTED KEY OF QUAI : " + iconTahBar.getSelectedKey());
+      let  lv_quai: string = iconTahBar.getSelectedKey();
+      let  lv_quai_number: number = Number(lv_quai.substring( lv_quai.length-2, lv_quai.length));
+      console.log("P1 LOT 17 NUMERO DU QUAI : " + lv_quai_number); 
+      let  lv_indicejson_quai: number = lv_quai_number-8;
+      let lv_length : number = event.getSource().toString().length;
+      let postenocharge_indice = event.getSource().toString().charAt(lv_length-1);
       console.log("postenocharge_indice" + postenocharge_indice);
-      this.dialog.setBindingContext(this.getOwnerComponent()?.getModel("chargementModelJson")?.createBindingContext("/results/" + lv_quai + "/tPosteNocharge/" + postenocharge_indice + "/") as Context,"chargementModelJson")
+      this.dialog.setBindingContext(this.getOwnerComponent()?.getModel("chargementModelJson")?.createBindingContext("/results/" + lv_indicejson_quai + "/tPosteNocharge/" + postenocharge_indice + "/") as Context,"chargementModelJson")
       this.dialog.open();
   }
 
-  public onSelectDialogUmStockPress(event: Button$PressEvent): void {
-  console.log(event.getSource().getParent()?.getBindingContext("chargementModelJson")?.getProperty("codart")  );
+public onSelectDialogUmStockPress(event: Button$PressEvent): void {
+  //console.log(event.getSource().getParent()?.getBindingContext("chargementModelJson")?.getProperty("codart")  );
   let lv_material : string = event.getSource().getParent()?.getBindingContext("chargementModelJson")?.getProperty("codart") 
   let data : {material:String} = { material: lv_material }               
   this.getOwnerComponent()?.getEventBus().publish("Default", "LoadMaterialUmStockListEvent", data);
@@ -125,23 +130,12 @@ export default class ChargementQuais extends Controller {
   //LOT 13 : Handler du bouton de validation de fin de chargement
   //---------------------------------------------------------------------------------------------------------------------------
   public onPressButtonFinCharg(event: Button$PressEvent): void {
-    // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr  [C'est également possible de récupéer le quai à partir du ChargementUM_GEt]
-    // ANCIEND CODE BEGIN
-    // BEGIN A- Récupération du numméro de quai et de l'indice json du quai
-    
-      // let  lv_source_id_length = event.getSource().getId().length;
-      // let  lv_quai: string = "quai" + event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length);
-      // let  lv_quai_number: number = Number(event.getSource().getId().substring( lv_source_id_length-2, lv_source_id_length));
-      // let  lv_indicejson_quai: number = lv_quai_number-8;
-      // END  Récupération du numméro de quai et de l'indice json du quai
-      // ANCIEN CODE END 
       let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;
       console.log("P1 LOT 17 SELECTED KEY OF QUAI : " + iconTahBar.getSelectedKey());
       let  lv_quai: string = iconTahBar.getSelectedKey();
       let  lv_quai_number: number = Number(lv_quai.substring( lv_quai.length-2, lv_quai.length));
       console.log("P1 LOT 17 NUMERO DU QUAI : " + lv_quai_number); 
       let  lv_indicejson_quai: number = lv_quai_number-8;
-  // EVOL 12-03-2026
     
     // B-Récupération du numéro de transport du quai à partir de l'index json du quai  
     let lv_numtransport:string = this.getOwnerComponent()?.getModel("chargementModelJson")?.getProperty("/results/" + lv_indicejson_quai.toString() + "/numtransport", undefined)
@@ -149,14 +143,17 @@ export default class ChargementQuais extends Controller {
     console.log("P1 HIGH LOT 13 POPUP Motifs non chargement Valeur du transport= " +  lv_numtransport+  "/QUAI=" + lv_quai_number); 
     let data : {quai:string, transport:string} = { quai:  lv_quai, transport: lv_numtransport } 
     // Récupération des motifs de non chargement dans l'API REST              
-    this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEndMotifsNchEvent", data);
+    this.getOwnerComponent()?.getEventBus().publish("Default",application_events_enum.chargemen_end_motifsNch_event , data);
     // Ouverture de la boîte de dialogue de saisie des motifs de non chargement
     this.dialogMotifsNoCharg.open();
   }
 
+  //--------------------------------------------------------------------------------------------------------------------------
+  //LOT 13 : Confirmation fin de chargement
+  //---------------------------------------------------------------------------------------------------------------------------
   public onconfirmMotifsNch(event: Button$PressEvent): void {
         // Envoi d'un event pour appel de l'API de fin de chargement                
-        this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEndMotifsNchPostEvent");
+        this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.chargemen_end_motifsNch_post_event);
       }
  //--------------------------------------------------------------------------------------------------------------------------
   //LOT 13 : Fin de chargement//Sélection des motifs de non chargement
@@ -171,36 +168,33 @@ export default class ChargementQuais extends Controller {
   }
 
   //---------------------------------------------------------------------
-  //LOT 15 : Chargement manuel scan
+  //LOT 15 : Appel de la boîte de dialogueChargement manuel scan
   //---------------------------------------------------------------------
   public onScanManuelUm(event: Button$PressEvent): void {
-         let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;
-          console.log("P1 SELECTED KEY OF QUAI : " + iconTahBar.getSelectedKey());
-        let  lv_quai: string = iconTahBar.getSelectedKey();
-        let  lv_quai_number: number = Number(lv_quai.substring(lv_quai.length-2, lv_quai.length));
-         // EVOL 12-03-2026
-        let  lv_indicejson_quai: number = lv_quai_number-8;
-         
-        //B- Envoi du numéro de  quai à l'API
-        // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr
-        let data : {quai:string} = { quai:  lv_quai } 
-        console.log("P1 Appel du GetChargemntUM : " + lv_quai);
-        this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUMGetEvent",  data);
-        // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr
+  let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;
+  console.log("P1 CONTROLLEUR ChargementQuais-WMETHODE onScanManuelUm-> SELECTED KEY OF QUAI : " + iconTahBar.getSelectedKey());
+  let  lv_quai: string = iconTahBar.getSelectedKey();
+  let  lv_quai_number: number = Number(lv_quai.substring(lv_quai.length-2, lv_quai.length));
+  let  lv_indicejson_quai: number = lv_quai_number-8;
+    
+  //B- Envoi du numéro de  quai à l'API
+  // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr
+  let data : {quai:string} = { quai:  lv_quai } 
+  this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.chargement_um_get_event,  data);
 
-        //C- Suppression des messages d'erreurs des scans manuels précédents
-        let validationMsgChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("notificationsQuaisModel") as JSONModel;
-        validationMsgChargementQuaiModel.setProperty("/quais/" + lv_indicejson_quai + "/notifs/notifsuccess_scanmanuelum/msg_txt", "") ;
-        validationMsgChargementQuaiModel.setProperty("/quais/" + lv_indicejson_quai + "/notifs/notifsuccess_scanmanuelum/visible", false) ;
+  //Suppression des messages d'erreurs des scans manuels précédents
+  let validationMsgChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("notificationsQuaisModel") as JSONModel;
+  validationMsgChargementQuaiModel.setProperty("/quais/" + lv_indicejson_quai + "/notifs/notifsuccess_scanmanuelum/msg_txt", "") ;
+  validationMsgChargementQuaiModel.setProperty("/quais/" + lv_indicejson_quai + "/notifs/notifsuccess_scanmanuelum/visible", false) ;
 
-        validationMsgChargementQuaiModel.setProperty("/quais/" + lv_indicejson_quai + "/notifs/notiferror_scanmanuelum/msg_txt", "") ;
-        validationMsgChargementQuaiModel.setProperty("/quais/" + lv_indicejson_quai + "/notifs/notiferror_scanmanuelum/visible", false) ;
-       //D- Faire pointer la bîte de dialogue sur le noeud correspondant au quai en cours
-        this.dialogScanManuelUm.setBindingContext(this.getOwnerComponent()?.getModel("notificationsQuaisModel")?.createBindingContext("/quais/" + lv_indicejson_quai + "/") as Context,"notificationsQuaisModel");  
-       //E- Ouverture de la boîte de dialogue dialogScanManuelUm
-        this.dialogScanManuelUm.open();
-        // Essayer de mettre le focus sur le champ de saisie
-         //this.byId("InputUmScan")?.focus();
+  validationMsgChargementQuaiModel.setProperty("/quais/" + lv_indicejson_quai + "/notifs/notiferror_scanmanuelum/msg_txt", "") ;
+  validationMsgChargementQuaiModel.setProperty("/quais/" + lv_indicejson_quai + "/notifs/notiferror_scanmanuelum/visible", false) ;
+  //Faire pointer la bîte de dialogue sur le noeud correspondant au quai en cours
+  this.dialogScanManuelUm.setBindingContext(this.getOwnerComponent()?.getModel("notificationsQuaisModel")?.createBindingContext("/quais/" + lv_indicejson_quai + "/") as Context,"notificationsQuaisModel");  
+  //E- Ouverture de la boîte de dialogue dialogScanManuelUm
+  this.dialogScanManuelUm.open();
+  // Essayer de mettre le focus sur le champ de saisie
+  //this.byId("InputUmScan")?.focus();
     }
   // LOT15 END Chargement manuel scan 
 
@@ -208,64 +202,58 @@ export default class ChargementQuais extends Controller {
   //------------------- LOT 15 BEGIN SCAN MANUEL DES UMS  ----------------------------------------------------------------------------------------------//  
   //----------------------------------------------------------------------------------------------------------------------------------------------------//
  public onSubmitUm(event:Input$SubmitEvent):void {
-  console.log("------------------------------------------------------P1 HIGH LOT15 Handler onSubmitUm: --------------------------------------------------------------");
- // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr  [C'est également possible de récupéer le quai à partir du ChargementUM_GEt]
+  console.log("-----P1 HIGH LOT15 CONTROLLEUR ChargementQuais->Handler onSubmitUm: --------------------------------------------------------------");
+  // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr (METHOD 1)  ou C'est également possible de récupéer le quai à partir du ChargementUM_GEt (METHODE 2)
+  // LOT17 TODO ->REFAIRE UN TEST IL SERAIT PREFERABLE DE RECUPERER LE QUAI A PARTIR DE l'ICONTABBAR (METHODE 1)
   // let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;
   // console.log("P1 onSubmitUm SELECTED KEY OF QUAI : " + iconTahBar.getSelectedKey());
   // let  lv_quai: string = iconTahBar.getSelectedKey();
   // EVOL 12-03-2026
- 
   let ChargementUmModel: JSONModel =   this.getOwnerComponent()?.getModel( "ChargementUmModel") as JSONModel;
   let input_data:any = ChargementUmModel.getData();
-  console.log("P1 onSubmitUm LOT scan manuel Valeur du quai=" + input_data.quai1 );
-
   let data : {quai:string, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string} =
      { quai: input_data.quai1, codum : input_data.codum,  msgid: '', aenam : '', errdt: '', errzt: '', choice : ''}
   console.log("----------P1 HIGH LOT 15 Appel du post de chargement UM-----VALEUR DU QUAI= " + input_data.quai1  + " Valeur de l'UM= " + input_data.codum);
-  this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUmPostEvent", data);
-// EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr
-  
-  //------------------LOT 17 Amélioration code -> A tester si un get est nécessaire après le post---------------------------------------------------// 
+  this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.chargement_um_post_event, data);
    let data2 : {quai:string} = { quai:  input_data.quai1 } 
-   this.getOwnerComponent()?.getEventBus().publish("Default", "ChargementUMGetEvent",  data2);
-  // EVOL 12-03-2026 Récupération du quai à partir du selectedKey de l'IconTabBAr
+   this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.chargement_um_get_event,  data2);
  }
   
  async onOpenDialog(): Promise<void> {
-          this.dialog ??= await this.loadFragment({
-             name: "clf.logistique.chargementquais.view.fragment.DialogUmFaucam"
-          }) as Dialog;
-          this.dialog.setModel(this.getOwnerComponent()?.getModel("chargementModelJson"),"chargementModelJson");
+  this.dialog ??= await this.loadFragment({
+      name: "clf.logistique.chargementquais.view.fragment.DialogUmFaucam"
+  }) as Dialog;
+  this.dialog.setModel(this.getOwnerComponent()?.getModel("chargementModelJson"),"chargementModelJson");
    }  
   async onLoadFragmentUmStock(): Promise<void> {
-          this.dialogUmStock ??= await this.loadFragment({
-             name: "clf.logistique.chargementquais.view.fragment.DialogUmStock"
-          }) as Dialog;
-          //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
+  this.dialogUmStock ??= await this.loadFragment({
+      name: "clf.logistique.chargementquais.view.fragment.DialogUmStock"
+  }) as Dialog;
+  //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
    }  
 
   async onLoadFragmentMotifsNonChargement(): Promise<void> {
-          this.dialogMotifsNoCharg ??= await this.loadFragment({
-             name: "clf.logistique.chargementquais.view.fragment.DialogMotifsNonCharg"                               //TODO LOT13  Créer un nouveau fragment pour la boîte de dialogue de saisie des motifs de non chargement
-          }) as Dialog;
-          //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
+    this.dialogMotifsNoCharg ??= await this.loadFragment({
+        name: "clf.logistique.chargementquais.view.fragment.DialogMotifsNonCharg"                               //TODO LOT13  Créer un nouveau fragment pour la boîte de dialogue de saisie des motifs de non chargement
+    }) as Dialog;
+    //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
     }   
 
 // LOT15 BEGIN Chargement manuel scan 
   public  async onLoadFragmentScanManuelUm(): Promise<void> {
-          this.dialogScanManuelUm ??= await this.loadFragment({
-             name: "clf.logistique.chargementquais.view.fragment.DialogScanManuelUm"                               //TODO LOT13  Créer un nouveau fragment pour la boîte de dialogue de saisie des motifs de non chargement
-          }) as Dialog;
-          //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
+  this.dialogScanManuelUm ??= await this.loadFragment({
+      name: "clf.logistique.chargementquais.view.fragment.DialogScanManuelUm"                               //TODO LOT13  Créer un nouveau fragment pour la boîte de dialogue de saisie des motifs de non chargement
+  }) as Dialog;
+  //this.dialog.setModel(this.getOwnerComponent()?.getModel("MaterialUmStockListModel"),"MaterialUmStockListModel");
     }  
 // LOT15 END Chargement manuel scan 
 //----------- Fermeture de la boîte de dialogue de saisie des motifs de non chargement---------------------------------/   
   public onDialogMotifsClose(): void {
-         this.dialogMotifsNoCharg.close();
+    this.dialogMotifsNoCharg.close();
     }
 // LOT15 BEGIN Chargement manuel scan 
   public onDialogValidScanUMClose(): void {
-         this.dialogScanManuelUm.close();
+    this.dialogScanManuelUm.close();
     }
 // LOT15 END Chargement manuel scan 
 
