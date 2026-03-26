@@ -97,7 +97,7 @@ export default class Component extends BaseComponent {
     public gv_startchargement_api_url: string;                  // URL API startchargement
     public gv_endchargement_api_url: string;                    // URL API endchargement
     public gv_chargementquais_api_url: string;                  // URL API chargement des quais
-    public gv_validation_msg_chargementquais_api_url: string;                                                                     //gv_validation_msg_chargementquais_api_url
+    public gv_validation_msg_chargementquais_api_url: string;    //gv_validation_msg_chargementquais_api_url
     public gv_chargementprevus_api_url: string;                  // URL API Chargement prévus
     public gv_material_umstock_api_url: string;                  // URL material_umstock_list
     public gv_websocket_url: string;                             // URL Web Socket    LOT16
@@ -343,7 +343,7 @@ export default class Component extends BaseComponent {
        let errzt :string   = Object.values(data)[5];
        let choice :boolean = Object.values(data)[6];
        
-       console.log("P1 LOt15 Chargement manuel scan EVENT ChargementUmPostEvent");
+       //console.log("P1 LOt15 Chargement manuel scan EVENT ChargementUmPostEvent");
        this.api_chargement_um_post(quai,codum,msgid,aenam,errdt,errzt,choice);
      }, this );
 
@@ -464,16 +464,6 @@ export default class Component extends BaseComponent {
              lv_socket_location = location.host;  
             }  
 
-    // LOT 17 Amélioration code (Enum)        
-    // this.gv_chargementquais_api_url = "https://" + lv_location  + "/sap/bc/gui/sap/its/zpcf_chargement/chargement";
-    // this.gv_validation_msg_chargementquais_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/valid_msg_chargement";    
-    // this.gv_chargementprevus_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_list"; 
-    // this.gv_startchargement_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/start_chargement";
-    // this.gv_endchargement_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/end_chargement";
-    // this.gv_material_umstock_api_url =  "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/material_umstock_list";
-    // this.gv_chargement_um_api_url = "https://" + lv_location + "/sap/bc/gui/sap/its/zpcf_chargement/chargement_um";
-    // this.gv_websocket_url = "wss://" + lv_socket_location + "/sap/bc/apc/sap/ychargement_camion_poc"; 
-
     this.gv_chargementquais_api_url = "https://" + lv_location  +  restapi_websocket_path_enum.chargementquais;
     this.gv_validation_msg_chargementquais_api_url = "https://" + lv_location +  restapi_websocket_path_enum.validation_chargement;    
     this.gv_chargementprevus_api_url = "https://" + lv_location +  restapi_websocket_path_enum.chargement_prevus; 
@@ -496,12 +486,10 @@ export default class Component extends BaseComponent {
       let notificationsQuaisModel : JSONModel  = this.getModel("notificationsQuaisModel") as JSONModel;
     //  let input_data:any = notificationsQuaisModel.getData(); 
       // 1 TODO Récupération de l'indice ou de l'ID du quai concerné par modification => Récupérer l'indice du quai à partir du current_quai
-      console.log("------------------------------------COMPONENT CONTROLLER/Méthode notificationWebSocketHandler-----------------------------------------------");  
+      //console.log("------------------------------------COMPONENT CONTROLLER/Méthode notificationWebSocketHandler-----------------------------------------------");  
       current_quai_index_json = Number(current_quai.slice(4,6));
       current_quai_index_json =   current_quai_index_json - 8 ;
-      console.log("QUAI = " + current_quai + " /Valeur de l'indice json  du quai: " +  current_quai_index_json + "/Type de Message:" + type_msg)
-      console.log("------------------------------------MAJ des notififications dans le modèle de notification-----------------------------------------------");  
-      console.log("P1 HIGH TEST POPOP VALIDATION CHARGEMENT ACTION=" + action + " TYPE MESSAGE = " + type_msg + "MSG_TXT = " +  msg_txt);
+      //console.log("QUAI = " + current_quai + " /Valeur de l'indice json  du quai: " +  current_quai_index_json + "/Type de Message:" + type_msg)
       // TODO  LOT7  A changer c'est plus subtil que cela si startchargement et Succes alors il faut pointer sur le root path des quais  (Path /chargementstartnotifs)
       //------------------En fonction du type d'action et du du type de message on enregistre la notification dans le modèle de notifications des quais  /quais/{indice_quai}/notifs
       //----------------- dans le  modèle de notifications le démarrage du chargement (Path /chargementstartnotifs)
@@ -657,9 +645,9 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
         }
     
 // END EVOLUTION -> Affichage de plusieurs messsages strip en même temps sur le quai
-    console.log("Strip Error Text   : "+ notificationsQuaisModel.getProperty(model_root_path + "/notiferror/msg_txt"));
-    console.log("Strip success Text : "+ notificationsQuaisModel.getProperty(model_root_path + "/notifsuccess/msg_txt"));
-    console.log("Strip Warning Text : "+ notificationsQuaisModel.getProperty(model_root_path + "/notifwarning/msg_txt"));
+    //console.log("Strip Error Text   : "+ notificationsQuaisModel.getProperty(model_root_path + "/notiferror/msg_txt"));
+    //console.log("Strip success Text : "+ notificationsQuaisModel.getProperty(model_root_path + "/notifsuccess/msg_txt"));
+    //console.log("Strip Warning Text : "+ notificationsQuaisModel.getProperty(model_root_path + "/notifwarning/msg_txt"));
 
 // TODO Rappel de l'API REST des messages de validation de chargement + Ouverture de la boîte de dialogue de validation de chargement 
 // TODO-> Vérifier que le popup s'affiche uniquement que si on se trouve sur l'application de chargement des quais
@@ -695,16 +683,16 @@ notificationsQuaisModel.setProperty("/quais/" + current_quai_index_json + "/um",
             break;
         }
       let msg_text_all_object : Object[] = notificationsQuaisModel.getProperty("/notif_txt_all") ;
-      console.log("P1----- Affichage de l'ensemble des messages de notifications---------------------" + msg_text_all_object);
+      //console.log("P1----- Affichage de l'ensemble des messages de notifications---------------------" + msg_text_all_object);
       msg_text_all_object.push({msg_txt: msg_txt, type_msg : type_msg_strip, time: time})
       notificationsQuaisModel.setProperty("/notif_txt_all",msg_text_all_object);
 
       //-------------------------------- Reprise de la logique de l'ancien handler-----------------------------------------------------------------------//
       // TODO -> Vérifier que la relance des API ne fait pas trop souvent- > Peut être relancer uniquement si l'utiliseur se trouve sur le quai concerné
-    this.refresh_after_wsnotifiction(action,type_msg,msg_txt)
+    this.refresh_after_wsnotification(action,type_msg,msg_txt)
 }
 
-public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: string)
+public refresh_after_wsnotification(action :string, type_msg:string, msg_txt: string)
 {
 // TODO -> Vérifier que la relance des API ne fait pas trop souvent- > Peut être relancer uniquement si l'utilisaeur se trouve sur le quai concerné
 // TODO-> En cas de notification de chargement relancer uniquement si c'est une notification de type 'S' et si le quai affiché est concerné par la notification
@@ -763,32 +751,32 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
      //chargementsPrevusListModel.updateBindings(true);
     }
 
-     //----------------------------------------------------------------------------------------------------------------------------//
-     //               Méthode d'appel à l'API  REST de récupération des stocks d'un article                                        //  
-     //----------------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------------------------//
+//               Méthode d'appel à l'API  REST de récupération des stocks d'un article                                        //  
+//----------------------------------------------------------------------------------------------------------------------------//
   public get_material_umstock_list(material:string):void {
  
-           var mHeader = {
-            "Access-Control-Allow-Origin": "*",
-            "Content-Type":"application/json",
-            "material": material                                      
-        }
-        let MaterialUmStockListModel: JSONModel;
-        if ( this.getModel("MaterialUmStockListModel") == undefined)
-        {
-            MaterialUmStockListModel = new JSONModel();
-            this.setModel(MaterialUmStockListModel, "MaterialUmStockListModel");
-        }else
-        {  
-            console.log("Relance du chargement list"),
-            MaterialUmStockListModel =   this.getModel( "MaterialUmStockListModel") as JSONModel;
-        }
+    var mHeader = {
+    "Access-Control-Allow-Origin": "*",
+    "Content-Type":"application/json",
+    "material": material                                      
+}
+    let MaterialUmStockListModel: JSONModel;
+    if ( this.getModel("MaterialUmStockListModel") == undefined)
+    {
+        MaterialUmStockListModel = new JSONModel();
+        this.setModel(MaterialUmStockListModel, "MaterialUmStockListModel");
+    }else
+    {  
+        //  console.log("Relance du chargement list"),
+        MaterialUmStockListModel =   this.getModel( "MaterialUmStockListModel") as JSONModel;
+    }
     MaterialUmStockListModel.loadData(this.gv_material_umstock_api_url,"",true,  "GET", false, true, mHeader); 
     }
 
-      //----------------------------------------------------------------------------------------------------------------------------//
-     //               Méthode d'appel à l'API  REST de chargement des quais                                                        //  
-     //----------------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------------------------//
+//               Méthode d'appel à l'API  REST de chargement des quais                                                        //  
+//----------------------------------------------------------------------------------------------------------------------------//
     public get_chargement_quais():void {
 // METHODE auhentification 1 - > Authorization : auth        (Retiré suite aux problématiques d'authentification d'Octobre 2025)
         // let credentials = userName + ':' + password;
@@ -824,16 +812,15 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     //            LOT10:  Méthode d'appel à l'API  REST des messages de validation des chargements sur les quais                  //  
     //----------------------------------------------------------------------------------------------------------------------------//
     public get_validation_msg_chargements():void {
-               var mHeader = {
-             "Content-Type":"application/json",
-              }
+    var mHeader = {
+    "Content-Type":"application/json",
+    }
 
       if ( this.getModel("validationMsgChargementQuaiModelJSON") == undefined)
      {
         this.setModel(new JSONModel(), "validationMsgChargementQuaiModelJSON");
      }
-    
-     console.log("P1 URL API ZCL_PCF_CHARG_VALIDMSG_RESOUR: " + this.gv_validation_msg_chargementquais_api_url ); 
+     //console.log("P1 URL API ZCL_PCF_CHARG_VALIDMSG_RESOUR: " + this.gv_validation_msg_chargementquais_api_url ); 
      (this.getModel("validationMsgChargementQuaiModelJSON") as JSONModel).loadData(this.gv_validation_msg_chargementquais_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {     });
     }
 
@@ -854,7 +841,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
         this.setModel(new JSONModel(), "finChargementQuaiModelJSON");
      }
     
-     console.log("P1 URL API ZCL_PCF_CHARGEMENT_END_RESOUR: " + this.gv_endchargement_api_url ); 
+    // console.log("P1 URL API ZCL_PCF_CHARGEMENT_END_RESOUR: " + this.gv_endchargement_api_url ); 
      (this.getModel("finChargementQuaiModelJSON") as JSONModel).loadData(this.gv_endchargement_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {     });
     }
 
@@ -875,7 +862,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
         }
 
    // Appel de l'api de fin de chargement    
-   finChargementQuaiModelJSON.loadData(this.gv_endchargement_api_url , JSON.stringify(input_data.tMotifNocharg)    ,true,  "POST", false, true, mHeader)?.then(result=>{
+       finChargementQuaiModelJSON.loadData(this.gv_endchargement_api_url , JSON.stringify(input_data.tMotifNocharg)    ,true,  "POST", false, true, mHeader)?.then(result=>{
        const router = this.getRouter();
        let lv_target_quai : string = "targetstartchargement" + input_data.quai1.toLowerCase();
        // MessageToast.show("Fin de chargement sur quai : " + input_data.quai1 + " et navigation sur Target:" +  lv_target_quai,{ duration: 4000, width : '50%' })
@@ -889,20 +876,19 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
      //----------------------------------------------------------------------------------------------------------------------------//
      //               Méthode d'appel de l'API  ZCL_PCF_START_CHARG_RESOURCE/ Méthode GET                                          //  
      //----------------------------------------------------------------------------------------------------------------------------//
-      public ChargementStartModel_Get():void{
+    public ChargementStartModel_Get():void{
 
-        let ChargementStartModel: JSONModel;
-        let lv_chargement_url : string;
-        if ( this.getModel("ChargementStartModel") == undefined)
-        {
-            ChargementStartModel = new JSONModel();
-            this.setModel(ChargementStartModel, "ChargementStartModel");
-            ChargementStartModel.setDefaultBindingMode("TwoWay");   // TODO => vérifier si c'est nécessaire d'activer  le two way binding
-        }else
-        {  
-            ChargementStartModel =   this.getModel( "ChargementStartModel") as JSONModel;
-        }
-  
+    let ChargementStartModel: JSONModel;
+    let lv_chargement_url : string;
+    if ( this.getModel("ChargementStartModel") == undefined)
+    {
+        ChargementStartModel = new JSONModel();
+        this.setModel(ChargementStartModel, "ChargementStartModel");
+        ChargementStartModel.setDefaultBindingMode("TwoWay");   // TODO => vérifier si c'est nécessaire d'activer  le two way binding
+    }else
+    {  
+        ChargementStartModel =   this.getModel( "ChargementStartModel") as JSONModel;
+    }
 
     //------------------------------------------------------------------------------------------------------------------------------------------------------
     // BEGIN LOT 12 : Déploiement PHP  -> Vérifier s'il ne faut pas remettre le paramètre "X-Requested-With":"X" et l'autoriser au niveau de UCONCOCKPIT
@@ -935,7 +921,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
         }
                                                                         
         let input_data:any = ChargementStartModel.getData();  
-        console.log("P1 Appel  de Start Chargement Valeur de quai:" + i_quai  + "// transport: " + input_data.results.tknum);
+        //console.log("P1 Appel  de Start Chargement Valeur de quai:" + i_quai  + "// transport: " + input_data.results.tknum);
 
     //-----------------------------------------------------------------------------------------
     // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
@@ -956,12 +942,9 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
         let lv_target_quai : string; 
         MessageToast.show("Chargement démarré sur le quai : " + i_quai ,{ duration: 3000, width : '50%' })
         i_quai = i_quai.toLowerCase();
-        //i_quai = i_quai.replace(/^\w/, (c) => c.toUpperCase());        // LOT13-> A priori cette conversion n'est plus nécessaire
-        MessageToast.show("Chargement démarré sur le quai : " + i_quai ,{ duration: 3000, width : '50%' })
-       // lv_target_quai = "TargetChargement" + i_quai;                  // LOT13-> Attention TargetChargementQuai12 a été changé en targetchargementquai12
        lv_target_quai = "targetchargement" + i_quai;
         const router = this.getRouter();
-        console.log("P1 Navigation vers le quai avec target " + lv_target_quai); 
+        //console.log("P1 Navigation vers le quai avec target " + lv_target_quai); 
          this.getEventBus().publish("Default", application_events_enum.chargement_start_get_event, {});
          router.getTargets()?.display(lv_target_quai);           // TODO -> Remis après refonte du modèle de notification car manquant
                                                                                                                       },reason=>{  console.log("P1 REJECTED PROMISE POST StartChargment" + ChargementStartModel.getJSON.toString());
@@ -1004,7 +987,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     public api_chargement_um_post(i_quai:string,i_codum:string, i_msgid :string, i_aenam:string , i_errdt:string, i_errzt:string, i_choice:boolean) :void{
        
         let ChargementUmModel: JSONModel;
-         let lv_target_quai : string; 
              
         console.log("-------------------------------METHODE  api_chargement_um_post---------------------------------------------------------------------------------------- "); 
         if ( this.getModel("ChargementUmModel") == undefined)
@@ -1038,8 +1020,8 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
     //----------------------------------------------------------------------------------------   
         ChargementUmModel.loadData(this.gv_chargement_um_api_url,"",true,  "POST", false, true, mHeader)?.then(result=>{  
     //------------------- TODO LOT9  Validation des messages de Warning->Mettre le code de suppression du Warning de la promise de l'API POST--------------------------------------------------
-       //console.log("P1 LOt15 Valeur de i_validation_charg_um :" + i_validation_charg_um);
-      console.log("P1 HIGH LOt15 Rappel de l'API des messages de validation");
+      //console.log("P1 LOt15 Valeur de i_validation_charg_um :" + i_validation_charg_um);
+      //console.log("P1 HIGH LOt15 Rappel de l'API des messages de validation");
       this.getEventBus().publish("Default", application_events_enum.validation_msg_chargement_event, {});  // LOT15 Rappel du modèle de validation de chargment -> Réfléchir si c'est nécessaire ou le mettre dans le handler du routing
 
                                                                                                                       },reason=>{ 
@@ -1051,10 +1033,7 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
      //----------------------------------------------------------------------------------------------------------------------------//
         public open_websocket_NotificationUM():void {
           //Ouverture des Web Sockets  
-          console.log("Hostname du POC//Construire l'URL en fonction du Host:" + location.hostname);
-          let lv_url: string;
-        
-         console.log("Instantiation du Web Socket avec url :" + this.gv_websocket_url);
+        // console.log("Instantiation du Web Socket avec url :" + this.gv_websocket_url);
          //["wss","ws","https","http"]
          let v_webSocket = new WebSocket(this.gv_websocket_url);
          let data_Socket : Object = '';
@@ -1071,7 +1050,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
          var that = this;
          v_webSocket.attachMessage(data_Socket, function (e: WebSocket$MessageEvent) {
             let params = e.getParameters();
-            console.log("LOT 13 Popup Motifs chargement/Régression notifications " + e.getParameters() );  
             let content : any = params.data;
             let content_json : {type_msg:String, msg_txt:String,quai:String,um:string,action:string,statut: string,transport:string,user:string,  time : Date, checknumber:number, checkid:string} = JSON.parse(content);   
              let data : {type_msg:String, msg_txt:String,transport:String, um:String, quai:String,action:String,user:string, time : Date, checkid:string} = {
@@ -1086,8 +1064,6 @@ public refresh_after_wsnotifiction(action :string, type_msg:string, msg_txt: str
                 checkid:  content_json.checkid                   
               };
 
-             // On envoie une notification UM qui sera gérée dans la vue de Chargement
-             // LOT Démarrage Chargement quai -> On va définir un handler notificationWebSocketEvent qui va redispatcher vers notificationUMEvent
              that.getEventBus().publish("Default", application_events_enum.notification_websocket_event,  data);   // Il est possible d'essayer avec    that.getEventBus().publish("Default", "notificationUMEvent",  content_json)
          }); 
     }

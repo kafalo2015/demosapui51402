@@ -1,7 +1,5 @@
 import Controller from "sap/ui/core/mvc/Controller";
-import { DatePicker$ChangeEvent } from "sap/m/DatePicker";
 import UIComponent from "sap/ui/core/UIComponent";
-import { Table$RowSelectionChangeEvent } from "sap/ui/table/Table";
 import Dialog from "sap/m/Dialog";
 import SideNavigation, { SideNavigation$ItemSelectEvent } from "sap/tnt/SideNavigation";
 import JSONModel from "sap/ui/model/json/JSONModel";
@@ -51,19 +49,17 @@ export default class MainSideNavigation extends Controller {
     }
 
   public itemSelect(event:SideNavigation$ItemSelectEvent)  {
-     console.log("P1 VERY HIGH/------------------------------------------ CONTROLLEUR MainSideNavigation->METHODE Item select------------------------------------------------------ ");
+   //  console.log("P1 VERY HIGH/------------------------------------------ CONTROLLEUR MainSideNavigation->METHODE Item select------------------------------------------------------ ");
      const router = UIComponent.getRouterFor(this);
      let ChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
   
     if ( event.getParameter("item")?.getKey() == "item_quai_all" )           //TODO-> Utiliser plutôt l'ID 
     { 
-      let indice_json : number = 0;                                                                             // Le quai 8 est affiché lorsque l'utilisateur clique sur Chargements par quais et l'indice json du quai 8 est 0
+      let indice_json : number = 0;      // Indice JSON du quai 8 (indice = 0  [Numéeo de QUAI -8])                                                                       // Le quai 8 est affiché lorsque l'utilisateur clique sur Chargements par quais et l'indice json du quai 8 est 0
       let encours : boolean = ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours");
        //-------------------- END On récupère dans le modèle si le quai 8 est cours de chargement -----------------------------------------------------------------------------------------------------------------------------//
        if (encours == true)                                                                                   // Si le quai 8 est en cours de chargement alors on affiche la vue du quai 8 sinon on affiche le formulaire de démarrage de chargement
-        { 
-          router.getTargets()?.display("targetchargementquai08"); 
-        }   
+        {         router.getTargets()?.display("targetchargementquai08");  }   
        else
         { router.getTargets()?.display("targetstartchargementquai08");}
     }

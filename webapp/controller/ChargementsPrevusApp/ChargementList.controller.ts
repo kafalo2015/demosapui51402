@@ -3,11 +3,21 @@ import { Link$PressEvent } from "sap/m/Link";
 import UIComponent from "sap/ui/core/UIComponent";
 import Table from "sap/m/Table";
 import { Sticky } from "sap/m/library";
-import { Targets$DisplayEvent } from "sap/ui/core/routing/Targets";
 
 /**
  * @namespace clf.logistique.chargementquais.controller
  */
+
+  enum quais_enum {
+  QUAI08 = "QUAI08",
+  QUAI09 = "QUAI09",
+  QUAI10 = "QUAI10",
+  QUAI11 = "QUAI11",
+  QUAI12 = "QUAI12",
+  QUAI13 = "QUAI13",
+  QUAI14 = "QUAI14",
+  QUAI15 = "QUAI15",
+  }
 export default class chargementlist extends Controller {
 
     /*eslint-disable @typescript-eslint/no-empty-function*/
@@ -21,22 +31,21 @@ export default class chargementlist extends Controller {
      }  
      
     public  handleLinkPress(event: Link$PressEvent): void {
-      console.log("OnPress sur le link");
       let lv_quai:string = event.getSource().getText();
-      console.log("Text du link: " +  lv_quai);
+      //console.log("Text du link: " +  lv_quai);
       let data : {quai:String} = {
          quai: lv_quai              
        };
      // La navigation sur les vues de quais de fait dans le handler du event linkQuaiPressEvent
-       const router = UIComponent.getRouterFor(this);
-      if ( lv_quai == "QUAI08" )  {  router.getTargets()?.display("TargetChargementQuai08");  }
-      if ( lv_quai == "QUAI09" )  {  router.getTargets()?.display("TargetChargementQuai09");  }
-      if ( lv_quai == "QUAI10" )  {  router.getTargets()?.display("TargetChargementQuai10");  }
-      if ( lv_quai == "QUAI11" )  {  router.getTargets()?.display("TargetChargementQuai11");  }
-      if ( lv_quai == "QUAI12" )  {  router.getTargets()?.display("TargetChargementQuai12");  }
-      if ( lv_quai == "QUAI13" )  {  router.getTargets()?.display("TargetChargementQuai13");  }
-      if ( lv_quai == "QUAI14" )  {  router.getTargets()?.display("TargetChargementQuai14");  }
-      if ( lv_quai == "QUAI15" )  {  router.getTargets()?.display("TargetChargementQuai15");  }
+      const router = UIComponent.getRouterFor(this);
+      if ( lv_quai == quais_enum.QUAI08 )  {  router.getTargets()?.display("TargetChargementQuai08");  }
+      if ( lv_quai == quais_enum.QUAI09 )  {  router.getTargets()?.display("TargetChargementQuai09");  }
+      if ( lv_quai == quais_enum.QUAI10 )  {  router.getTargets()?.display("TargetChargementQuai10");  }
+      if ( lv_quai == quais_enum.QUAI11 )  {  router.getTargets()?.display("TargetChargementQuai11");  }
+      if ( lv_quai == quais_enum.QUAI12 )  {  router.getTargets()?.display("TargetChargementQuai12");  }
+      if ( lv_quai == quais_enum.QUAI12 )  {  router.getTargets()?.display("TargetChargementQuai13");  }
+      if ( lv_quai == quais_enum.QUAI14 )  {  router.getTargets()?.display("TargetChargementQuai14");  }
+      if ( lv_quai == quais_enum.QUAI15 )  {  router.getTargets()?.display("TargetChargementQuai15");  }
 }
       
 }
