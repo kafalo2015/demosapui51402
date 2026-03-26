@@ -1,8 +1,4 @@
 import Controller from "sap/ui/core/mvc/Controller";
-import Table from "sap/m/Table";
-import { Sticky } from "sap/m/library";
-import Dialog from "sap/m/Dialog";
-import Context from "sap/ui/model/Context";
 import Button, { Button$PressEvent } from "sap/m/Button";
 import IconTabBar, { IconTabBar$SelectEvent } from "sap/m/IconTabBar";
 import Input, { Input$SubmitEvent } from "sap/m/Input";

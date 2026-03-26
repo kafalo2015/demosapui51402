@@ -5,11 +5,8 @@
         "type": "application",
         "i18n": "i18n/i18n.properties",
         "applicationVersion": {
-            "version": "0.0.1"
+            "version": "1.1.1"
         },
-        
-      
-        
         "title": "{{appTitle}}",
         "description": "{{appDescription}}",
         "resources": "resources.json",
@@ -19,30 +16,7 @@
             "toolsId": "a010ed0b-a9c9-4fb5-a22d-27573be4e57d"
         },
         "dataSources": {
-            "ServiceJsonBas_local": {
-                "uri": "/rest_bac/POCUI5SERVICE/chargement",
-                "type": "JSON"               
-            },  
-            "ServiceJsonBas_build": {
-                "uri": "http://sexa-sapoc-s4.exaclair.clairefontaine.local:8001/POCUI5SERVICE/chargement",
-                "type": "JSON"  
-            },        
-            "ServiceRestJson_ChargQuai_local": {
-                "uri": "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement",
-                "type": "JSON"               
-            },  
-            "ServiceRestJson_ChargList_local": {
-                "uri": "/rest_dev/sap/bc/gui/sap/its/zpcf_chargement/chargement_list",
-                "type": "JSON"               
-            }, 
-            "ServiceRestJson_ChargQuai_build": {
-                "uri": "http://shds-sapdev.exaclair.clairefontaine.local:1080/sap/bc/gui/sap/its/zpcf_chargement/chargement",
-                "type": "JSON"  
-            },
-            "ServiceRestJson_ChargList_build": {
-                "uri": "http://shds-sapdev.exaclair.clairefontaine.local:1080/sap/bc/gui/sap/its/zpcf_chargement/chargement_list",
-                "type": "JSON"  
-            }
+         
         }
     },
     "sap.ui": {
@@ -62,7 +36,6 @@
         }
     },
     "sap.ui5": {
-        
         "flexEnabled": true,
         "dependencies": {
             "minUI5Version": "1.132.1",
@@ -72,7 +45,6 @@
                 "sap.ui.layout": {},
                 "sap.f": {},
                 "sap.tnt": {}
-               
             }
         },
         "contentDensities": {
@@ -83,8 +55,6 @@
                         "api_env": "dev"
                 },
         "models": {
-            
-          
                    
         },
         "resources": {
@@ -117,7 +87,6 @@
                         "targetchargementlist"
                     ]
                 },
-              
                 {
                     "name": "RouteChargementList",
                     "pattern": "chargementprevu",
@@ -190,12 +159,10 @@
                 }                     
             ],
             "targets": {
-              
                 "targetchargementlist": {
                     "id": "chargementlist",
                     "name": "chargementlist",
                     "path": "clf.logistique.chargementquais.view.chargementsprevusapp",
-                    
                     "level" : 2,
                     "transition": "slide",
                     "clearControlAggregation": true
@@ -242,7 +209,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                    
                 },
              
                 "targetchargementquai11": {
@@ -255,7 +221,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                    
                 },
                 "targetchargementquai12": {
                     "id": "quai12",
@@ -267,7 +232,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                    
                 },
                 "targetchargementquai13": {
                     "id": "quai13",
@@ -279,7 +243,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                   
                 },
                 "targetchargementquai14": {
                     "id": "quai14",
@@ -291,7 +254,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                   
                 },
                 "targetchargementquai15": {
                     "id": "quai15",
@@ -303,7 +265,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                    
                 },
                      "targetstartchargementquai08": {
                     "id": "ChargementStartQuai08",
@@ -315,7 +276,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                    
                 },
                   "targetstartchargementquai09": {
                     "id": "ChargementStartQuai09",
@@ -327,7 +287,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                    
                 },
                   "targetstartchargementquai10": {
                     "id": "ChargementStartQuai12",
@@ -339,9 +298,8 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                    
                 },
-                        "targetstartchargementquai11": {
+                    "targetstartchargementquai11": {
                     "id": "ChargementStartQuai11",
                     "name": "ChargementStart",
                     "path": "clf.logistique.chargementquais.view.ChargementsQuaisApp.startchargement",
@@ -351,7 +309,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                    
                 },
                    "targetstartchargementquai12": {
                     "id": "ChargementStartQuai12",
@@ -363,7 +320,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                    
                 },
                    "targetstartchargementquai13": {
                     "id": "ChargementStartQuai13",
@@ -375,7 +331,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                    
                 },
                    "targetstartchargementquai14": {
                     "id": "ChargementStartQuai14",
@@ -387,7 +342,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                    
                 },
                    "targetstartchargementquai15": {
                     "id": "ChargementStartQuai15",
@@ -399,7 +353,6 @@
                     "clearControlAggregation": true,
                     "level" : 2,
                     "transition": "slide"
-                    
                 },
                 "TargetMain": {
                     "id": "Main",
@@ -409,10 +362,8 @@
                     "id": "notfound",
                     "name": "notfound",
                      "path": "clf.logistique.chargementquais.view.error",
-                   
                      "transition": "show"
                  }
-
             }
         },
         "rootView": {

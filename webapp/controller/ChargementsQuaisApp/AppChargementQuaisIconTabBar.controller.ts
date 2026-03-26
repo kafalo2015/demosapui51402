@@ -18,7 +18,7 @@ import { Button$PressEvent } from "sap/m/Button";
  * @namespace clf.logistique.chargementquais.controller
  */
 
-   enum application_events_enum {
+  enum application_events_enum {
   chargement_quais_event = "chargementEvent",
   chargement_prevus_event = "chargementListEvent",
   validation_msg_chargement_event = "validationMsgChargementEvent",
@@ -30,7 +30,7 @@ import { Button$PressEvent } from "sap/m/Button";
   validation_dialog_event = "validationDialogEvent",
   }
 
-   enum quais_enum {
+  enum quais_enum {
   QUAI08 = "QUAI08",
   QUAI09 = "QUAI09",
   QUAI10 = "QUAI10",
@@ -57,7 +57,7 @@ export default class AppChargementQuaisIconTabBar extends Controller {
   //---------------------------------------------------------------------------------------------------------------------------------------------------------//
 // Mettre les handlers sur les targets de quai
  const router = UIComponent.getRouterFor(this);
- router.getTargets()?.attachDisplay((evt: Targets$DisplayEvent)=>{ console.log("P1 HIGH// TEST de l'attach display de l'ensemble des targets")      }); 
+// router.getTargets()?.attachDisplay((evt: Targets$DisplayEvent)=>{ console.log("P1 HIGH// TEST de l'attach display de l'ensemble des targets")      }); 
  
  let target_quai08: Target = router.getTarget("targetchargementquai08") as Target;
  let target_quai09: Target = router.getTarget("targetchargementquai09") as Target;
@@ -156,7 +156,7 @@ target_quai15.attachDisplay(()=>{
   }
                                 });       
                                 
-   target_startchargement_quai08.attachDisplay(()=>{   this.gv_current_quai =  quais_enum.QUAI08;   this.gv_current_quai_number = 8;  });     //LOT 17 => Amélioration robustesse code
+   target_startchargement_quai08.attachDisplay(()=>{   this.gv_current_quai =  quais_enum.QUAI08;  this.gv_current_quai_number = 8;  });      //LOT 17 => Amélioration robustesse code
                                                                                                 
    target_startchargement_quai09.attachDisplay(()=>{   this.gv_current_quai =  quais_enum.QUAI09;  this.gv_current_quai_number = 9;});        //LOT 17 => Amélioration robustesse code
 
@@ -184,7 +184,7 @@ target_quai15.attachDisplay(()=>{
   //             HANDLER validationDialogEvent  [LOT 8 : Validation des messages de chargement]                                 //  
   //----------------------------------------------------------------------------------------------------------------------------//
     this.getOwnerComponent()?.getEventBus().subscribe("Default",application_events_enum.validation_dialog_event,(channel:string,event:string,data: Object) => {           
-       
+      // On reconstitue le numéro de quai à partir du QUAI (QUAI08 ->08, QUAI09->09) // Amélioration posssible fournir le numéro de quai à l'event
       let quai_number: number = Number(Object.values(data)[0].slice(4,6));
       let current_quai_index_json:number=   quai_number - 8 ;
      // console.log("P1 LOT10 Validation des chargements QUAI DE LA NOTIFICATION: " + quai_number + "-QUAI ACTUEL:  " + this.gv_current_quai_number);
@@ -199,11 +199,9 @@ target_quai15.attachDisplay(()=>{
   //  TODO LOT17 -> Il rajouter un test pour vérifier si le quai est cours de chargement ou pas pour pointer sur l'écran de chargement ou l'écran de démarrage de chargement 
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------------ //
     public button_chargementquai_handler() : void{ 
-       console.log("P1 METHODE Méthode button_chargementquai_handler() ------------------ " );
        let IconTabBarControl : IconTabBar;
        IconTabBarControl = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
        let selectedKeyQuaiNumber : string  =  IconTabBarControl.getSelectedKey();
-       console.log(" button_chargementquai_handler() : " + selectedKeyQuaiNumber);
       const router = UIComponent.getRouterFor(this);
            if ( selectedKeyQuaiNumber == "" )                  {  router.getTargets()?.display("targetchargementquai08");  }   // Evolution quai 8 et 09
            if ( selectedKeyQuaiNumber ==  quais_enum.QUAI08 )  {  router.getTargets()?.display("targetchargementquai08");  }   // Evolution quai 8 et 09s
@@ -295,18 +293,16 @@ target_quai15.attachDisplay(()=>{
   }
 
  public onConfirmValidationMsgChargement(event:Button$PressEvent):void {
-  console.log("------------------------------------------------------HANDLER onConfirmValidationMsgChargement --------------------------------------------------------------");
-  let validation_msg_indicejson:string;
   // Récupération du modèle de notifications des quais (Messages de validation par quai)
   let validationMsgChargementQuaiModel : JSONModel = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON") as JSONModel;
   
   let source_string:string                 = event.getSource().toString();                // Pour récupérer l'indice de message de validation(Warning ou choice) , l'élément source du handler utilisé (Autre possibilité -> Utiliser event->GetParameter())
   let current_indicejson_quai :number      = this.gv_current_quai_number - 8;             // Calcul de l'indice json du quai (quai number-8)
-  let indice_validationmsg_string : string = source_string.at(source_string.length-1)!;   // Récupération de l'indice du message de Validation // A vérifier si c'est toujours Ok pour le L0T 10
+  let indice_validationmsg_string : string = source_string.at(source_string.length-1)!;   // Récupération de l'indice du message de Validation 
   //----------------------------------------------------------------------------------------------------------------------------------------------------//
   //------------------- LOT8/9 Validation des messages de Warning-> Récupérer le contexte de la validation (QUAI/UM/Checknumber)------------------------//
   //----------------------------------------------------------------------------------------------------------------------------------------------------//
-  let validation_msg_codum : string     = validationMsgChargementQuaiModel.getProperty("/results/" +  current_indicejson_quai +  "/tValidationMsg/" + indice_validationmsg_string + "/exidv") ;
+  let validation_msg_codum : string     = validationMsgChargementQuaiModel.getProperty("/results/" +  current_indicejson_quai + "/tValidationMsg/" + indice_validationmsg_string + "/exidv") ;
   let validation_msg_msgid : string     = validationMsgChargementQuaiModel.getProperty("/results/" +  current_indicejson_quai + "/tValidationMsg/" + indice_validationmsg_string + "/msgId") ;
   let validation_msg_aenam : string     = validationMsgChargementQuaiModel.getProperty("/results/" +  current_indicejson_quai + "/tValidationMsg/" + indice_validationmsg_string + "/aenam") ;
   let validation_msg_errdt : string     = validationMsgChargementQuaiModel.getProperty("/results/" +  current_indicejson_quai + "/tValidationMsg/" + indice_validationmsg_string + "/errdt") ;
@@ -319,13 +315,6 @@ target_quai15.attachDisplay(()=>{
   //-----------------------------------------Envoi d'un évènement au controlleur pour appel de l'API de Chargement de l'UM-------------------------------------------------------------------------------------------------- 
   //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   let lv_quai= this.gv_current_quai;
- 
- // TODO LOT17 => Pas besoin de faire cela , récupérer directement dans gv_current_quai
-  // if ( this.gv_current_quai_number < 10 )
-  //     { lv_quai = "QUAI" + "0" + this.gv_current_quai_number; }
-  // else{ lv_quai = "QUAI" + this.gv_current_quai_number; }
-// Anomalie 18/11/2025 END
-
 // LOT15 BEGIN 
     let data : {quai:string|undefined, codum :string, msgid:string, aenam:string, errdt:string, errzt :string, choice:string} =
      { quai: lv_quai, codum : validation_msg_codum,  msgid: validation_msg_msgid, aenam : validation_msg_aenam, errdt: validation_msg_errdt, errzt: validation_msg_errzt, choice : lv_choice}

@@ -19,7 +19,7 @@ height = "100%">
 				key="{chargementModelJson>quai}"/>
 		</items>
 		<content >  
-	             <!-- Le quai sera chargé pr routing  -->
+	             <!-- Le quai sera chargé par routing  -->
 		</content>
 	</IconTabBar>
 	<ScrollContainer vertical='true'>   
@@ -27,7 +27,7 @@ height = "100%">
 			<content>
 
 				<List   headerText=""  items="{ path : 'notificationsQuaisModel>/notif_txt_all',
-				                                       sorter: { path: 'time', descending: true    }}"
+				                                sorter: { path: 'time', descending: true    }}"
 						growing="false"
 						growingThreshold="1"
 						growingScrollToLoad="false">
@@ -44,7 +44,6 @@ height = "100%">
 	            </List>
 			</content>
 		</Panel>
-
 	</ScrollContainer>
 </mvc:View>
 
