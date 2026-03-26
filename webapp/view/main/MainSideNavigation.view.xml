@@ -7,6 +7,8 @@
 <HBox  height="100%">
 	<VBox renderType="Bare" alignItems="Start" height="100%"  >
 		<Button
+		    id = "MainSideNavigationCollapseExpandeBtn"
+			tooltip ="Agrandir/Rétrécir" 
 			text=""
 			icon="sap-icon://menu2"
 			press=".onCollapseExpandPress" />

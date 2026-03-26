@@ -107,7 +107,7 @@ export default class Component extends BaseComponent {
 		// call the base component's init function
 		super.init();
         // Changemment de variable environnement (dev ou qual) pour appeler les API de la qual ou de la dev
-         this.gv_environment = environment_enum.test;
+         this.gv_environment = environment_enum.dev;
       
          console.log("P1 HIGH Lecture de la variable de configuration du manifest /sap.ui5/config/api_env : " +    this.gv_environment )
         // set the device model

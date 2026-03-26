@@ -1,8 +1,6 @@
 <mvc:View controllerName="clf.logistique.chargementquais.controller.ChargementsQuaisApp.ChargementQuais"
     xmlns:l="sap.ui.layout"
-    xmlns:form="sap.ui.layout.form"
     xmlns:mvc="sap.ui.core.mvc"
-	xmlns:si="sap.suite.ui.commons.statusindicator"
     xmlns="sap.m"
 	height = "100%">
 
