@@ -755,7 +755,11 @@ public refresh_after_wsnotification(action :string, type_msg:string, msg_txt: st
   public get_material_umstock_list(material:string):void {
  
     var mHeader = {
+<<<<<<< HEAD
     //"Access-Control-Allow-Origin": "*",
+=======
+    "Access-Control-Allow-Origin": "*",
+>>>>>>> 625cda945d6bbec8eb34089a70bd5bb0c4ec8740
     "Content-Type":"application/json",
     "material": material                                      
 }
@@ -985,9 +989,16 @@ public refresh_after_wsnotification(action :string, type_msg:string, msg_txt: st
     public api_chargement_um_post(i_quai:string,i_codum:string, i_msgid :string, i_aenam:string , i_errdt:string, i_errzt:string, i_choice:boolean) :void{
        
         let ChargementUmModel: JSONModel;
+<<<<<<< HEAD
 
         console.log("-------------------------------METHODE  api_chargement_um_post---------------------------------------------------------------------------------------- ");
         if (this.getModel("ChargementUmModel") == undefined) {
+=======
+             
+        console.log("-------------------------------METHODE  api_chargement_um_post---------------------------------------------------------------------------------------- "); 
+        if ( this.getModel("ChargementUmModel") == undefined)
+        {
+>>>>>>> 625cda945d6bbec8eb34089a70bd5bb0c4ec8740
             ChargementUmModel = new JSONModel();
             this.setModel(ChargementUmModel, "ChargementUmModel");
             ChargementUmModel.setDefaultBindingMode("TwoWay");   // TODO => vérifier si c'est nécessaire d'activer  le two way binding
