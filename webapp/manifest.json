@@ -176,8 +176,8 @@
 					"transition": "slide"
                 },
                 "targetchargementquai08": {
-                    "id": "quai08",
-                    "name": "quai08",
+                    "id": "quai_all",
+                    "name": "quai_all",
                     "path": "clf.logistique.chargementquais.view.ChargementsQuaisApp.quais",
                     "parent" :  "targetchargementquais",
                     "controlId": "idIconTabBarQuais",
@@ -188,8 +188,8 @@
                     
                 },
                   "targetchargementquai09": {
-                    "id": "quai09",
-                    "name": "quai09",
+                    "id": "quai_all",
+                    "name": "quai_all",
                     "path": "clf.logistique.chargementquais.view.ChargementsQuaisApp.quais",
                     "parent" :  "targetchargementquais",
                     "controlId": "idIconTabBarQuais",
@@ -200,8 +200,8 @@
                     
                 },
                 "targetchargementquai10": {
-                    "id": "quai10",
-                    "name": "quai10",
+                    "id": "quai_all_10",
+                    "name": "quai_all",
                     "path": "clf.logistique.chargementquais.view.ChargementsQuaisApp.quais",
                     "parent" :  "targetchargementquais",
                     "controlId": "idIconTabBarQuais",
@@ -212,8 +212,8 @@
                 },
              
                 "targetchargementquai11": {
-                    "id": "quai11",
-                    "name": "quai11",
+                    "id": "quai_all_11",
+                    "name": "quai_all",
                     "path": "clf.logistique.chargementquais.view.ChargementsQuaisApp.quais",
                     "parent" :  "targetchargementquais",
                     "controlId": "idIconTabBarQuais",
@@ -223,8 +223,8 @@
                     "transition": "slide"
                 },
                 "targetchargementquai12": {
-                    "id": "quai12",
-                    "name": "quai12",
+                    "id": "quai_all_12",
+                    "name": "quai_all",
                     "path": "clf.logistique.chargementquais.view.ChargementsQuaisApp.quais",
                     "parent" :  "targetchargementquais",
                     "controlId": "idIconTabBarQuais",
@@ -234,8 +234,8 @@
                     "transition": "slide"
                 },
                 "targetchargementquai13": {
-                    "id": "quai13",
-                    "name": "quai13",
+                    "id": "quai_all_13",
+                    "name": "quai_all",
                     "path": "clf.logistique.chargementquais.view.ChargementsQuaisApp.quais",
                     "parent" :  "targetchargementquais",
                     "controlId": "idIconTabBarQuais",
@@ -245,8 +245,8 @@
                     "transition": "slide"
                 },
                 "targetchargementquai14": {
-                    "id": "quai14",
-                    "name": "quai14",
+                    "id": "quai_all_14",
+                    "name": "quai_all",
                     "path": "clf.logistique.chargementquais.view.ChargementsQuaisApp.quais",
                     "parent" :  "targetchargementquais",
                     "controlId": "idIconTabBarQuais",
@@ -256,8 +256,8 @@
                     "transition": "slide"
                 },
                 "targetchargementquai15": {
-                    "id": "quai15",
-                    "name": "quai15",
+                    "id": "quai_all_15",
+                    "name": "quai_all",
                     "path": "clf.logistique.chargementquais.view.ChargementsQuaisApp.quais",
                     "parent" :  "targetchargementquais",
                     "controlId": "idIconTabBarQuais",

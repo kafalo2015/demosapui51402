@@ -28,6 +28,7 @@ import { Button$PressEvent } from "sap/m/Button";
   chargement_end_event = "finChargementEvent",
   notification_websocket_event = "notificationWebSocketEvent",
   validation_dialog_event = "validationDialogEvent",
+  changement_quai_event = "changementQuaiEvent",
   }
 
   enum quais_enum {
@@ -82,9 +83,12 @@ target_quai08.attachDisplay(()=>{
    this.gv_current_quai_number = 8;                         //LOT 17 => Amélioration robustesse code
   let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/0/tValidationMsg");
   // La popup ne doit s'afficher que s'il existe des notifications de validation dans le modèle notificationsQuaisModel pour le quai en question
+    let data : {quai_number_popup:String} =  { quai_number_popup:   quais_enum.QUAI08};
+   this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.changement_quai_event, data);   // EVOLUTION LOT18 Une seule vue pour les quais
   if (t_validation_msg_list.length > 0 ) {  
-  let data : {quai_number_popup:String} =  { quai_number_popup:   quais_enum.QUAI08};
-  this.getOwnerComponent()?.getEventBus().publish("Default", "validationDialogEvent", data);
+
+ 
+  this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.validation_dialog_event, data);
   }
                                 });
 
@@ -92,17 +96,24 @@ target_quai09.attachDisplay(()=>{
   this.gv_current_quai =  quais_enum.QUAI09;
   this.gv_current_quai_number = 9;                            //LOT 17 => Amélioration robustesse code
   let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/1/tValidationMsg");
+  console.log("ATTACH DISPLAY QUAI09");
+   let data : {quai_number_popup:String}  =  { quai_number_popup:   quais_enum.QUAI09};
+  this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.changement_quai_event, data);   // EVOLUTION LOT18 Une seule vue pour les quais
   if (t_validation_msg_list.length > 0 ) {  
-  let data : {quai_number_popup:String}  =  { quai_number_popup:   quais_enum.QUAI09};
-  this.getOwnerComponent()?.getEventBus().publish("Default", "validationDialogEvent", data);
+ 
+  
+  this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.validation_dialog_event, data);
   }
                                 });
 
 target_quai10.attachDisplay(()=>{ 
   this.gv_current_quai_number = 10;                           //LOT 17 => Amélioration robustesse code
   let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/2/tValidationMsg");
+    let data : {quai_number_popup:String} =  { quai_number_popup:   quais_enum.QUAI10};
+   this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.changement_quai_event, data);   // EVOLUTION LOT18 Une seule vue pour les quais
   if (t_validation_msg_list.length > 0 ) {  
-  let data : {quai_number_popup:String} =  { quai_number_popup:   quais_enum.QUAI10};
+
+ 
   this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.validation_dialog_event, data);
   }
                                 });
@@ -110,8 +121,12 @@ target_quai11.attachDisplay(()=>{
   this.gv_current_quai =  quais_enum.QUAI11;                 //LOT 17 => Amélioration robustesse code
   this.gv_current_quai_number = 11;
   let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/3/tValidationMsg");
+
+   let data : {quai_number_popup:String} =  { quai_number_popup:   quais_enum.QUAI11};
+  this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.changement_quai_event, data);   // EVOLUTION LOT18 Une seule vue pour les quais
   if (t_validation_msg_list.length > 0 )      {   
-  let data : {quai_number_popup:String} =  { quai_number_popup:   quais_enum.QUAI11};
+ 
+  
   this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.validation_dialog_event, data);
   }                                               
                             });
@@ -120,8 +135,12 @@ target_quai12.attachDisplay(()=>{
   this.gv_current_quai =  quais_enum.QUAI12;
   this.gv_current_quai_number = 12;                            //LOT 17 => Amélioration robustesse code
   let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/4/tValidationMsg");
+
+   let data : {quai_number_popup:String} =  { quai_number_popup:   quais_enum.QUAI12};
+    this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.changement_quai_event, data);   // EVOLUTION LOT18 Une seule vue pour les quais
   if (t_validation_msg_list.length > 0 ) {  
-  let data : {quai_number_popup:String} =  { quai_number_popup:   quais_enum.QUAI12};
+ 
+
   this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.validation_dialog_event, data);
   }
                                 });
@@ -130,8 +149,11 @@ target_quai13.attachDisplay(()=>{
   this.gv_current_quai =  quais_enum.QUAI13;
   this.gv_current_quai_number = 13;                             //LOT 17 => Amélioration robustesse code
   let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/5/tValidationMsg");
-  if (t_validation_msg_list.length > 0 ) {  
   let data : {quai_number_popup:String} =  { quai_number_popup:   quais_enum.QUAI13};
+    this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.changement_quai_event, data);   // EVOLUTION LOT18 Une seule vue pour les quais
+  if (t_validation_msg_list.length > 0 ) {  
+  
+
   this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.validation_dialog_event, data);
   }
                                 });        
@@ -140,8 +162,11 @@ target_quai14.attachDisplay(()=>{
   this.gv_current_quai =  quais_enum.QUAI14;
   this.gv_current_quai_number = 14;                           //LOT 17 => Amélioration robustesse code
   let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/6/tValidationMsg");
-  if (t_validation_msg_list.length > 0 ) {  
   let data : {quai_number_popup:String} =  { quai_number_popup:   quais_enum.QUAI14 };
+  this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.changement_quai_event, data);   // EVOLUTION LOT18 Une seule vue pour les quais
+  if (t_validation_msg_list.length > 0 ) {  
+  
+  
   this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.validation_dialog_event, data);
   }
                                 }); 
@@ -150,8 +175,11 @@ target_quai15.attachDisplay(()=>{
   this.gv_current_quai =  quais_enum.QUAI15;
   this.gv_current_quai_number = 15;                          //LOT 17 => Amélioration robustesse code
   let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/7/tValidationMsg");
+   let data : {quai_number_popup:String} =  { quai_number_popup:   quais_enum.QUAI15};
+    this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.changement_quai_event, data);   // EVOLUTION LOT18 Une seule vue pour les quais
   if (t_validation_msg_list.length > 0 ) {  
-  let data : {quai_number_popup:String} =  { quai_number_popup:   quais_enum.QUAI15};
+ 
+
   this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.validation_dialog_event, data);
   }
                                 });       
@@ -180,6 +208,7 @@ target_quai15.attachDisplay(()=>{
           this.button_chargementquai_handler();  
         },this); 
 
+        
   //----------------------------------------------------------------------------------------------------------------------------//
   //             HANDLER validationDialogEvent  [LOT 8 : Validation des messages de chargement]                                 //  
   //----------------------------------------------------------------------------------------------------------------------------//
@@ -193,7 +222,33 @@ target_quai15.attachDisplay(()=>{
            this.gv_dialog_validation_charg.open();
       }
         },this);
-      }
+
+
+  //----------------------------------------------------------------------------------------------------------------------------//
+  //             HANDLER Changement de quai  LOT18 Une seule vue par quai                                                                                     //  
+  //----------------------------------------------------------------------------------------------------------------------------//
+    this.getOwnerComponent()?.getEventBus().subscribe("Default",application_events_enum.changement_quai_event,(channel:string,event:string,data: Object) => {           
+      // On reconstitue le numéro de quai à partir du QUAI (QUAI08->08, QUAI09->09) // Amélioration posssible fournir le numéro de quai à l'event
+      let quai_number: number = Number(Object.values(data)[0].slice(4,6));
+      let current_quai_index_json:number=   quai_number - 8 ;
+         let  IconTabBarControl = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
+         let viewQuai: Control[] = IconTabBarControl.getContent();
+         console.log("Changement des quais");
+          viewQuai[0].setBindingContext(this.getOwnerComponent()?.getModel("chargementModelJson")?.createBindingContext("/results/" + current_quai_index_json + "/") as Context,"chargementModelJson");  
+         
+         //   /quais/0/   -> Binding sur un quai dans le modèle de notifications
+          viewQuai[0].setBindingContext(this.getOwnerComponent()?.getModel("notificationsQuaisModel")?.createBindingContext("/quais/" + current_quai_index_json + "/") as Context,"notificationsQuaisModel");  
+      // Attention il faut binder les deux modèles -> Le modèle de chargemetn des quais et le modèle de notification des quais
+       //  this.gv_dialog_validation_charg.setBindingContext(this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.createBindingContext("/results/" + current_quai_index_json + "/") as Context,"validationMsgChargementQuaiModelJSON");  
+    
+
+
+        },this);
+      
+
+  }
+
+
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
   //   Handler clic sur le quai      -> A VERIFIER SI C'EST UTILISE  (serait utilisé pour le lien vers le quai dans l'application 'Chargement prévus" )                     // 
   //  TODO LOT17 -> Il rajouter un test pour vérifier si le quai est cours de chargement ou pas pour pointer sur l'écran de chargement ou l'écran de démarrage de chargement 
@@ -213,6 +268,10 @@ target_quai15.attachDisplay(()=>{
            if ( selectedKeyQuaiNumber ==  quais_enum.QUAI14 )  {  router.getTargets()?.display("targetchargementquai14");  }
            if ( selectedKeyQuaiNumber ==  quais_enum.QUAI15 )  {  router.getTargets()?.display("targetchargementquai15");  }
         }
+
+
+
+
 //----------------------------------------------------------------------------------------------------------------------------//
 //               Handler clic sur le quai  (Pour synchroniser le routing avec le quai sélectionné)                            //  
 //----------------------------------------------------------------------------------------------------------------------------//

@@ -28,6 +28,7 @@ import ElementBase from "sap/suite/ui/commons/networkgraph/ElementBase";
 // LOt 15-29/11/2026-GILLES CAMILLERI => Scan Manuel des UMS
 // LOt 16-27/02/2026-GILLES CAMILLERI => Déploiement HTTPS sur Web OPC
 // LOt 17-27/02/2026-GILLES CAMILLERI => amélioration code (Enumérations environnement, url serveur sap, action_code)
+// LOt 18-27/03/2026-GILLES CAMILLERI => Une seule vue pour affichage des quais
 
 
 //TODO Enum -> Rajouter des Enum pour les types d'erreur, les actions (chargement/dechargement), les quais, les modèles
