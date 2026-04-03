@@ -28,9 +28,11 @@
 		</tnt:SideNavigation>
 	</VBox>
    		<NavContainer	id="navcontainermain"
-						width="1300px"
-						height="100%"
+						width="1200px"
+						height="1200px"
 						class="navContainerControl sapUiSmallMarginBottom">
+						<pages>
+						</pages>
 		</NavContainer>	
 </HBox>
 </mvc:View>

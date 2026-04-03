@@ -104,7 +104,8 @@ export default class ChargementQuais extends Controller {
     }
 
   public onSelectDialogUmFauxCam(event: Button$PressEvent): void {
-      let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;
+    let iconTahBar : IconTabBar =  this.getView()?.getParent()?.getParent() as IconTabBar;    "EVOL 19 -> Transitionlet iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;"
+      
       let  lv_quai: string = iconTahBar.getSelectedKey();
       let  lv_quai_number: number = Number(lv_quai.substring( lv_quai.length-2, lv_quai.length));
       let  lv_indicejson_quai: number = lv_quai_number-8;
@@ -167,7 +168,7 @@ public onSelectDialogUmStockPress(event: Button$PressEvent): void {
   //LOT 15 : Appel de la boîte de dialogue Chargement manuel scan
   //---------------------------------------------------------------------
   public onScanManuelUm(event: Button$PressEvent): void {
-  let iconTahBar : IconTabBar =  this.getView()?.getParent() as IconTabBar;                      //CODE REVIEW
+  let iconTahBar : IconTabBar =  this.getView()?.getParent()?.getParent() as IconTabBar;                // EVOL NAVCONTAINER dans icontabbar      //CODE REVIEW
   let  lv_quai: string = iconTahBar.getSelectedKey();
   let  lv_quai_number: number = Number(lv_quai.substring(lv_quai.length-2, lv_quai.length));
   let  lv_indicejson_quai: number = lv_quai_number-8;

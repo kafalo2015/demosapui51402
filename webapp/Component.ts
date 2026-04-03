@@ -16,7 +16,7 @@ import { Targets$DisplayEvent } from "sap/ui/core/routing/Targets";
 import ElementBase from "sap/suite/ui/commons/networkgraph/ElementBase";
 
 
-// LOT/DATE/AUTEUR/DECRIPTION
+// LOT/DATE/AUTEUR=>DECRIPTION
 // LOT 6 => Lancement du démarrage du chargemnet à partir du quai
 // LOT 7- 18/09/2025- GILLES CAMILLERI LOT 7 => Modèle de Notifications au niveau du component 
 // LOT 8- 18/09/2025- GILLES CAMILLERI => Boîte de dialogue de validation de chargement
@@ -29,6 +29,8 @@ import ElementBase from "sap/suite/ui/commons/networkgraph/ElementBase";
 // LOt 16-27/02/2026-GILLES CAMILLERI => Déploiement HTTPS sur Web OPC
 // LOt 17-27/02/2026-GILLES CAMILLERI => amélioration code (Enumérations environnement, url serveur sap, action_code)
 // LOt 18-27/03/2026-GILLES CAMILLERI => Une seule vue pour affichage des quais
+// LOt 19-27/03/2026-GILLES CAMILLERI => Simplification du paramétrage du routing dans le fichier manifest (pas de duplication de route et target pour les quais)
+// LOt 20-03/04/2026-GILLES CAMILLERI => Amélioration GEMINI (Notifications modèles avec des quais en dynamique, Récupération de l'indice d'un quai (les quais peuvent être renvoyés dans le désordre), Récupération de l'indice de validation par BindingContext)
 
 
 //TODO Enum -> Rajouter des Enum pour les types d'erreur, les actions (chargement/dechargement), les quais, les modèles
@@ -103,12 +105,14 @@ export default class Component extends BaseComponent {
     public gv_material_umstock_api_url: string;                  // URL material_umstock_list
     public gv_websocket_url: string;                             // URL Web Socket    LOT16
     public gv_current_application: string;                       // Stocke le nom de l'application actuellement affiché (Liste des chargmentn ou Chargement des quais)
+    public gv_current_quai: string;   
+     public gv_current_quai_number: number;                            
    
 	public init() : void {
 		// call the base component's init function
 		super.init();
         // Changemment de variable environnement (dev ou qual) pour appeler les API de la qual ou de la dev
-         this.gv_environment = environment_enum.dev;
+         this.gv_environment = environment_enum.test;
       
          console.log("P1 HIGH Lecture de la variable de configuration du manifest /sap.ui5/config/api_env : " +    this.gv_environment )
         // set the device model
@@ -119,144 +123,147 @@ export default class Component extends BaseComponent {
   //  });
         //this.setModel(i18nModel, "i18n"); 
         
-        let notificationsQuaisModel = new JSONModel();
-            //TODO LOT15 Scan Manuel  -> Dans le modèle JSON Faire une notification de Succès/Error séparée pour la boîte de dialogue de Scan Manuel
-            let json_object : object = 
-              {
-    "quais": [
-        {
-            "quai": "quai08",
-             "header": {
-                "backgroundcolorset" : "ColorSet9",
-                "backgroundcolorshade" : "ShadeE"
+//         let notificationsQuaisModel = new JSONModel();
+//             //TODO LOT15 Scan Manuel  -> Dans le modèle JSON Faire une notification de Succès/Error séparée pour la boîte de dialogue de Scan Manuel
+//             let json_object : object = 
+//               {
+//     "quais": [
+//         {
+//             "quai": "quai08",
+//              "header": {
+//                 "backgroundcolorset" : "ColorSet9",
+//                 "backgroundcolorshade" : "ShadeE"
               
-            },
-            "um" : "",
-            "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false    },
-                "notifwarning" : {"msg_txt": "","visible": false    },
-                "notiferror" :   {"msg_txt": "","visible": false    },
-                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
-                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
-            }
-        },
-        {
-            "quai": "quai09",
-             "header": {
-                "backgroundcolorset" : "ColorSet9",
-                "backgroundcolorshade" : "ShadeE"
-            },
-            "um" : "",
-            "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false    },
-                "notifwarning" : {"msg_txt": "","visible": false    },
-                "notiferror" :   {"msg_txt": "","visible": false    },
-                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
-                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
-            }
-        },
-        {
-            "quai": "quai10",
-             "header": {
-                "backgroundcolorset" : "ColorSet9",
-                "backgroundcolorshade" : "ShadeE"
-            },
-            "um" : "",
-            "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false    },
-                "notifwarning" : {"msg_txt": "","visible": false    },
-                "notiferror" :   {"msg_txt": "","visible": false    },
-                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
-                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
-            }
-        },
-        {
-            "quai": "quai11",
-              "header": {
-                "backgroundcolorset" : "ColorSet9",
-                "backgroundcolorshade" : "ShadeE"
-            },
-            "um" : "",
-            "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false    },
-                "notifwarning" : {"msg_txt": "","visible": false    },
-                "notiferror"   : {"msg_txt": "","visible": false    },
-                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
-                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
-            }
-        },
-        {
-            "quai": "quai12",
-              "header": {
-                "backgroundcolorset" : "ColorSet9",
-                "backgroundcolorshade" : "ShadeE"
-            },
-            "um" : "",
-            "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false    },
-                "notifwarning" : {"msg_txt": "","visible": false    },
-                "notiferror" :   {"msg_txt": "","visible": false    },
-                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
-                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
-            }
-        },
-        {
-            "quai": "quai13",
-            "header": {
-                "backgroundcolorset" : "ColorSet9",
-                "backgroundcolorshade" : "ShadeE"
-            },
-            "um" : "",
-            "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false    },
-                "notifwarning" : {"msg_txt": "","visible": false    },
-                "notiferror" :   {"msg_txt": "","visible": false    },
-                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
-                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
-            }
-        },
-        {
-            "quai": "quai14",
-            "header": {
-                "backgroundcolorset" : "ColorSet9",
-                "backgroundcolorshade" : "ShadeE"
-            },
-            "um" : "",
-             "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false    },
-                "notifwarning" : {"msg_txt": "","visible": false    },
-                "notiferror" :   {"msg_txt": "","visible": false    },
-                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
-                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
-            }
-        },
-        {
-        "quai": "quai15",
-        "header": {
-                "backgroundcolorset" : "ColorSet9",
-                "backgroundcolorshade" : "ShadeE"
-            },
-         "um" : "",
-           "notifs": {
-                "notifsuccess" : {"msg_txt": "","visible": false    },
-                "notifwarning" : {"msg_txt": "","visible": false    },
-                "notiferror" :   {"msg_txt": "","visible": false    },
-                "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
-                "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
-            }
-        }
-    ],
-    "notif_txt_all": [
+//             },
+//             "um" : "",
+//             "notifs": {
+//                 "notifsuccess" : {"msg_txt": "","visible": false    },
+//                 "notifwarning" : {"msg_txt": "","visible": false    },
+//                 "notiferror" :   {"msg_txt": "","visible": false    },
+//                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+//                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
+//             }
+//         },
+//         {
+//             "quai": "quai09",
+//              "header": {
+//                 "backgroundcolorset" : "ColorSet9",
+//                 "backgroundcolorshade" : "ShadeE"
+//             },
+//             "um" : "",
+//             "notifs": {
+//                 "notifsuccess" : {"msg_txt": "","visible": false    },
+//                 "notifwarning" : {"msg_txt": "","visible": false    },
+//                 "notiferror" :   {"msg_txt": "","visible": false    },
+//                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+//                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
+//             }
+//         },
+//         {
+//             "quai": "quai10",
+//              "header": {
+//                 "backgroundcolorset" : "ColorSet9",
+//                 "backgroundcolorshade" : "ShadeE"
+//             },
+//             "um" : "",
+//             "notifs": {
+//                 "notifsuccess" : {"msg_txt": "","visible": false    },
+//                 "notifwarning" : {"msg_txt": "","visible": false    },
+//                 "notiferror" :   {"msg_txt": "","visible": false    },
+//                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+//                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
+//             }
+//         },
+//         {
+//             "quai": "quai11",
+//               "header": {
+//                 "backgroundcolorset" : "ColorSet9",
+//                 "backgroundcolorshade" : "ShadeE"
+//             },
+//             "um" : "",
+//             "notifs": {
+//                 "notifsuccess" : {"msg_txt": "","visible": false    },
+//                 "notifwarning" : {"msg_txt": "","visible": false    },
+//                 "notiferror"   : {"msg_txt": "","visible": false    },
+//                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+//                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
+//             }
+//         },
+//         {
+//             "quai": "quai12",
+//               "header": {
+//                 "backgroundcolorset" : "ColorSet9",
+//                 "backgroundcolorshade" : "ShadeE"
+//             },
+//             "um" : "",
+//             "notifs": {
+//                 "notifsuccess" : {"msg_txt": "","visible": false    },
+//                 "notifwarning" : {"msg_txt": "","visible": false    },
+//                 "notiferror" :   {"msg_txt": "","visible": false    },
+//                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+//                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
+//             }
+//         },
+//         {
+//             "quai": "quai13",
+//             "header": {
+//                 "backgroundcolorset" : "ColorSet9",
+//                 "backgroundcolorshade" : "ShadeE"
+//             },
+//             "um" : "",
+//             "notifs": {
+//                 "notifsuccess" : {"msg_txt": "","visible": false    },
+//                 "notifwarning" : {"msg_txt": "","visible": false    },
+//                 "notiferror" :   {"msg_txt": "","visible": false    },
+//                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+//                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
+//             }
+//         },
+//         {
+//             "quai": "quai14",
+//             "header": {
+//                 "backgroundcolorset" : "ColorSet9",
+//                 "backgroundcolorshade" : "ShadeE"
+//             },
+//             "um" : "",
+//              "notifs": {
+//                 "notifsuccess" : {"msg_txt": "","visible": false    },
+//                 "notifwarning" : {"msg_txt": "","visible": false    },
+//                 "notiferror" :   {"msg_txt": "","visible": false    },
+//                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+//                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
+//             }
+//         },
+//         {
+//         "quai": "quai15",
+//         "header": {
+//                 "backgroundcolorset" : "ColorSet9",
+//                 "backgroundcolorshade" : "ShadeE"
+//             },
+//          "um" : "",
+//            "notifs": {
+//                 "notifsuccess" : {"msg_txt": "","visible": false    },
+//                 "notifwarning" : {"msg_txt": "","visible": false    },
+//                 "notiferror" :   {"msg_txt": "","visible": false    },
+//                 "notifsuccess_scanmanuelum" : {"msg_txt": "","visible": false    },
+//                 "notiferror_scanmanuelum"   : {"msg_txt": "","visible": false    }
+//             }
+//         }
+//     ],
+//     "notif_txt_all": [
                            
-    ],
-     "chargementstartnotifs": {
+//     ],
+//      "chargementstartnotifs": {
               
-                "notifwarning" : {"msg_txt": "","visible": false    },
-                "notiferror" :   {"msg_txt": "","visible": false    },
-            },                      
-};
-            notificationsQuaisModel.setData(json_object);
-            this.setModel(notificationsQuaisModel, "notificationsQuaisModel");
+//                 "notifwarning" : {"msg_txt": "","visible": false    },
+//                 "notiferror" :   {"msg_txt": "","visible": false    },
+//             },                      
+// };
+//             notificationsQuaisModel.setData(json_object);
+//             this.setModel(notificationsQuaisModel, "notificationsQuaisModel");
+
+
+            this._createDynamicQuaisModel();
 
       //----------------------------------------------------------------------------------------------------------------------------//
      //               Détermination des URL des API                                                                                //  
@@ -391,33 +398,82 @@ this.getEventBus().subscribe("Default","LoadMaterialUmStockListEvent",(channel:s
       const router = this.getRouter().initialize();   
       
          let target_chargement_list: Target = router.getTarget("targetchargementlist") as Target;
-         let target_quai08: Target = router.getTarget("targetchargementquai08") as Target;
-         let target_quai09: Target = router.getTarget("targetchargementquai09") as Target;
-         let target_quai10: Target = router.getTarget("targetchargementquai10") as Target;
-         let target_quai11: Target = router.getTarget("targetchargementquai11") as Target;
-         let target_quai12: Target = router.getTarget("targetchargementquai12") as Target;
-         let target_quai13: Target = router.getTarget("targetchargementquai13") as Target;
-         let target_quai14: Target = router.getTarget("targetchargementquai14") as Target;
-         let target_quai15: Target = router.getTarget("targetchargementquai15") as Target;
 
+
+         // LOT 18 Simplification du routing
+
+
+        //  let target_quai08: Target = router.getTarget("targetchargementquai08") as Target;
+        //  let target_quai09: Target = router.getTarget("targetchargementquai09") as Target;
+        //  let target_quai10: Target = router.getTarget("targetchargementquai10") as Target;
+        //  let target_quai11: Target = router.getTarget("targetchargementquai11") as Target;
+        //  let target_quai12: Target = router.getTarget("targetchargementquai12") as Target;
+        //  let target_quai13: Target = router.getTarget("targetchargementquai13") as Target;
+        //  let target_quai14: Target = router.getTarget("targetchargementquai14") as Target;
+        //  let target_quai15: Target = router.getTarget("targetchargementquai15") as Target;
+
+        // target_chargement_list.attachDisplay(()=>{  this.gv_current_application = application_names_enum.chargementsPrevus;}     //Stockage du nom de l'application en cours d'utilisation  // LOT17 Amélioration code
+        //                                     );    
+        // target_quai08.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                //Stockage du nom de l'application en cours d'utilisation  // LOT17 Amélioration code
+        //                             );
+        // target_quai09.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+        //                             );  
+        // target_quai10.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+        //                             );   
+        // target_quai11.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+        //                             );  
+        // target_quai12.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+        //                             );   
+        // target_quai13.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+        //                             );    
+        // target_quai14.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+        //                             ); 
+        // target_quai15.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
+        //                             );  
+        
+        let target_quai_all: Target = router.getTarget("targetchargementquaiall") as Target;
+       
         target_chargement_list.attachDisplay(()=>{  this.gv_current_application = application_names_enum.chargementsPrevus;}     //Stockage du nom de l'application en cours d'utilisation  // LOT17 Amélioration code
                                             );    
-        target_quai08.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                //Stockage du nom de l'application en cours d'utilisation  // LOT17 Amélioration code
-                                    );
-        target_quai09.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                    );  
-        target_quai10.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                    );   
-        target_quai11.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                    );  
-        target_quai12.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                    );   
-        target_quai13.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                    );    
-        target_quai14.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                    ); 
-        target_quai15.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}                // LOT17 Amélioration code
-                                    );                                                                                                          
+        target_quai_all.attachDisplay(()=>{ this.gv_current_application = application_names_enum.chargementsQuais;}  )              //Stockage du nom de l'application en cours d'utilisation  // LOT17 Amélioration code
+    
+         // LOT 18 Simplification du routing
+    }
+
+
+
+private _createDynamicQuaisModel(): void {
+    // Configuration : quels sont nos quais ?
+    const aQuaiNumbers = ["08", "09", "10", "11", "12", "13", "14", "15"];
+    
+    // Construction de la structure de base
+    const oData = {
+        quais: aQuaiNumbers.map((sNum) => {
+            return {
+                quai: "QUAI" + sNum,
+                header: {
+                    backgroundcolorset: "ColorSet9",
+                    backgroundcolorshade: "ShadeE"
+                },
+                um: "",
+                notifs: {
+                    notifsuccess: { msg_txt: "", visible: false },
+                    notifwarning: { msg_txt: "", visible: false },
+                    notiferror: { msg_txt: "", visible: false },
+                    notifsuccess_scanmanuelum: { msg_txt: "", visible: false },
+                    notiferror_scanmanuelum: { msg_txt: "", visible: false }
+                }
+            };
+        }),
+        notif_txt_all: [],
+        chargementstartnotifs: {
+            notifwarning: { msg_txt: "", visible: false },
+            notiferror: { msg_txt: "", visible: false }
+        }
+    };
+
+    const oModel = new JSONModel(oData);
+    this.setModel(oModel, "notificationsQuaisModel");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------//
@@ -945,6 +1001,7 @@ public refresh_after_wsnotification(action :string, type_msg:string, msg_txt: st
         const router = this.getRouter();
         //console.log("P1 Navigation vers le quai avec target " + lv_target_quai); 
          this.getEventBus().publish("Default", application_events_enum.chargement_start_get_event, {});
+         this.getEventBus().publish("Default", application_events_enum.validation_msg_chargement_event, {}); // ANO RECETTE 31/03/2026 Les messages de validation sont à rafraîchir après démarrage
          router.getTargets()?.display(lv_target_quai);           // TODO -> Remis après refonte du modèle de notification car manquant
                                                                                                                       },reason=>{  console.log("P1 REJECTED PROMISE POST StartChargment" + ChargementStartModel.getJSON.toString());
                                                                                                              }); 

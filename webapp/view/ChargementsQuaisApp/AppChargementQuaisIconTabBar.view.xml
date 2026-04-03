@@ -20,6 +20,12 @@ height = "100%">
 		</items>
 		<content >  
 	             <!-- Le quai sera chargé par routing  -->
+				  <!-- EVOL TRANSITION -->
+				 <NavContainer id="navContainerQuais" height= "700px" width= "100%"  defaultTransitionName="flip">
+                <pages>
+				</pages>
+				 </NavContainer>
+				   <!-- EVOL TRANSITION--> 
 		</content>
 	</IconTabBar>
 	<ScrollContainer vertical='true'>   
