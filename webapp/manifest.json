@@ -1,7 +1,7 @@
 {
     "_version": "1.65.0",
     "sap.app": {
-        "id": "clf.logistique.chargementquais.082025_2",
+        "id": "clf.logistique.chargementquais",
         "type": "application",
         "i18n": "i18n/i18n.properties",
         "applicationVersion": {
@@ -48,13 +48,47 @@
             }
         },
         "contentDensities": {
-            "compact": true,
+            "compact": false,
             "cozy": true
         },
         "config": {
-                        "api_env": "dev"
+                    "api_env": "dev",
+                    "sap/base/Log": {
+                                     "level": "INFO"
+                                    }
                 },
         "models": {
+            "i18n": {
+                 "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                           "bundleUrl": "i18n/i18n.properties",
+                           "supportedLocales": [""],
+                           "fallbackLocale": ""
+                           
+                            }
+             },
+           "chargementModelJson": {
+                    "type": "sap.ui.model.json.JSONModel",
+                    "preload": true
+           },
+           "chargementsPrevusListModel": {
+                    "type": "sap.ui.model.json.JSONModel",
+                    "preload": true
+           },
+            "validationMsgChargementQuaiModelJSON": {
+                    "type": "sap.ui.model.json.JSONModel",
+                    "preload": true
+           },
+            "ChargementStartModel": {
+                    "type": "sap.ui.model.json.JSONModel",
+                    "preload": true
+           },
+            "device": {
+                "type": "sap.ui.model.json.JSONModel",
+                "preload": true,
+                "settings": {},
+                "dataSource": "deviceModelSource" 
+            }
                    
         },
         "resources": {
@@ -69,7 +103,7 @@
                 "routerClass": "sap.f.routing.Router",
                 "controlAggregation": "pages",
                 "controlId": "navcontainermain",
-                "transition": "flip",
+                "transition": "show",
                 "transitionParameters": {},
                 "bypassed": {
                 "target": "notfound"
@@ -81,13 +115,7 @@
                
             },
             "routes": [
-                {
-                    "name": "RouteHome",
-                    "pattern": "",
-                    "target": [
-                        "targetchargementquaiall"
-                    ]
-                },
+            
                 {
                     "name": "RouteChargementList",
                     "pattern": "chargementprevu",
@@ -101,12 +129,26 @@
                     
                     
                 },
+                   
+                  
                  {
                     "name": "RouteChargementStart",
                     "pattern": "chargementstart/{quainumber}",
                     "target":  "targetstartchargementquaiall"
                     
-                }
+                },
+                    {
+                    "name": "RouteHome",
+                    "pattern": "",
+                    "target": [
+                        "targetchargementlist"
+                    ]
+                },
+                {
+                    "name": "notFound",
+                    "pattern": ":all*:",
+                    "target": "targetNotFound"
+                    }
                 
                 
             ],
@@ -122,37 +164,33 @@
                 "targetchargementquais": {
                     "id": "AppChargementQuaisIconTabBar",
                     "viewName": "ChargementsQuaisApp.AppChargementQuaisIconTabBar"
-                         
-                    
+                   
 					
                 },
                 "targetchargementquaiall": {
                     "id": "quai_all",
                     "viewName": "ChargementsQuaisApp.quais.quai_all",
                     "parent" :  "targetchargementquais",
-                    "controlId": "navContainerQuais", 
-                    "controlAggregation": "pages",    
+                    "controlId": "animWrapper", 
+                    "controlAggregation": "items",    
                     "clearControlAggregation": true,
-                    "transition" : "flip"
-                    
-
-                    
+                    "transition" : "show"
                 },
+             
                      "targetstartchargementquaiall": {
                     "id": "ChargementStartQuaiall",
                     "viewName": "ChargementsQuaisApp.startchargement.ChargementStart",
                     "parent" :  "targetchargementquais",
-                    "controlId": "navContainerQuais",
-                    "controlAggregation": "pages",
+                    "controlId": "animWrapper",
+                    "controlAggregation": "items",
                     "clearControlAggregation": true
                     
                     
                 },
-                "notfound": {
-                    "id": "notfound",
-                    "name": "notfound",
-                     "path": "clf.logistique.chargementquais.view.error",
-                     "transition": "show"
+                "targetNotFound": {
+                    "id": "notFound",
+                    "viewName": "error.notFound",
+                    "transition": "show"
                  }
             }
         },

@@ -14,8 +14,8 @@
 			press=".onCollapseExpandPress" />
 		<tnt:SideNavigation id="sideNavigation" selectedKey="walked" expanded="true" itemSelect= "itemSelect" >
 			<tnt:NavigationList>
-					<tnt:NavigationListItem text="Suivi Chargement" icon="sap-icon://activity-items" key ="item_chargement_list" />
-					<tnt:NavigationListItem text="Chargements par quais" icon="sap-icon://inventory" key ="item_quai_all" />
+					<tnt:NavigationListItem text="{i18n>SuiviCharg}" icon="sap-icon://activity-items" key ="item_chargement_list" />
+					<tnt:NavigationListItem text="{i18n>ChargQuais}" icon="sap-icon://inventory" key ="item_quai_all" />
 			</tnt:NavigationList>
 
 			<tnt:fixedItem>
@@ -27,6 +27,7 @@
 			</tnt:fixedItem>
 		</tnt:SideNavigation>
 	</VBox>
+	
    		<NavContainer	id="navcontainermain"
 						width="1200px"
 						height="1200px"
@@ -34,5 +35,6 @@
 						<pages>
 						</pages>
 		</NavContainer>	
+		
 </HBox>
 </mvc:View>

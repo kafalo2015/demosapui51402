@@ -1,21 +1,25 @@
 <mvc:View controllerName="clf.logistique.chargementquais.controller.ChargementsQuaisApp.ChargementQuais"
     xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
     xmlns:mvc="sap.ui.core.mvc"
+	 xmlns:core="sap.ui.core"
     xmlns="sap.m"
-	height = "1200px"
-	width = "1100px"
+	height="100%" 
+	width="100%"
 	>
-	  <Page showHeader = "false">
- <l:BlockLayout id="blockLayout" class="sapUiSmallMargin">
+
+
+
+				
+ <l:BlockLayout id="blockLayout" class="" backgroundDesign="">
 		<l:BlockLayoutRow >
-			<l:BlockLayoutCell
-			   title="Quai: {chargementModelJson>quai} Transport: {chargementModelJson>numtransport}"
-			   titleAlignment = "Begin"
+			<l:BlockLayoutCell id = "Header_BlockLayoutCell1" class="compactCell"
+
 			   width = "75"
-			   class="sapUiContentPadding sapUiNoMarginBegin sapUiNoMarginBottom"
+			   
 			   backgroundColorSet="{notificationsQuaisModel>header/backgroundcolorset}"
 			   backgroundColorShade="{notificationsQuaisModel>header/backgroundcolorshade}">
-					<FlexBox
+					<!--<FlexBox
 				     direction="Row"
 				     justifyContent="Start"
 				     alignItems="Center">
@@ -28,9 +32,44 @@
 				        <Text id="faux_camion_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>fauxcamion}"/>
 						 </items>
 						
-				</FlexBox> 
+				</FlexBox> -->
 
-				 	<FlexBox
+				<Title text="{i18n>Quai}: {chargementModelJson>quai} {i18n>Transport}: {chargementModelJson>numtransport}" 
+           level="H2" 
+           titleStyle="H3" 
+		   textAlign="Center"
+            class="sapUiNoMarginBottom customTitleColor" />
+
+			<f:SimpleForm 
+    editable="false"
+    layout="ResponsiveGridLayout"
+    backgroundDesign="Transparent"
+    class="sapUiNoContentPadding"
+    labelSpanL="4" 
+    labelSpanM="4"
+    columnsL="2" 
+    columnsM="2"
+    emptySpanL="0"
+    emptySpanM="0"
+	breakpointL="500"
+    breakpointM="400">
+    
+    <f:content>
+        <core:Title text="" /> <Label text="{i18n>Chargeur}" design="Bold" />
+        <Text text="{chargementModelJson>zpcfName1}" />
+        
+        <Label text="{i18n>Transporteur}" design="Bold" />
+        <Text text="{chargementModelJson>transporteur}" />
+
+        <core:Title text="" /> <Label text="{i18n>FauxCam}" design="Bold" />
+        <Text text="{chargementModelJson>fauxcamion}" />
+        
+        <Label text="{i18n>Consignes}" design="Bold" />
+        <Text text="{chargementModelJson>text1}" />
+    </f:content>
+</f:SimpleForm>	 
+
+				 	<!-- <FlexBox
 				     direction="Row"
 				     justifyContent="Start"
 				     alignItems="Center">
@@ -38,13 +77,19 @@
 						<Label id= "LabelConsignes" text="Consignes chargement" class="sapUiTinyMarginEnd" design="Bold" /> 
 				        <Text id="consignes_txt" class="sapUiTinyMarginEnd" text="{chargementModelJson>text1} {text2} {chargementModelJson>text3} {chargementModelJson>text4}"/>
 					</items>
-				</FlexBox>
+				</FlexBox> -->
 			</l:BlockLayoutCell>
+
+	
+
 			<l:BlockLayoutCell
 			   title=""
 			   width = "25"
 			   backgroundColorSet="ColorSet9"
-			   backgroundColorShade="ShadeD">
+			   backgroundColorShade="ShadeD"
+			   class ="compactCell"
+
+			   >
 					 <ProgressIndicator
 						id="LoadingIndicator"
 						class="sapUiSmallMarginBottom"
@@ -58,34 +103,58 @@
 						justifyContent="Center"
 						alignItems="Center">
 						<items>
-						<Label id= "LabelUmcharg" text="Chargées" class="sapUiTinyMarginEnd"  design="Bold" /> 
+						<Label id= "LabelUmcharg" text="{i18n>CountCharg}" class="sapUiTinyMarginEnd"  design="Bold" /> 
 						<Text id= "InputUmCharg" class="sapUiTinyMarginEnd" text="{chargementModelJson>umCharg}"  />
-						<Label id= "LabelUmNb" text="Nb Um" class="sapUiTinyMarginEnd" design="Bold" /> 
+						<Label id= "LabelUmNb" text="{i18n>CountUmTotal}" class="sapUiTinyMarginEnd" design="Bold" /> 
 						<Text id= "InputUmNb" text="{chargementModelJson>umNb}"  />
 						</items>
 				    </FlexBox>	
 			</l:BlockLayoutCell>
 		</l:BlockLayoutRow>
 	</l:BlockLayout> 
+	       <MessageStrip id = "messageStripInformationV2"
+				text="{notificationsQuaisModel>notifs/notifsuccess/msg_txt}"
+				type="Success"
+				showIcon="true"
+				visible = "{notificationsQuaisModel>notifs/notifsuccess/visible}"
+				class="sapUiNoMarginBottom sapUiNoMarginBegin">
+			</MessageStrip>
+      
+            <MessageStrip id = "messageStripWarningV2"
+				text="{notificationsQuaisModel>notifs/notifwarning/msg_txt}"
+				type="Warning"
+				showIcon="true"
+				visible = "{notificationsQuaisModel>notifs/notifwarning/visible}"
+				class="sapUiNoMarginBottom">
+			</MessageStrip>
+			  <MessageStrip id = "messageStripErrorV2"
+				text="{notificationsQuaisModel>notifs/notiferror/msg_txt}"
+				type="Error"
+				showIcon="true"
+				visible = "{notificationsQuaisModel>notifs/notiferror/visible}"
+				class="sapUiNoMarginBottom">
+			</MessageStrip>
+
 			
-	<ScrollContainer height='250px' vertical='true'>
-	  <Table id="TablePostesNonCharges_quai08"  class="sapSmallMargin" backgroundDesign = "Solid"  width="auto" headerText="Postes restants" enableBusyIndicator = "true" 
+<ScrollContainer height='250px' vertical='true'>
+	  <Table id="TablePostesNonCharges_quai_all"  class="" backgroundDesign = "Solid"  width="auto" 
+	  headerText="{i18n>PosteRestant}" fixedLayout="false" enableBusyIndicator = "true"  height="50px" sticky="ColumnHeaders,HeaderToolbar" renderType="Div"
 		items="{
 				path : 'chargementModelJson>tPosteNocharge'	  		
 			}">
 			<headerToolbar>
-					<OverflowToolbar id="SubheaderTablePostenoChargQuai08">
+					<OverflowToolbar id="SubheaderTablePostenoChargQuaiAll">
 					<Text text="Postes restants" />
 						<ToolbarSpacer/>
 					</OverflowToolbar>
 				</headerToolbar>
 	    <columns>
-            <Column hAlign="Begin" width="10%"> <Text text="Livraison" /> </Column>
+            <Column hAlign="Begin" width="12%"> <Text text="Livraison" /> </Column>
 			<Column hAlign="Begin" width="6%"> <Text text="Poste Livr."/> </Column>
 			<Column hAlign="Begin" width="12%"> <Text text="Article" /> </Column>	
 			<Column hAlign="Begin" width="10%"> <Text text="Type UM" /> </Column>
 			<Column hAlign="Begin" width="10%"> <Text text="Commande" /> </Column>	
-			<Column hAlign="Begin" width="22%"> <Text text="Client" /> </Column>	
+			<Column hAlign="Begin" width="20%"> <Text text="Client" /> </Column>	
 			<Column hAlign="Begin" width="7%"> <Text text="UMs chargés" /> </Column>	
 			<Column hAlign="Begin" width="7%"> <Text text="UMs à charger" /></Column>
 			<Column hAlign="Begin" width="7%"> <Text text="Statut faux camion" /></Column>	
@@ -105,25 +174,36 @@
 					<Text text="{chargementModelJson>nbumch}" />
 					<Text text="{chargementModelJson>nbumac}" />
 					<Text text="{chargementModelJson>nbUmFaucam}" />
-					<Button text="FauxCam" 	press=".onSelectDialogUmFauxCam"/>
-					<Button text="Stock" 	press=".onSelectDialogUmStockPress"/>
+					<Button text="{i18n>BtnFxCam}" 	press=".onSelectDialogUmFauxCam">
+					  <customData>
+                       <core:CustomData key="quai" value="{chargementModelJson>quai}" />
+					   <!-- <core:CustomData key="indice" value="{path: 'chargementModelJson>indice'}" /> -->
+						<core:CustomData key="numtra" value="{path: 'chargementModelJson>numtra'}" />
+						<core:CustomData key="numliv" value="{path: 'chargementModelJson>numliv'}" />
+					    <core:CustomData key="pstliv" value="{path: 'chargementModelJson>pstliv'}" />
+                      </customData>
+                   </Button>
+					<Button text="{i18n>BtnStock}" 	press=".onSelectDialogUmStockPress"/>
 				</cells>
 			</ColumnListItem>
 		</items>
 	</Table>	
 		</ScrollContainer>
 			<ScrollContainer height='250px' vertical='true'>
-	    <Table id="tableChargementUM_quai08" class="sapSmallMargin"  backgroundDesign="Solid" width="auto" headerText="UMs Chargées" enableBusyIndicator = "true"
+	    <Table id="tableChargementUM_quai_all" class="sapSmallMargin"  backgroundDesign="Solid" width="auto" headerText="{i18n>UMCharg}" enableBusyIndicator = "true"
 		items="{
 				path : 'chargementModelJson>tChargItem'			
 			}">
 				<headerToolbar>
 					<OverflowToolbar id="otbSubheader">
-					<Text text="UMs Chargées" />
+					<Text text="{i18n>UMCharg}" />
 						<ToolbarSpacer/>
 					
-						<Button id="ScanManuelQuai08" text="Scan Manuel UM" type="Transparent" press=".onScanManuelUm" icon= "sap-icon://bar-code"/>
-						
+						<Button id="ScanManuelQuaiAll" text="{i18n>BtnScanManuelUM}" type="Transparent" press=".onScanManuelUm" icon= "sap-icon://bar-code">
+						<customData>
+                           <core:CustomData key="quai" value="{chargementModelJson>quai}" />
+                        </customData>
+                         </Button>
 					</OverflowToolbar>
 				</headerToolbar>	
 		
@@ -147,40 +227,22 @@
 			</ColumnListItem>
 		</items>
 	</Table>
-	</ScrollContainer>
+		</ScrollContainer>
+
 
 <!--enabled="{= %{chargementModelJson>/results/0/tChargItem}.length > 0  &&  %{chargementModelJson>/results/0/nbUmTotalFaucam} === 0?true:false}"-->
-	<Button id="FinChargQuai08" text="Fin Chargement" type= "Accept" icon= "sap-icon://complete"
+	<Button id="FinChargQuaiAll" text="{i18n>BtnFinCharg}" type= "Accept" icon= "sap-icon://complete"
 						press=".onPressButtonFinCharg"
 						enabled="{= (%{chargementModelJson>nbUmTotalFaucam} > 0) || (%{chargementModelJson>tChargItem}.length === 0)?false:true}"
 						ariaDescribedBy="defaultButtonDescription genericButtonDescription">
 					<layoutData>
 						<FlexItemData growFactor="1" />
 					</layoutData>
+					<customData>
+                    <core:CustomData key="quai" value="{chargementModelJson>quai}" />
+                    </customData>
 				</Button>
-<!--   A REMETTRE DANS UNE VUE SEPAREE
-	<MessageStrip id = "messageStripInformationV2"
-				text="{notificationsQuaisModel>notifs/notifsuccess/msg_txt}"
-				type="Success"
-				showIcon="true"
-				visible = "{notificationsQuaisModel>notifs/notifsuccess/visible}"
-				class="sapUiNoMarginBottom sapUiNoMarginBegin">
-			</MessageStrip>
-      
-  <MessageStrip id = "messageStripWarningV2"
-				text="{notificationsQuaisModel>notifs/notifwarning/msg_txt}"
-				type="Warning"
-				showIcon="true"
-				visible = "{notificationsQuaisModel>notifs/notifwarning/visible}"
-				class="sapUiNoMarginBottom">
-			</MessageStrip>
-			  <MessageStrip id = "messageStripErrorV2"
-				text="{notificationsQuaisModel>notifs/notiferror/msg_txt}"
-				type="Error"
-				showIcon="true"
-				visible = "{notificationsQuaisModel>notifs/notiferror/visible}"
-				class="sapUiNoMarginBottom">
-			</MessageStrip>
-	-->	
-</Page>
+
+	
+
     </mvc:View>

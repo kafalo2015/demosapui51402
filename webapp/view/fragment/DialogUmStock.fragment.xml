@@ -5,7 +5,7 @@
 		<TableSelectDialog
 		id="DialogUmStock"
 		noDataText="No um "
-		title="Um en stock"
+		title="{i18n>TableSelectDialogUmStockTitle}"
 		contentWidth = "40%"
 		contentHeight = "45%"
 		draggable ="true"

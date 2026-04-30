@@ -33,19 +33,13 @@ export default class chargementlist extends Controller {
     public  handleLinkPress(event: Link$PressEvent): void {
       let lv_quai:string = event.getSource().getText();
       //console.log("Text du link: " +  lv_quai);
-      let data : {quai:String} = {
-         quai: lv_quai              
-       };
+      // let data : {quai:String} = {
+      //    quai: lv_quai              
+      //  };
      // La navigation sur les vues de quais de fait dans le handler du event linkQuaiPressEvent
       const router = UIComponent.getRouterFor(this);
-      if ( lv_quai == quais_enum.QUAI08 )  {  router.getTargets()?.display("TargetChargementQuai08");  }
-      if ( lv_quai == quais_enum.QUAI09 )  {  router.getTargets()?.display("TargetChargementQuai09");  }
-      if ( lv_quai == quais_enum.QUAI10 )  {  router.getTargets()?.display("TargetChargementQuai10");  }
-      if ( lv_quai == quais_enum.QUAI11 )  {  router.getTargets()?.display("TargetChargementQuai11");  }
-      if ( lv_quai == quais_enum.QUAI12 )  {  router.getTargets()?.display("TargetChargementQuai12");  }
-      if ( lv_quai == quais_enum.QUAI12 )  {  router.getTargets()?.display("TargetChargementQuai13");  }
-      if ( lv_quai == quais_enum.QUAI14 )  {  router.getTargets()?.display("TargetChargementQuai14");  }
-      if ( lv_quai == quais_enum.QUAI15 )  {  router.getTargets()?.display("TargetChargementQuai15");  }
+      const lv_quai_number : string =  lv_quai?.slice(4,6);
+      router.navTo("RouteChargementQuai", {quainumber: lv_quai_number})   
 }
       
 }

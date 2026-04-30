@@ -1,1 +1,87 @@
 /* Enter your custom styles here */
+
+
+
+/* Animation de slide vers la droite */
+@keyframes slideInFromLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Animation de slide vers la droite */
+@keyframes slideInFromRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+
+/* Animation de sortie vers la gauche */
+@keyframes slideOutToLeft {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+
+/* Animation de sortie vers la gauche */
+@keyframes slideOutToRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(+100%);
+        opacity: 0;
+    }
+}
+
+/* Classe à appliquer pour la sortie */
+.quai-slide-out-left {
+    animation: slideOutToLeft 0.4s ease-in forwards; 
+    /* "forwards" permet à l'élément de rester invisible/décalé à la fin */
+}
+
+/* Classe à appliquer pour la sortie */
+.quai-slide-out-right {
+    animation: slideOutToRight 0.4s ease-in forwards; 
+    /* "forwards" permet à l'élément de rester invisible/décalé à la fin */
+}
+
+/* Classe à appliquer dynamiquement au contenu */     /* GEMINI [amélioration] Passage de 0.1s ease-out à 0.3s ease-out */
+
+.quai-slide-in-right {
+    animation: slideInFromRight 0.3s ease-out;
+}
+
+.quai-slide-in-left {
+    animation: slideInFromLeft 0.3s ease-out;
+}
+
+/* Forcer la couleur du titre si nécessaire (ex: noir profond pour le contraste) */
+.customTitleColor {
+    color: #e1ee2be8 !important;
+    display: block;
+    margin-bottom: 0 !important;
+    padding : 0rem
+}
+
+/* 3. Supprimer l'espace réservé par les core:Title vides du SimpleForm */
+/* C'est souvent l'élément .sapUiFormTitle qui crée ce grand vide */
+  .compactCell .sapUiFormTitle {
+    height: 0px !important;
+    line-height: 0px !important;
+    margin: 1 !important;
+    padding: 0 !important;
+    visibility: hidden; /* Cache le titre vide mais garde la fonction de colonne */
+}
+
+ /* On cible précisément le contenu de la cellule pour SizeL */
+ /* GEMINI Est-ce que ce sélecteur est différent? .sapUiBlockLayoutSizeL  .sapUiBlockCellContent .compactCell */
+.sapUiBlockLayoutSizeL .compactCell .sapUiBlockCellContent {
+    padding: 0.6rem 0.8rem !important; /* On divise par 4 l'espace par défaut */
+}

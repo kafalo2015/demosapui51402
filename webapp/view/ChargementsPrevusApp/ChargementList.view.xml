@@ -18,7 +18,7 @@
 				justifyContent="SpaceBetween"
 				alignItems="Center"		
 				>
-			   <ObjectAttribute text="Tonnage Prévu"  class="sapUiTinyMarginEnd sapUiTinyMarginBegin"/>
+			   <ObjectAttribute text="{i18n>ObjectAttributeTonnagePrevu}"  class="sapUiTinyMarginEnd sapUiTinyMarginBegin"/>
 				<ObjectNumber
 				class="sapUiTinyMarginEnd"
 				number="{= Math.round(%{chargementsPrevusListModel>/results/poidsprevucumul})}"
@@ -26,14 +26,14 @@
 				unit="TONNE"
 				state="Information" />
                 
-				<ObjectAttribute text="Tonnage Chargé"  class="sapUiTinyMarginEnd"/>                            
+				<ObjectAttribute text="{i18n>ObjectAttributeTonnageCharg}"  class="sapUiTinyMarginEnd"/>                            
 				<ObjectNumber
 				class="sapUiTinyMarginEnd"
 				number="{= Math.round(%{chargementsPrevusListModel>/results/poidschargcumul})}"
 				inverted="true"
 				unit="TONNE"
 				state="Success" />
-                <ObjectAttribute text=" Tonnage à Charger"  class="sapUiTinyMarginEnd"/>
+                <ObjectAttribute text="{i18n>ObjectAttributeTonnageACharg}"  class="sapUiTinyMarginEnd"/>
 				<ObjectNumber
 				class="sapUiTinyMarginEnd"
 				number="{= Math.round(%{chargementsPrevusListModel>/results/poidsrestantcumul})}"

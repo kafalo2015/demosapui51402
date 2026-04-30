@@ -3,7 +3,7 @@
 	xmlns:core="sap.ui.core"
 	 xmlns:l="sap.ui.layout"                                   >
  
-<Dialog title="Scan UM " showHeader= "true" contentWidth = "40%" contentHeight = "20%" resizable ="true" draggable="true" initialFocus="InputUmScan">
+<Dialog title="Scan UM " showHeader= "true" contentWidth = "40%" contentHeight = "20%" resizable ="true" draggable="true" initialFocus="idInputUmScanUm">
 	
 		 <l:BlockLayout id="blockLayoutScanUM" class="sapUiSmallMargin">
 		<l:BlockLayoutRow >
@@ -22,7 +22,7 @@
 
 	<Label id= "LabelScanUm" class="sapUiTinyMarginEnd" text="Veuillez saisir ou scanner UM"  design="Bold" labelFor="InputUmScan" />
     <Input
-			id="InputUmScan"
+			id="idInputUmScanUm"
 			value=   "{ChargementUmModel>/codum}" 
 			placeholder="Scannez un UM"
 			submit=".onSubmitUm"
@@ -32,18 +32,18 @@
 		</Input>
 
 			<MessageStrip id = "messageStripInformationScanManuel"
-				text="{notificationsQuaisModel>notifs/notifsuccess_scanmanuelum/msg_txt}"
+				text="{notificationsQuaisModel>notifs/notifsuccess/msg_txt}"
 				type="Success"
 				showIcon="true"
-				visible = "{notificationsQuaisModel>notifs/notifsuccess_scanmanuelum/visible}"
+				visible = "{notificationsQuaisModel>notifs/notifsuccess/visible}"
 				class="sapUiNoMarginBottom sapUiNoMarginBegin">
 	</MessageStrip>  
 
 		 <MessageStrip id = "messageStripErrorScanManuel"
-				text="{notificationsQuaisModel>notifs/notiferror_scanmanuelum/msg_txt}"
+				text="{notificationsQuaisModel>notifs/notiferror/msg_txt}"
 				type="Error"
 				showIcon="true"
-				visible = "{notificationsQuaisModel>notifs/notiferror_scanmanuelum/visible}"
+				visible = "{notificationsQuaisModel>notifs/notiferror/visible}"
 				class="sapUiNoMarginBottom">
 			</MessageStrip>
 	</FlexBox>

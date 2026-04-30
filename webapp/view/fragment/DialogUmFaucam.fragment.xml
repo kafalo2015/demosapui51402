@@ -4,8 +4,8 @@
 	
 	<TableSelectDialog
 		id="UmsFauxCamTableSelectDialog"
-		noDataText="Pas d'UM"
-		title="UMs Faux camion"
+		noDataText="{i18n>TableSelectDialogFauxCamNoData}"
+		title="{i18n>TableSelectDialogFauxCamTitle}"
 		contentWidth = "50%"
 		contentHeight = "30%"
 		draggable ="true"

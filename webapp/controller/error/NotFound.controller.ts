@@ -1,6 +1,5 @@
-import Controller from "sap/ui/core/mvc/Controller";
-import Event from "sap/ui/base/Event";
-import JSONModel from "sap/ui/model/json/JSONModel";
+import Controller from "sap/ui/core/mvc/Controller"; import UIComponent from "sap/ui/core/UIComponent";
+import History from "sap/ui/core/routing/History";
 
 
 /**
@@ -16,5 +15,20 @@ export default class NotFound extends Controller {
     public onAfterRendering(): void {
     
     }
+
+    public onNavBack(): void {
+        const oHistory = History.getInstance();
+        const sPreviousHash = oHistory.getPreviousHash();
+
+        if (sPreviousHash !== undefined) {
+            window.history.go(-1);
+        } else {
+            const oRouter = UIComponent.getRouterFor(this);
+            // On redirige vers la route par défaut (la liste des chargements par exemple)
+            oRouter.navTo("RouteChargementPrevus", {}, true);
+        }
+
+    }
+
   
 }

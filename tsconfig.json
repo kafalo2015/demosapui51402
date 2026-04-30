@@ -1,17 +1,23 @@
 {
   "compilerOptions": {
-    "target": "es2022",
-    "module": "es2022",
+
+    "target": "ES2022",
+    "module": "ESNext",
     "skipLibCheck": true,
+    "checkJs": false,
     "allowJs": true,
     "strict": true,
     "strictPropertyInitialization": false,
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
+    "useDefineForClassFields": false, // CRITIQUE : à laisser à false pour UI5
+    "experimentalDecorators": true,
+     "types": ["*"],
+    
     "rootDir": "./webapp",
     "outDir": "./dist",
-    "baseUrl": "./",
+  
     "paths": {
-      "clf/demo/sapui51402/demosapui51402/*": [
+      "clf/logistique/chargementquais/*": [
         "./webapp/*"
       ],
       "unit/*": [
@@ -23,10 +29,12 @@
     },
     "typeRoots": [
       "./node_modules/@types",
-      "./node_modules/@sapui5/types"
+      "./node_modules/@sapui5/types",
+      "./node_modules/@sapui5"
     ]
   },
   "include": [
     "./webapp/**/*"
+    
   ]
 }

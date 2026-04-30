@@ -51,7 +51,7 @@
 							  </Input> -->
 
 
-							  
+							   <!-- GEMINI [Amélioration performances] Limiter le nombre de suggestionRows à  100 au lieu de 800 -->
 							  <Input
 							id="MatriculeTabularInput"
 							value=   "{ChargementStartModel>/results/matri}" 
@@ -60,7 +60,7 @@
 							placeholder="Saisir le matricule..."
 							showSuggestion="true"
 							showTableSuggestionValueHelp="false"
-							suggestionRows="{path: 'ChargementStartModel>/results/tSuggestedMatricule', length: 800}" 
+							suggestionRows="{path: 'ChargementStartModel>/results/tSuggestedMatricule', length: 400}"   
 							suggestionItemSelected=".onSuggestionItemSelected"
 							submit=".onSubmit">
 							<formattedValueStateText>
@@ -166,7 +166,7 @@
 						     </ColumnListItem>
 			           </suggestionRows>
 			      </Input>
-						 <Button text="DEMARRER CHARGEMENT" press="onClickChargementQuai"/>
+						 <Button id="Btn_Start_Chargement" text="DEMARRER CHARGEMENT" press="onClickChargementQuai"/>
                          </items>					
 				</FlexBox> 
 				 	

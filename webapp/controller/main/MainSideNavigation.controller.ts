@@ -9,7 +9,7 @@ import JSONModel from "sap/ui/model/json/JSONModel";
  */
 export default class MainSideNavigation extends Controller {
 
-  private dialog: Dialog;
+  private dialog!: Dialog;
 
     /*eslint-disable @typescript-eslint/no-empty-function*/
     public onInit(): void {
@@ -59,9 +59,9 @@ export default class MainSideNavigation extends Controller {
       let encours : boolean = ChargementQuaiModel.getObject("/results/" + indice_json + "/chargementEncours");
        //-------------------- END On récupère dans le modèle si le quai 8 est cours de chargement -----------------------------------------------------------------------------------------------------------------------------//
        if (encours == true)                                                                                   // Si le quai 8 est en cours de chargement alors on affiche la vue du quai 8 sinon on affiche le formulaire de démarrage de chargement
-        {         router.navTo("RouteChargementQuai", {quainumber: "08"});  }   
+        {         router.navTo("RouteChargementQuai", {quainumber: "8"});  }   
        else
-        { router.navTo("RouteChargementStart", {quainumber: "08"});}
+        { router.navTo("RouteChargementStart", {quainumber: "8"});}
     }
       
      if (  event.getParameter("item")?.getKey() == "item_chargement_list" ) { router.navTo("RouteChargementList");}
