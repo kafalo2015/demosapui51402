@@ -12,7 +12,8 @@ import VBox from "sap/m/VBox";
 import MessageBox from "sap/m/MessageBox";
 import Log from "sap/base/Log";
 import { application_events_enum,chargement_um_context} from "../../model/Enums";
-import { IChargementUmValidationPayload, IRouteParams} from "../../model/Interfaces";
+import { IChargementUmValidationPayload, IRouteParams, IChargementMsgValidation} from "../../model/Interfaces";
+import Component from "../../Component";
 // Importation de l'enum
 
 /**
@@ -31,7 +32,7 @@ export default class AppChargementQuaisIconTabBar extends Controller {
   //----------------------------------------------------------------------------------------------------------------------------//
   //               LOT 8/9 : Validation des messages de chargement// Instantiation du fragment du dialogue                      //
   //----------------------------------------------------------------------------------------------------------------------------//
-  this.onOpenDialogValidCharg();
+  //this.onOpenDialogValidCharg();    / ANO TESTs UNITAIRES 28/04/2026 => Ouverture de la boîte de dialogue à la volée dans le handler d'ouvertue de boîte de dialogue
   // ==================================LOT 18 BEGIN -> Simplification du routing (une seule route et une seule target pour l'ensemble des quais)=============================================//
     const router = UIComponent.getRouterFor(this);
     router.getRoute("RouteChargementQuai")!.attachPatternMatched(this.onObjectMatched, this);
@@ -43,7 +44,13 @@ export default class AppChargementQuaisIconTabBar extends Controller {
   //----------------------------------------------------------------------------------------------------------------------------//
     this.getOwnerComponent()?.getEventBus().subscribe("Default",application_events_enum.validation_dialog_event,(channel:string,event:string,data: Object) => {           
       // On reconstitue le numéro de quai à partir du QUAI (QUAI08 ->08, QUAI09->09) // Amélioration posssible fournir le numéro de quai à l'event
-       let quai_number: number = Number(Object.values(data)[0].slice(4,6));
+      
+      // GEMINI BEGIN [Amélioration] Créer une interface de payload (data) pouro cet event
+     // let quai_number: number = Number(Object.values(data)[0].slice(4,6));
+      const payload = data as IChargementMsgValidation;   // GEMINI [Check] Il faut que l'interface continenne le champ quai au format number 
+                                                          // GEMINI [TODO] Passer ce payload à chaque publish de cet event
+
+      // GEMINI END [Amélioration] Créer une interface de payload (data) pouro cet event
       
       // BEGIN  Amélioration GEMINI LOT 21 => Ne plus utiliser de nombre magique -> Trouver l'indice json du quai à partir de son appelation QUAI08, QUAI09, ect
        const oModelData: JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
@@ -51,13 +58,11 @@ export default class AppChargementQuaisIconTabBar extends Controller {
        const current_quai_index_json = aQuaisData.findIndex(obj => obj.quai === (Object.values(data)[0]));   //Object.values(data)[0] contient le libellé du quai (QUAI08, QUAI09,ect)
       //et current_quai_index_json:number=   quai_number - 8 ;
       // END  Amélioration GEMINI LOT 21 => Ne plus utiliser de nombre magique -> Trouver l'indice json du quai à partir de son appelation QUAI08, QUAI09, ect
-      console.log("P1 LOT10 Validation des chargements QUAI DE LA NOTIFICATION: " + quai_number + "-QUAI ACTUEL:  " + this.gv_current_quai_number);
-       if ( quai_number == this.gv_current_quai_number) 
+       if (  payload.quai_number == this.gv_current_quai_number) // La boîte de dialogue ne doit s'ouvrir que si la validation concerne le quai en cours d'affichage
       {    
-        console.log("P1 Ouverture de la boîte de dialogue Current_quai_index_json = " +  current_quai_index_json); 
+        //console.log("P1 Ouverture de la boîte de dialogue Current_quai_index_json = " +  current_quai_index_json); 
+        this.onOpenDialogValidCharg();   // ANO TESTs UNITAIRES 28/04/2026 => S'assurer que la boîte de dialogue (Fragment ) est instancié avant le binding
         this.gv_dialog_validation_charg.setBindingContext(this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.createBindingContext("/results/" + current_quai_index_json + "/") as Context,"validationMsgChargementQuaiModelJSON");  
-        console.log("Avant ouverture boite de dialogue") ;
-        console.log(this.gv_dialog_validation_charg) ;
             // On laisse un micro-délai pour que le rendu de la page se termine
     setTimeout(() => {
         this.gv_dialog_validation_charg.open();
@@ -101,8 +106,10 @@ private _onChargementQuaiButton(channel: string, event: string, data: any): void
       let IconTabBarControl : IconTabBar;
       IconTabBarControl = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
       let selectedKeyQuaiNumber : string  =  IconTabBarControl.getSelectedKey();
-
-      let quai_number : number= Number( selectedKeyQuaiNumber?.slice(4,6));
+    // BEGIn GEMINI [TODO] Attention remplacer tous les "QUAI08"?.slice(4,6)  par  replace("QUAI", "") pour transformer le libellé du quai en quai_number
+    let quai_number : number= Number( selectedKeyQuaiNumber?.slice(4,6));    
+    // END GEMINI [TODO] Attention remplacer tous les "QUAI08"?.slice(4,6)  par  replace("QUAI", "") pour transformer le libellé du quai en quai_number
+    
       const router = UIComponent.getRouterFor(this);
 
       // LOT 18 BEGIN Simplification routing [Uilisation de navTo au lieu  target display]
@@ -156,34 +163,37 @@ if (isNaN(iQuaiNum) ||  iQuaiNum > 15 ||  iQuaiNum < 8) {
     return; // On arrête l'exécution pour éviter le crash du binding
   }
 // Amélioration GEMINI LOT 21 END
-console.log("P1 LOT18 Route ChargementQuais matched - Récupération du paramètre quaiid =" +  lv_quainumber );
 // On rajoute un 0 devant le numéro de quai si le numéro de quai est inférieur à 10 (car les quais doivent être au format QUAI08,QUAI09)
   if ( ( iQuaiNum < 10 ) && lv_quainumber.length == 1 ) { lv_quainumber = "0" + lv_quainumber;}
-
-  let lv_quai = "QUAI" + lv_quainumber
-  let data_event_publish : {quai_number_popup:string} =  { quai_number_popup:    lv_quai};
-  console.log("P1 LOT18 Route ChargementQuais matched - Récupération du paramètre quai =" +  lv_quai );
   const IconTabBarControl : IconTabBar = this.getView()?.byId("idIconTabBarQuais") as IconTabBar;
-  console.log("P1 onAfterRendering IcontabControler = " + this.gv_current_quai );
+  //console.log("P1 onAfterRendering IcontabControler = " + this.gv_current_quai );
   
-  this.gv_current_quai = lv_quai;
-  this.gv_current_quai_number = Number(lv_quainumber);
+  // BEGIN GEMINI [TODO] Attention il faut également mettre les variables du component controller car le code dans le module EventRegistrationService.ts s'appuie dessus
+  // this.gv_current_quai = "QUAI" + lv_quainumber;
+  // this.gv_current_quai_number = Number(lv_quainumber);
+  const oComponent = this.getOwnerComponent() as Component;
+  oComponent.gv_current_quai =this.gv_current_quai = "QUAI" + lv_quainumber;
+  oComponent.gv_current_quai_number = this.gv_current_quai_number = Number(lv_quainumber);
+  // END GEMINI [TODO] Attention il faut également mettre les variables du component controller
+  
   IconTabBarControl.setSelectedKey(this.gv_current_quai);       // Synchronisation du quai de l'Icontabbar avec le quai indiqué dans l'URL
 
 // 2. Faire le binding directement ici (Lot 18/19)
-    this._performContextBinding(lv_quai);
+    this._performContextBinding( this.gv_current_quai);
   //===============Deux possibilitées Appel de la popup dans cette méthode ou appel dans le attach display de la route ======================================//
     //const oModelData: JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson") as JSONModel;
     const aQuaisData = oModelData.getProperty("/results") as any[];
-    const iIndexData = aQuaisData.findIndex(obj => obj.quai === (lv_quai));
+    const iIndexData = aQuaisData.findIndex(obj => obj.quai === ( this.gv_current_quai));
 
   let  t_validation_msg_list : Array<string> = this.getOwnerComponent()?.getModel("validationMsgChargementQuaiModelJSON")?.getProperty("/results/" + iIndexData + "/tValidationMsg");
   // // La popup ne doit s'afficher que s'il existe des notifications de validation dans le modèle notificationsQuaisModel pour le quai en question
-     let data : {quai_number_popup:String} =  { quai_number_popup:   lv_quai};
-  //  this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.changement_quai_event, data);   // EVOLUTION LOT18 Une seule vue pour les quais // LOT 21 OBSOLETE
+   // GEMINI BEGIN  [Amélioration] Payload pour les data des event
+   const payload : IChargementMsgValidation =  { quai_number:   Number( this.gv_current_quai.slice(4,6))};
+  console.log("P1 Payload" + payload.quai_number)
+   // GEMINI END  [Amélioration] Payload pour les data des event
   if (t_validation_msg_list.length > 0 ) {  
    console.log("P1 LOT18  Appel de la boîte de dialogue de validation") ;
-  this.getOwnerComponent()?.getEventBus().publish("Default",  application_events_enum.validation_dialog_event, data);
+  this.getOwnerComponent()?.getEventBus().publish("Default",  application_events_enum.validation_dialog_event, payload);
   }
 }
 

@@ -20,6 +20,10 @@ export interface IRouteParams {
      checkid : string
 }
 
+ export interface IChargementMsgValidation {
+   quai_number:number
+}
+
 
  export interface IChargementUmContext {
     context:string,
@@ -53,6 +57,11 @@ export interface IChargementUmValidationPayload {
 // Payload pour le scan d'une UM
 export interface IChargementStartPayload {
     quai: string,
+    quai_number:number,
+    numtransport : string,
+    matri : string,
+    name1 : string
+
 }
 
 // Payload pour le scan d'une UM
@@ -64,8 +73,10 @@ export interface IMotifsNchGetPayload {
 
 // Payload pour le scan d'une UM
 export interface IMotifsNchPostPayload {
-    quai: string,
-    transport:string,
+    quai1: string,
+    quai_number : number,
+    tknum:string,
+    tMotifNocharg: string[]
 }
 
 

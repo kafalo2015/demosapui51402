@@ -11,7 +11,7 @@
 
 
 				
- <l:BlockLayout id="blockLayout" class="" backgroundDesign="">
+ <l:BlockLayout id="blockLayout" class="" >
 		<l:BlockLayoutRow >
 			<l:BlockLayoutCell id = "Header_BlockLayoutCell1" class="compactCell"
 
@@ -137,8 +137,8 @@
 
 			
 <ScrollContainer height='250px' vertical='true'>
-	  <Table id="TablePostesNonCharges_quai_all"  class="" backgroundDesign = "Solid"  width="auto" 
-	  headerText="{i18n>PosteRestant}" fixedLayout="false" enableBusyIndicator = "true"  height="50px" sticky="ColumnHeaders,HeaderToolbar" renderType="Div"
+	  <Table id="TablePostesNonCharges_quai_all"  class=""   width="auto" 
+	  headerText="{i18n>PosteRestant}" fixedLayout="false" enableBusyIndicator = "true"   sticky="ColumnHeaders,HeaderToolbar" 
 		items="{
 				path : 'chargementModelJson>tPosteNocharge'	  		
 			}">

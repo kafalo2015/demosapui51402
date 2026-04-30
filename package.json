@@ -1,5 +1,6 @@
 {
-  "name": "demosapui51402",
+  "name": "chargementquais",
+   "type": "application",
   "version": "0.0.1",
   "description": "An SAP Fiori application.",
   "keywords": [
@@ -24,8 +25,8 @@
     "ui5-tooling-transpile": "^3.3.7"
   },
   "scripts": {
-    "start": "fiori run --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#clfdemosapui51402demosapui5140-display\"",
-    "start-local": "fiori run --config ./ui5-local.yaml --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#clfdemosapui51402demosapui5140-display\"",
+    "start": "fiori run --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#chargementquais-display\"",
+    "start-local": "fiori run --config ./ui5-local.yaml --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#chargementquais-display\"",
     "build": "ui5 build  --config=ui5.yaml --clean-dest --dest dist",
     "lint": "eslint ./",
     "ts-typecheck": "tsc --noEmit",

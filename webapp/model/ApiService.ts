@@ -2,6 +2,7 @@ import JSONModel from "sap/ui/model/json/JSONModel";
 import { environment_enum,sapserver_url_enum, restapi_websocket_path_enum,application_events_enum } from "./Enums";
 import EventBus from "sap/ui/core/EventBus";
 import Component from "../Component";
+import MessageToast from "sap/m/MessageToast";
 
 /**
  * @namespace clf.logistique.chargementquais.model
@@ -180,6 +181,33 @@ public gv_websocket_url!: string;                             // URL Web Socket 
     //----------------------------------------------------------------------------------------
     i_ChargementStartModel.loadData(this.gv_startchargement_api_url,"",true,  "GET", false, true, mHeader);
     }  
+
+
+//---------------------------------------------------------------------------------------------------------------------------------//
+//   Méthode d'appel à l'API  REST de lancement du chargement d'un quai  [ZCL_PCF_START_CHARG_RESOURCE/Méthode POST ]                                       //  
+//---------------------------------------------------------------------------------------------------------------------------------//
+public api_startchargementquai_post(i_ChargementStartModel:JSONModel, i_quai:string, i_quainumber :number, i_numtransport:string, i_matri:string, i_name1 : string):void{
+    const router = this._oComponent.getRouter();
+   
+    let mHeader = {
+    "Access-Control-Allow-Origin": "*",
+    "Content-Type":"application/json",  
+    "X-Requested-With":"X",
+    "tknum": i_numtransport, //GEMINI[CHECK] Vérifier le type attendu par l'API SAP -> Est-ce que le champ doit être un string ou un number?
+    "quai1": i_quai,         //input_data.results.quai1 
+    "matri": i_matri,        //GEMINI[CHECK] Vérifier le type attendu par l'API SAP -> Est-ce que le champ doit être un string ou un number?
+    "name1": i_name1,
+    }
+    // END GEMINI [Amélioration] Rendre le payload de cet api plus visible à travers les paramètres de la méthode
+    i_ChargementStartModel.loadData(this.gv_startchargement_api_url,"",true,  "POST", false, true, mHeader)?.then(
+        result=>{   MessageToast.show("Chargement démarré sur le quai : " + i_quai + " numéro " +  i_quainumber,{ duration: 3000, width : '50%' })
+                    this._g_event_bus.publish("Default", application_events_enum.chargement_start_get_event, {});
+                    this._g_event_bus.publish("Default", application_events_enum.validation_msg_chargement_event, {}); 
+                    console.log("Navigation vers le formulaire de démarrage de chargement du quai :" +  i_quainumber );
+                    router.navTo("RouteChargementQuai", {quainumber: i_quainumber });},
+        reason=>{  console.log("P1 REJECTED PROMISE POST StartChargement" + i_ChargementStartModel.getJSON.toString()); }
+                ); 
+}
                  
 public get_material_umstock_list(i_MaterialUmStockListModel:JSONModel, i_material:string):void {
              
@@ -219,6 +247,38 @@ i_MaterialUmStockListModel.loadData(this.gv_material_umstock_api_url,"",true,  "
     
     // console.log("P1 URL API ZCL_PCF_CHARGEMENT_END_RESOUR: " + this.gv_endchargement_api_url ); 
     i_finChargementQuaiModelJSON.loadData(this.gv_endchargement_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {     });
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------------//
+    //            LOT13:  Méthode d'appel à l'API  REST de fin de chargement                                                       //  
+    //-----------------------------------------------------------------------------------------------------------------------------//
+    public post_motifs_nonchargement(i_finChargementQuaiModelJSON : JSONModel, i_quai1:string, i_quainumber : number, i_tknum : string, i_tMotifNocharg : string[]):void {
+    // Récupération des données du modèle
+    // BEGIN GEMINI [Amélioration]  Eviter de récupérer les données du formulaire ici mais les récupérer en amont et les fournir à cette méthode en paramètre   
+    // let input_data:any =  finChargementQuaiModelJSON.getData();  // GEMINI => Le getData() doit se faire en amont dans le contrôlleur de la vue
+        const router = this._oComponent.getRouter();
+
+        let mHeader = {
+            "Access-Control-Allow-Origin": "*",
+            "Content-Type":"application/json",  
+            "X-Requested-With":"X",
+            "tknum": i_tknum,    
+            "quai1": i_quai1,   
+        }
+     // END GEMINI [Amélioration]  Eviter de récupérer les données du formulaire ici mais les récupérer en amont et les fournir à cette méthode en paramètre
+        // Appel de l'api de fin de chargement      // ancien code pour alimenter les motifs de non chargement : input_data.tMotifNocharg 
+        // GEMINI [CHECK] Vérifier quel est le format attendu pour le tableau des motifs de non chargement , un tableau de string[]  ? 
+       i_finChargementQuaiModelJSON.loadData(this.gv_endchargement_api_url , JSON.stringify(i_tMotifNocharg),true,  "POST", false, true, mHeader)?.then
+       (     result=>{
+        // BEGIN LOT 18/LOT 19 -> Vue quai unique et simplification du routing
+        this._g_event_bus.publish("Default", application_events_enum.chargement_end_event, {});      //=> TODO -> Voir s'il est toujours nécessaire d'appeler cet évènement
+        console.log("Navigation vers le formulaire de démarrage de chargement du quai :" + i_quainumber );
+        router.navTo("RouteChargementStart", {quainumber: i_quainumber });   //GEMINI[TODO]  Vérifier quel est le format attendu par la méthode onRouteMatched
+        // END LOT 18/LOT 19 -> Vue quai unique et simplification du routing
+        },
+        reason=>{  console.log("P1 LOT13 Rejected Promise POST FinChargement" + i_finChargementQuaiModelJSON.getJSON.toString());
+                                                                                                                    }
+        );  
     }
 
     public api_chargement_um_get(i_ChargementUmModel:JSONModel, i_quai:string):void{

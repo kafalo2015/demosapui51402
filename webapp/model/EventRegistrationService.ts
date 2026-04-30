@@ -104,7 +104,7 @@ public initEvents(): void {
         //let quai :string = Object.values(data)[0] as string;
         const payload = data as IChargementStartPayload;   // GEMINI[Avis] Possibilité de typer directement le pamètre data en IChargementStartPayload mais moins de flexibilité
         // BEGIN Amélioration  - > Faire un payload pour le démarrage du  quai
-        this._oComponent.startchargementquai_post(payload.quai);
+        this._oComponent.chargementStartModel_post_apiservice(payload.quai, payload.quai_number, payload.numtransport, payload.matri, payload.name1);
     }
 
     private _get_motifs_nonchargement(channel: string, event: string, data: any): void {
@@ -118,7 +118,7 @@ private _post_motifs_nonchargement(channel: string, event: string, data: any): v
     // GEMINI BEGIN  [Amélioration] Créer un payload 
     const payload = data as IMotifsNchPostPayload;
     // GEMINI END [Amélioration] Créer un payload 
-        this._oComponent.post_motifs_nonchargement();   //GEMINI[Harmonisation] Pas de payload pour cette API
+        this._oComponent.post_motifs_nonchargement_apiservice(payload.quai1, payload.quai_number, payload.tknum, payload.tMotifNocharg);   //GEMINI[Harmonisation] Pas de payload pour cette API
                                                         //=> Les données sont récupérées plus tard par model.get_data()
     }
 

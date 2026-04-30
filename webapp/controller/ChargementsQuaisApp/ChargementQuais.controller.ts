@@ -10,10 +10,10 @@ import Input, { Input$SubmitEvent } from "sap/m/Input";
 import Element from "sap/ui/core/Element";
 // Importation de l'enum
 import {  application_events_enum, chargement_um_context} from "../../model/Enums";
-import {  IChargementUmPayload} from "../../model/Interfaces";
+import {  IMotifsNchGetPayload, IMotifsNchPostPayload, IChargementUmPayload, IUmStockForMaterialPayload} from "../../model/Interfaces";
 import ContextBinding from "sap/ui/model/ContextBinding";
 import ColumnListItem from "sap/m/ColumnListItem";
-
+import  Component  from "../../Component";
 
 
 /**
@@ -175,8 +175,14 @@ public onSelectDialogUmFauxCam(event: Button$PressEvent): void {
 
 public onSelectDialogUmStockPress(event: Button$PressEvent): void {
   let lv_material : string = event.getSource().getParent()?.getBindingContext("chargementModelJson")?.getProperty("codart") 
-  let data : {material:String} = { material: lv_material }               
-  this.getOwnerComponent()?.getEventBus().publish("Default", "LoadMaterialUmStockListEvent", data);
+
+  const oPayload: IUmStockForMaterialPayload = {
+    material : lv_material
+   
+};
+ 
+  
+  this.getOwnerComponent()?.getEventBus().publish("Default", "LoadMaterialUmStockListEvent", oPayload);
   this.dialogUmStock.open();
   }
 
@@ -200,9 +206,22 @@ public onSelectDialogUmStockPress(event: Button$PressEvent): void {
 
     // B-Récupération du numéro de transport du quai à partir de l'index json du quai  
     let lv_numtransport:string = this.getOwnerComponent()?.getModel("chargementModelJson")?.getProperty(`/results/${quai_index}/numtransport`, undefined)
-    let data : {quai:string, transport:string} = { quai:  sQuai, transport: lv_numtransport } 
+   //GEMINI  BEGIN [Amélioration] Typage du payload des event 
+   // let data : {quai:string, transport:string} = { quai:  sQuai, transport: lv_numtransport } 
+
+  // Instanciation du modèle à la volée au premier sur le bouton Fin de chargement
+     if ( this.getOwnerComponent()?.getModel("finChargementQuaiModelJSON") == undefined)
+           {   this.getOwnerComponent()?.setModel(new JSONModel().setDefaultBindingMode("TwoWay"), "finChargementQuaiModelJSON");}
+   
+
+    const oPayload: IMotifsNchGetPayload = {
+    quai : sQuai,
+    transport: lv_numtransport
+    }
+   //GEMINI  END [Amélioration] Typage du payload des event  
+
     // Récupération des motifs de non chargement dans l'API REST              
-    this.getOwnerComponent()?.getEventBus().publish("Default",application_events_enum.chargemen_end_motifsNch_get_event , data);
+    this.getOwnerComponent()?.getEventBus().publish("Default",application_events_enum.chargemen_end_motifsNch_get_event , oPayload);
     // Ouverture de la boîte de dialogue de saisie des motifs de non chargement
         this.dialogMotifsNoCharg.open();
         ((this.byId("tableMotifsNcharg") as Table).getItems() as ColumnListItem[]).forEach(item  => (item.getCells()[0]  as ComboBox).setValueState("None"));  //GEMINI [A Capitaliser] -> Accès A Table//Tableau ColumnListItem[]//item.getCells()[indicecell]
@@ -211,8 +230,25 @@ public onSelectDialogUmStockPress(event: Button$PressEvent): void {
   //          LOT 13 : Confirmation fin de chargement                                                                                                              //
   //---------------------------------------------------------------------------------------------------------------------------------------------------------------//
   public onconfirmMotifsNch(event: Button$PressEvent): void {
-    // Envoi d'un event pour appel de l'API de fin de chargement                
-    this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.chargemen_end_motifsNch_post_event);
+    // Envoi d'un event pour appel de l'API de fin de chargement 
+    // .... Modèle StartChargement....
+    let finChargementQuaiModel :any = this.getOwnerComponent()?.getModel("finChargementQuaiModelJSON") as JSONModel;
+    // ... Récupération du composant parent....
+    const oComponent = this.getOwnerComponent() as Component;
+    // ... Récupération des données du 
+    const input_data: IMotifsNchPostPayload =  finChargementQuaiModel.getData() as IMotifsNchPostPayload;
+    
+     const oPayload: IMotifsNchPostPayload = {
+        quai1 :  oComponent.gv_current_quai,  // Ancien code: input_data.quai1        
+                                              // Il faut soit le récupérer dans le modèle soit dans la variable globale du component gv_current_quai
+        quai_number :  oComponent.gv_current_quai_number,  //input_data.quai1
+        tknum:  input_data.tknum,
+        tMotifNocharg:  input_data.tMotifNocharg,  // GEMINI[Check] Vérifier que le typage de la propriété tMotifNocharg de l'interface IMotifsNchPostPayload est correct.
+    }
+    console.log("QUAI = " + oPayload.quai1 + "QUAINUMBER = "  + oPayload.quai_number + "TKNUM=" + oPayload.tknum);
+    console.table(oPayload);    // Affichage du payload pour vérifier que les données saisies sont bien capturées dans le payload
+
+    this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.chargemen_end_motifsNch_post_event, oPayload);
   }
  //--------------------------------------------------------------------------------------------------------------------------
  //           LOT 13 : Fin de chargement//Sélection des motifs de non chargement
