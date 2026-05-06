@@ -1,4 +1,11 @@
 {
     "extends": "plugin:@sap-ux/eslint-plugin-fiori-tools/defaultTS",
-    "root": true
+    "root": true,
+    "rules": {
+    "@typescript-eslint/no-explicit-any": "warn",      // any devient un avertissement (jaune) au lieu d'une erreur
+    "@typescript-eslint/no-unused-vars": "warn",      // variable inutilisée = jaune
+    "no-console": "off",                              // autorise les console.log
+    "@typescript-eslint/explicit-module-boundary-types": "off" // moins strict sur les retours de fonctions
+}
+    
 }

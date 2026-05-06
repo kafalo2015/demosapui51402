@@ -32,6 +32,7 @@
 						valueState="Error"            
 						items="{
 							path: 'finChargementQuaiModelJSON>/tCodelib',
+							templateShareable: false,
 							sorter: { path: 'zcdlib' }
 					}">
 						<core:ListItem key="{finChargementQuaiModelJSON>zcdlib}" text="{finChargementQuaiModelJSON>zlib25}" additionalText = "{finChargementQuaiModelJSON>zcdlib}"/>

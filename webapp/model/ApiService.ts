@@ -3,6 +3,9 @@ import { environment_enum,sapserver_url_enum, restapi_websocket_path_enum,applic
 import EventBus from "sap/ui/core/EventBus";
 import Component from "../Component";
 import MessageToast from "sap/m/MessageToast";
+import MessageBox from "sap/m/MessageBox";
+import Log from "sap/base/Log";
+
 
 /**
  * @namespace clf.logistique.chargementquais.model
@@ -28,8 +31,8 @@ public gv_websocket_url!: string;                             // URL Web Socket 
 
     constructor(p_environment: environment_enum, i_eventbus : EventBus, i_component:Component) {
        this._gv_environment = p_environment;
-        this._g_event_bus = i_eventbus;
-        this._oComponent = i_component;
+       this._g_event_bus = i_eventbus;
+       this._oComponent = i_component;
     }
 
     /**
@@ -130,39 +133,36 @@ public gv_websocket_url!: string;                             // URL Web Socket 
            
           // this.getModel("chargementModelJson")?.attachRequestCompleted(function (evt) { console.log("PARAMETRES RESPONSE HEADER:" +evt); });
            }
-   
 
+    public get_chargements_prevus(i_chargementsPrevusListModel : JSONModel):void {
+    var mHeader = {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type":"application/json",
+    }
+    // let chargementsPrevusListModel: JSONModel;
+    // if ( this.getModel("chargementsPrevusListModel") == undefined)
+    // {
+    //     chargementsPrevusListModel = new JSONModel();
+    //     this.setModel(chargementsPrevusListModel, "chargementsPrevusListModel");
+    // }else
+    // {  
+    //     chargementsPrevusListModel =   this.getModel( "chargementsPrevusListModel") as JSONModel;
+    // }
 
-         public get_chargements_prevus(i_chargementsPrevusListModel : JSONModel):void {
-            var mHeader = {
-                "Access-Control-Allow-Origin": "*",
-                "Content-Type":"application/json",
-            }
-            // let chargementsPrevusListModel: JSONModel;
-            // if ( this.getModel("chargementsPrevusListModel") == undefined)
-            // {
-            //     chargementsPrevusListModel = new JSONModel();
-            //     this.setModel(chargementsPrevusListModel, "chargementsPrevusListModel");
-            // }else
-            // {  
-            //     chargementsPrevusListModel =   this.getModel( "chargementsPrevusListModel") as JSONModel;
-            // }
+i_chargementsPrevusListModel.loadData(this.gv_chargementprevus_api_url,"",true,  "GET", false, true, mHeader); 
+//chargementsPrevusListModel.forceNoCache(true);
+//chargementsPrevusListModel.updateBindings(true);
+} 
         
-        i_chargementsPrevusListModel.loadData(this.gv_chargementprevus_api_url,"",true,  "GET", false, true, mHeader); 
-        //chargementsPrevusListModel.forceNoCache(true);
-        //chargementsPrevusListModel.updateBindings(true);
-        } 
-        
-          public get_validation_msg_chargements(i_validationMsgChargementQuaiModelJSON :JSONModel):void {
-                var mHeader = {
-                "Content-Type":"application/json",
-                }
-        
-               
-                //console.log("P1 URL API ZCL_PCF_CHARG_VALIDMSG_RESOUR: " + this.gv_validation_msg_chargementquais_api_url ); 
-                i_validationMsgChargementQuaiModelJSON.loadData(this.gv_validation_msg_chargementquais_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {     });
-                }
+    public get_validation_msg_chargements(i_validationMsgChargementQuaiModelJSON :JSONModel):void {
+        var mHeader = {
+        "Content-Type":"application/json",
+        }
 
+        
+        //console.log("P1 URL API ZCL_PCF_CHARG_VALIDMSG_RESOUR: " + this.gv_validation_msg_chargementquais_api_url ); 
+        i_validationMsgChargementQuaiModelJSON.loadData(this.gv_validation_msg_chargementquais_api_url,"",true,  "GET", false, true, mHeader)?.then((data) => {     });
+        }
 
     //----------------------------------------------------------------------------------------------------------------------------//
     //               Méthode d'appel de l'API  ZCL_PCF_START_CHARG_RESOURCE/ Méthode GET                                          //  
@@ -183,10 +183,58 @@ public gv_websocket_url!: string;                             // URL Web Socket 
     }  
 
 
+public async api_startchargementquai_post( i_ChargementStartModel: JSONModel, i_quai: string, i_quainumber: number,  i_numtransport: string, i_matri: string, i_name1: string
+): Promise<void> {
+    
+    const router = this._oComponent.getRouter();
+
+    // Préparation des Headers (Paramètres fonctionnels envoyés dans l'entête)
+    const mHeaders = {
+        "X-Requested-With": "X",
+        "tknum": i_numtransport, 
+        "quai1": i_quai,         
+        "matri": i_matri,        
+        "name1": i_name1
+    };
+
+    // Si l'API attend des données dans le corps, on les met ici. 
+    // Sinon, on envoie un objet vide pour respecter la structure JSON.
+    const oPayload = {}; 
+
+    try {
+        const oResult = await this._postData(this.gv_startchargement_api_url, oPayload, mHeaders);
+        
+        // Mise à jour du modèle avec le retour de SAP
+        i_ChargementStartModel.setData(oResult);   //GEMINI[Questions] Je ne comprends pas pourquoi on doit appeler cette méthode après le post?
+
+        // UI et Evénements
+        MessageToast.show(`Chargement démarré sur le quai : ${i_quai} numéro ${i_quainumber}`, {
+            duration: 3000,
+            width: '50%'
+        });
+
+        this._g_event_bus.publish("Default", application_events_enum.chargement_start_get_event, {});
+        this._g_event_bus.publish("Default", application_events_enum.validation_msg_chargement_event, {});  //GEMINI[Questions] Je suis obligé de refaire un get après le post 
+                                                                                                            // afin de récupérer les matchcodes matricule, numéro de transport
+
+        // Navigation
+        Log.info(`Navigation vers le formulaire de démarrage du quai : ${i_quainumber}`);
+        router.navTo("RouteChargementQuai", { quainumber: i_quainumber });
+
+    } catch (oError: any) {
+        Log.error("Échec de l'appel POST StartChargement", JSON.stringify(oError));
+        // L'ApiService._handleError a déjà affiché la MessageBox, 
+        // donc on s'arrête ici sans naviguer.
+    }
+}
+
+
+
+
 //---------------------------------------------------------------------------------------------------------------------------------//
 //   Méthode d'appel à l'API  REST de lancement du chargement d'un quai  [ZCL_PCF_START_CHARG_RESOURCE/Méthode POST ]                                       //  
 //---------------------------------------------------------------------------------------------------------------------------------//
-public api_startchargementquai_post(i_ChargementStartModel:JSONModel, i_quai:string, i_quainumber :number, i_numtransport:string, i_matri:string, i_name1 : string):void{
+public api_startchargementquai_post_old(i_ChargementStartModel:JSONModel, i_quai:string, i_quainumber :number, i_numtransport:string, i_matri:string, i_name1 : string):void{
     const router = this._oComponent.getRouter();
    
     let mHeader = {
@@ -229,8 +277,7 @@ var mHeader = {
 i_MaterialUmStockListModel.loadData(this.gv_material_umstock_api_url,"",true,  "GET", false, true, mHeader); 
 }  
 
-
-  public get_motifs_nonchargement(i_finChargementQuaiModelJSON : JSONModel,i_quai:string,i_numtransport:string):void {
+public get_motifs_nonchargement(i_finChargementQuaiModelJSON : JSONModel,i_quai:string,i_numtransport:string):void {
     //console.log("P1 HIGH/ Méthode Get_motifs_nonchargement QUAI=" + i_quai + " TRANSPORT= "  + i_numtransport )
             
             var mHeader = {
@@ -252,7 +299,7 @@ i_MaterialUmStockListModel.loadData(this.gv_material_umstock_api_url,"",true,  "
     //----------------------------------------------------------------------------------------------------------------------------//
     //            LOT13:  Méthode d'appel à l'API  REST de fin de chargement                                                       //  
     //-----------------------------------------------------------------------------------------------------------------------------//
-    public post_motifs_nonchargement(i_finChargementQuaiModelJSON : JSONModel, i_quai1:string, i_quainumber : number, i_tknum : string, i_tMotifNocharg : string[]):void {
+public post_motifs_nonchargement_old(i_finChargementQuaiModelJSON : JSONModel, i_quai1:string, i_quainumber : number, i_tknum : string, i_tMotifNocharg : string[]):void {
     // Récupération des données du modèle
     // BEGIN GEMINI [Amélioration]  Eviter de récupérer les données du formulaire ici mais les récupérer en amont et les fournir à cette méthode en paramètre   
     // let input_data:any =  finChargementQuaiModelJSON.getData();  // GEMINI => Le getData() doit se faire en amont dans le contrôlleur de la vue
@@ -281,7 +328,34 @@ i_MaterialUmStockListModel.loadData(this.gv_material_umstock_api_url,"",true,  "
         );  
     }
 
-    public api_chargement_um_get(i_ChargementUmModel:JSONModel, i_quai:string):void{
+public async post_motifs_nonchargement(oModel: JSONModel, i_quai1: string, i_quainumber: number, i_tknum: string, i_tMotifNocharg: string[]): Promise<void> {
+    const sUrl = `${this.gv_endchargement_api_url}`;
+    
+    const oPayload = { motifs: i_tMotifNocharg };
+
+    // On prépare les headers spécifiques
+    const oSpecificHeaders = {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type":"application/json",  
+        "X-Requested-With":"X",
+        "tknum": i_tknum,
+        "quai1": i_quai1
+    };
+
+    try {
+        const oResult = await this._postData(sUrl, oPayload, oSpecificHeaders);
+        oModel.setData(oResult);
+        this._g_event_bus.publish("Default", application_events_enum.chargement_end_event, {});
+        const router = this._oComponent.getRouter();
+        router.navTo("RouteChargementStart", {quainumber: i_quainumber });   //GEMINI[TODO]  Vérifier quel est le format attendu par la méthode onRouteMatched
+
+    } catch (oError) {
+        this._handleError(oError, "post_motifs_nonchargement");
+        throw oError;
+    }
+}
+
+public api_chargement_um_get(i_ChargementUmModel:JSONModel, i_quai:string):void{
     // BEGIN LOT 12 : Déploiement PHP  -> Vérifier s'il ne faut pas remettre le paramètre "X-Requested-With":"X" et l'autoriser au niveau de UCONCOCKPIT
     //---------------------------------------------------------------------------------------- --------------------------------------------------------------                    
         let mHeader = {
@@ -307,18 +381,18 @@ public api_chargement_um_post(i_ChargementUmModel:JSONModel, i_quai:string,i_cod
     //-----------------------------------------------------------------------------------------
         // BEGIN LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
     //----------------------------------------------------------------------------------------
-                let mHeader = {
-                //"Access-Control-Allow-Origin": "*",           // Pas ut
-                "Content-Type":"application/json",  
-                "X-Requested-With":"X",
-                "codum":  i_codum,      // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
-                "quai1":  i_quai,       //input_data.results.quai1 
-                "msgid": i_msgid,
-                "aenam": i_aenam,
-                "errdt": i_errdt,
-                "errzt": i_errzt,
-                "choice": i_choice? "X":""    // GEMINI[TOCHECK] L'API ABAP accepte mal le boolean. Je suis obligé convertir le true en 'X'. 
-            }
+        let mHeader = {
+        //"Access-Control-Allow-Origin": "*",           // Pas ut
+        "Content-Type":"application/json",  
+        "X-Requested-With":"X",
+        "codum":  i_codum,      // Object.values(input_data)[0]  //TODO => Essayer de passer les paramètre dans le Body du POST
+        "quai1":  i_quai,       //input_data.results.quai1 
+        "msgid": i_msgid,
+        "aenam": i_aenam,
+        "errdt": i_errdt,
+        "errzt": i_errzt,
+        "choice": i_choice? "X":""    // GEMINI[TOCHECK] L'API ABAP accepte mal le boolean. Je suis obligé convertir le true en 'X'. 
+    }
 
         //-----------------------------------------------------------------------------------------
         // END LOT 10 : Problématique Authentification RESTAPI -> Essai pas d'authentification (Paramètre authorization retiré)
@@ -338,96 +412,50 @@ public api_chargement_um_post(i_ChargementUmModel:JSONModel, i_quai:string,i_cod
         }
 
 
-        // Dans votre classe Component extends BaseComponent
-public async api_chargement_um_post_newgemini(
-        sQuai: string, 
-        sCodum: string, 
-        sMsgid: string, 
-        sAenam: string, 
-        sErrdt: string, 
-        sErrzt: string, 
-        bChoice: boolean
-    ): Promise<void> {
-        
-        // 1. Récupération de l'indice du quai (Logique Lot 20)
-        // On suppose que sQuai est "QUAI08" -> on cherche son index dans le modèle
-        const oNotifModel = this._oComponent.getModel("notificationsQuaisModel") as JSONModel;
-        const aQuais = oNotifModel.getProperty("/quais") as any[];
-        const iIndex = aQuais.findIndex(q => q.quai === sQuai);
+/**
+ * Méthode générique POST avec injection de Headers
+ * @param sUrl L'URL de destination
+ * @param oPayload Le corps de la requête (JSON)
+ * @param mExtraHeaders (Optionnel) Un objet contenant des paires Clé/Valeur pour les headers
+ */
+private async _postData(sUrl: string, oPayload: object, mExtraHeaders: Record<string, string> = {}): Promise<any> {
+    
+    // On définit les headers par défaut (indispensables)
+    const oHeaders = new Headers({
+        "Content-Type": "application/json",
+        ...mExtraHeaders // On fusionne avec les headers spécifiques passés en paramètre
+    });
 
-        if (iIndex === -1) return;
+    const response = await fetch(sUrl, {
+        method: 'POST',
+        headers: oHeaders,
+        body: JSON.stringify(oPayload)
+    });
 
-        const sPath = `/quais/${iIndex}/notifs`;
-
-        try {
-            // 2. Préparation du Body pour SAP
-            const oPayload = {
-                iv_quai: sQuai,
-                iv_codum: sCodum,
-                iv_msgid: sMsgid,
-                iv_choice: bChoice ? "X" : ""
-                // ... autres paramètres
-            };
-
-            // 3. Appel API (Utilisation de l'URL déterminée dans getApiUrl)
-            const response = await fetch(this.gv_chargement_um_api_url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(oPayload)
-            });
-
-            const oResult = await response.json();
-
-            // 4. Gestion du retour SAP
-            if (oResult.ev_type === "S") { 
-                // SUCCESS
-                this._updateQuaiNotif(oNotifModel, sPath, "notifsuccess_scanmanuelum", oResult.ev_message, true);
-                
-                // Rafraîchissement automatique des données du quai
-                this._g_event_bus.publish("Default", "chargementEvent", { quai: sQuai });
-            } else {
-                // ERROR ou WARNING
-                this._updateQuaiNotif(oNotifModel, sPath, "notiferror_scanmanuelum", oResult.ev_message, true);
-            }
-
-        } catch (oError) {
-            // 5. Erreur technique (Réseau/Timeout)
-            this._updateQuaiNotif(oNotifModel, sPath, "notiferror_scanmanuelum", "Erreur de connexion au serveur SAP", true);
-        }
+    if (!response.ok) {
+        const sErrorText = await response.text();
+        throw {
+            status: response.status,
+            responseText: sErrorText
+        };
     }
+    return await response.json();
+}
 
-    /**
-     * Helper interne pour mettre à jour proprement le modèle de notification
-     */
-    private _updateQuaiNotif(oModel: JSONModel, sPath: string, sType: string, sMsg: string, bVisible: boolean): void {
-        oModel.setProperty(`${sPath}/${sType}/msg_txt`, sMsg);
-        oModel.setProperty(`${sPath}/${sType}/visible`, bVisible);
-        
-        // Auto-fermeture après 5 secondes pour les succès
-        if (sType.includes("success")) {
-            setTimeout(() => {
-                oModel.setProperty(`${sPath}/${sType}/visible`, false);
-            }, 5000);
-        }
-    }
+private _handleError(oError: any, sMethodName: string): void {
+    // Extraction du message d'erreur
+    let sDetails = oError.responseText || oError.message || "Erreur inconnue";
+    let sStatus = oError.statusCode || oError.status || "N/A";
 
-    // public sendErrorToBackend(sSeverity: string, sMessage: string): void {
-    //     const oDataModel = this?.getModel() as ODataModel;
-    //     const oPayload = {
-    //         Severity: sSeverity,
-    //         Message: sMessage,
-    //         Timestamp: new Date(),
-    //         //User: sap.ushell?.Container?.getService("UserInfo")?.getId() || "Unknown",
-    //         AppSource: "ChargementQuais_IconTabBar"
-    //     };
+    const sFullMessage = `[API Service] ${sMethodName} échoué (Status: ${sStatus}). Détails: ${sDetails}`;
+    
+    Log.error(sFullMessage);
 
-    //     // Appcreael asynchrone sans bloquer l'UI
-    //     oDataModel.create("/ErrorLogSet", oPayload, {
-    //         success: () => Log.info("Log synchronisé avec le backend SAP"),
-    //         error: () => Log.error("Échec de synchronisation du log avec le backend")
-    //     });
-    // }
-
-
+    // UX : On avertit l'utilisateur
+    MessageBox.error("Une erreur est survenue lors de la communication avec SAP.", {
+        title: "Erreur de connexion",
+        details: sFullMessage // Le détail technique est caché sous le bouton "Plus"
+    });
+}
 
 }

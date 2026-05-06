@@ -21,6 +21,7 @@ export interface IRouteParams {
 }
 
  export interface IChargementMsgValidation {
+   quai : string, 
    quai_number:number
 }
 

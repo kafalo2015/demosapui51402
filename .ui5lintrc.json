@@ -1,0 +1,9 @@
+{
+    "ignores": [
+        "test/**",
+        "webapp/test/**",
+        "*.js",
+        "**/Container.js",
+        "**/initFlp.js"
+    ]
+}

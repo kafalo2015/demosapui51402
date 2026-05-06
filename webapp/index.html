@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <!-- TESTS LOT12 <meta http-equiv="X-UA-Compatible" content="IE=edge">  -->
-    
-<!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />-->
     <!--
-Source - https://stackoverflow.com/a
-Posted by Super Kai - Kazuya Ito, modified by community. See post 'Timeline' for change history
-Retrieved 2025-12-16, License - CC BY-SA 4.0
-HISTORIQUE VERSION:
-25/02/2026 LOT 16 V2 Appel HTTPS
+        HISTORIQUE VERSION:
+        25/02/2026 LOT 16 V2 Appel HTTPS
 
-ANO Chargement resources 22-04-2026 
-24/04/2026 -> Le chargemnet de la librairie avec le UI5 Tooling SAPUI5 est cassé
-src="resources/sap-ui-core.js"
+        ANO Chargement resources 22-04-2026 
+        24/04/2026 -> Le chargemnet de la librairie avec le UI5 Tooling SAPUI5 est cassé
+        src="resources/sap-ui-core.js"
 
--->
+        AMELIORATION GEMINI [Pointer sur la version CDN déclarée dans le manifest 1.120]
+        https://ui5.sap.com/1.120.12/resources/sap-ui-core.js  au lieu de
+        https://sdk.openui5.org/resources/sap-ui-core.js  
+    -->
 
 
-    <title>24/04/2026 PROD LOT 20/21 GEMININ END </title>
+    <title>30/04/2026 LOT 20/21 V2 librairie à partir du CDN SAP </title>
     <style>
         html, body, body > div, #container, #container-uiarea {
             height: 100%;
@@ -28,7 +25,7 @@ src="resources/sap-ui-core.js"
     </style>
     <script
         id="sap-ui-bootstrap"
-        src="https://sdk.openui5.org/resources/sap-ui-core.js"                           
+        src="https://ui5.sap.com/1.120.12/resources/sap-ui-core.js"                           
         data-sap-ui-theme="sap_horizon"
         data-sap-ui-resource-roots='{
             "clf.logistique.chargementquais": "./"

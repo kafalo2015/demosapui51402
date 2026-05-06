@@ -60,7 +60,7 @@ export default class QuaiChargementStart extends Controller {
   // BEGIN GEMINI[Amélioration] Typage du payload
 
         // GEMINI LOT 20/21 21/04/2026 [Criticité 1] -> Eviter le double-clic sur bouton 'Démarrer Chargement' -> A quel moment il faut réactiver le bouton Démarrger Chargement?
-    ( this.byId("Btn_Start_Chargement") as Button).setEnabled(false);
+    //( this.byId("Btn_Start_Chargement") as Button).setEnabled(false); // GEMINI [TOCHECK] J'ai retiré car je ne suis pas à quel endroit réactive le bouton de démarrage de chargement
 // ... Publication de l'évènement chargement_start_post_event
       this.getOwnerComponent()?.getEventBus().publish("Default",  application_events_enum.chargement_start_post_event, oPayload);
     }

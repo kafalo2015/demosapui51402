@@ -1,14 +1,17 @@
 <mvc:View controllerName="clf.logistique.chargementquais.controller.error.NotFound"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m">
-  <MessagePage
-        title="{i18n>notFoundTitle}"
-        text="{i18n}"
-        description="{i18n>notFoundDescription}"
-        showNavButton="true"
-        navButtonPress=".onNavBack"
-        icon="sap-icon://document-error">
-    </MessagePage>		
-
+        <Page 
+            showNavButton="true" 
+            navButtonPress=".onNavBack">
+            <IllustratedMessage 
+                illustrationType="sapIllu-PageNotFound"
+                title="{i18n>notFoundTitle}"
+                description="{i18n>notFoundDescription}">
+                <additionalContent>
+                    <!-- Tu peux ajouter un bouton d'action ici si nécessaire -->
+                </additionalContent>
+            </IllustratedMessage>
+        </Page>
 
     </mvc:View>
