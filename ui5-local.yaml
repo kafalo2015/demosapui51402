@@ -13,6 +13,8 @@ framework:
     - name: sap.ushell
     - name: themelib_sap_horizon
 server:
+  configuration:
+    https: true
   customMiddleware:
     - name: fiori-tools-appreload
       afterMiddleware: compression

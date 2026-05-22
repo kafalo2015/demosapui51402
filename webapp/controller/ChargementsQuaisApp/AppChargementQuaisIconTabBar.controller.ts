@@ -108,6 +108,36 @@ private _onValidationDialogEvent(channel: string, event: string, data: object): 
 private _onChargementQuaiButton(channel: string, event: string, data: any): void {
     this.button_chargementquai_handler();
 }
+
+/**
+ * Gère l'animation de slide CSS lors du changement de quai
+ * @param oWrapper Le conteneur VBox qui subit l'animation
+ * @param iNewQuaiNumber Le numéro du quai de destination
+ * @param iDuration La durée d'attente du setTimeout (en ms)
+ */
+private _triggerQuaiTransition(oWrapper: VBox, iNewQuaiNumber: number, iDuration: number): void {
+    // Nettoyage initial des classes d'entrée pour éviter les conflits d'animation
+    oWrapper.removeStyleClass("quai-slide-in-right quai-slide-in-left");
+
+    if (iNewQuaiNumber < this.gv_current_quai_number) {
+        // SCÉNARIO : On recule (ex: Quai 5 -> Quai 4) -> Sort vers la droite
+        oWrapper.addStyleClass("quai-slide-out-right");
+
+        setTimeout(() => {
+            oWrapper.removeStyleClass("quai-slide-out-right");
+            oWrapper.addStyleClass("quai-slide-in-left"); // Arrive de la gauche
+        }, iDuration);
+
+    } else if (iNewQuaiNumber > this.gv_current_quai_number) {
+        // SCÉNARIO : On avance (ex: Quai 4 -> Quai 5) -> Sort vers la gauche
+        oWrapper.addStyleClass("quai-slide-out-left");
+
+        setTimeout(() => {
+            oWrapper.removeStyleClass("quai-slide-out-left");
+            oWrapper.addStyleClass("quai-slide-in-right"); // Arrive de la droite
+        }, iDuration);
+    }
+}
   
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
   //   Handler clic sur le quai      -> A VERIFIER SI C'EST UTILISE  (serait utilisé pour le lien vers le quai dans l'application 'Chargement prévus" )                     // 
@@ -269,78 +299,83 @@ oModelData.dataLoaded().then(() => {
 //----------------------------------------------------------------------------------------------------------------------------//
 //               Handler de sélection d'un onglet de l'IConTabBar                                                             //  
 //----------------------------------------------------------------------------------------------------------------------------//
-    public onTabSelect(event: IconTabBar$SelectEvent): void {
-      // Récupération de l'identififant de l'onglet sélectionné
-      let iconTabBarkey = event.getParameter("key") as string;            //LOT 17 let iconTabBarkey:string -> undefined rajouté
-      const router : Router = UIComponent.getRouterFor(this);
-      //========================= Récupération des modèles json nécessaires====================================================///
-      let ChargementQuaiModel     : JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson")     as JSONModel;
-      let notificationsQuaisModel : JSONModel = this.getOwnerComponent()?.getModel("notificationsQuaisModel") as JSONModel;
-      let chargementStartModel    : JSONModel = this.getOwnerComponent()?.getModel("ChargementStartModel")    as JSONModel;
-      //=========================== Calcul des indices et indice json du quai sélectionné======================================///
-      let quai_number : number= Number( iconTabBarkey.replace("QUAI", ""));  // Le numéro de quai est calculé à partir de la clé de l'onglet de l'IconTabBar QUAI ->8, QUAI09->9
+public onTabSelect(event: IconTabBar$SelectEvent): void {
+// Récupération de l'identififant de l'onglet sélectionné
+let iconTabBarkey = event.getParameter("key") as string;            //LOT 17 let iconTabBarkey:string -> undefined rajouté
+const router : Router = UIComponent.getRouterFor(this);
+//========================= Récupération des modèles json nécessaires====================================================///
+let ChargementQuaiModel     : JSONModel = this.getOwnerComponent()?.getModel("chargementModelJson")     as JSONModel;
+let notificationsQuaisModel : JSONModel = this.getOwnerComponent()?.getModel("notificationsQuaisModel") as JSONModel;
+let chargementStartModel    : JSONModel = this.getOwnerComponent()?.getModel("ChargementStartModel")    as JSONModel;
+//=========================== Calcul des indices et indice json du quai sélectionné======================================///
+let quai_number : number= Number( iconTabBarkey.replace("QUAI", ""));  // Le numéro de quai est calculé à partir de la clé de l'onglet de l'IconTabBar QUAI ->8, QUAI09->9
 
-      const aResults = ChargementQuaiModel.getProperty("/results") as any[];
+const aResults = ChargementQuaiModel.getProperty("/results") as any[];
 
-    // BEGIN Amélioration GEMINI LOT 21 [Chargement en cours] 
-      if (!aResults) {
-          MessageToast.show("Chargement des données en cours...");
-          return;
-      }
-       // BEGIN Amélioration GEMINI LOT 21 
+// BEGIN Amélioration GEMINI LOT 21 [Chargement en cours] 
+if (!aResults) {
+    MessageToast.show("Chargement des données en cours...");
+    return;
+}
+  // BEGIN Amélioration GEMINI LOT 21 
 
-      const quai_index = aResults.findIndex(q => q.quai ===  iconTabBarkey );    // On recherche l'indice de QUAI10, QUAI11 dans la liste des quais
-  
-    //----------------------------- Détection de s'il s'agit de si le quai est en cours de chargement ou non ----------------------------------------------                
-   //  let encours : boolean = ChargementQuaiModel.getObject('/results/${indice_json}/chargementEncours');    // Utiliser les strings templates au lieu de concaténation string
-      const encours = ChargementQuaiModel.getProperty(`/results/${quai_index}/chargementEncours`);
+const quai_index = aResults.findIndex(q => q.quai ===  iconTabBarkey );    // On recherche l'indice de QUAI10, QUAI11 dans la liste des quais
+
+//----------------------------- Détection de s'il s'agit de si le quai est en cours de chargement ou non ----------------------------------------------                
+//  let encours : boolean = ChargementQuaiModel.getObject('/results/${indice_json}/chargementEncours');    // Utiliser les strings templates au lieu de concaténation string
+const encours = ChargementQuaiModel.getProperty(`/results/${quai_index}/chargementEncours`);
           
-    if ( encours == true ) 
-    {
+if ( encours == true )     // CAS CHARGEMENT EN COURS
+{
       /******************    REINITIALISATION DES MESSAGES ERREUR/WARNING LORS DE CHANGEMENT DE QUAI**************************************** */      
       notificationsQuaisModel.setProperty("/chargementstartnotifs/notifwarning/msg_txt","");   
       notificationsQuaisModel.setProperty("/chargementstartnotifs/notifwarning/visible",false); 
       
-      // LOT18 BEGIN -> simplification routing
-      // Relance de la récupération des données de chargement avant la navigation sur le quai
-      this.getOwnerComponent()?.getEventBus().publish("Default", "chargementEvent", {}); 
-      // BEGIN Amélioration GEMINI 09-04-2026 
+      // 2. Accéder au modèle de stockage des statuts
+
+    let aQuais = notificationsQuaisModel.getProperty("/quais") || [];
+
+    // 3. Trouver l'index du quai sélectionné
+    let iIndexQuai = aQuais.findIndex((oQuai: any) => oQuai.quai === iconTabBarkey);
+
+    if (iIndexQuai !== -1) {
+        let bNotRefreshed = notificationsQuaisModel.getProperty(`/quais/${iIndexQuai}/NotRefreshed`);          // TODO-> Vérifier le chemin
+        let bIsRfidLoading = notificationsQuaisModel.getProperty(`/quais/${iIndexQuai}/isRfidLoading`);
+            // Déclenchement du rechargement des données du quai via l'Event Bus
+            // Comment savoir si le quai est dirty à cause d'une chargement UM ( necessire refresh du modèle globale) ou à cause d'un message de valiation (nécessite le refresh du modèle de validation de chargement UM)
+            // SÉCURITÉ : On vérifie qu'on a bien un tableau avec des éléments ET qu'on n'est pas en cours de lecture RFID
+            if (Array.isArray(bNotRefreshed) && bNotRefreshed.length > 0 && bIsRfidLoading !== true) {
+                
+                // On boucle sur toutes les demandes accumulées pendant l'absence de l'utilisateur
+                bNotRefreshed.forEach((sStrategy: string) => {
+                    if (sStrategy === "GLOBAL") {
+                        // Exécuter le refresh global
+                        this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.chargement_quais_event, {
+                            quai: iconTabBarkey
+                        });
+                    } 
+                    else if (sStrategy === "VALIDATION") {
+                        // Exécuter le refresh du modèle de validation (Pop-up)
+                        this.getOwnerComponent()?.getEventBus().publish("Default", application_events_enum.validation_msg_chargement_event, {
+                            quai: iconTabBarkey
+                        });
+                    }
+                });
+
+                // 5. REMISE À ZÉRO : Tous les rafraîchissements ont été faits, on remet un tableau vide
+                notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/NotRefreshed`, []); 
+            }
+     }
+    //LOT22 END=======================================================================================================================================
 
      // 1. Récupérer le wrapper d'animation
      const oWrapper = this.byId("animWrapper") as VBox;
 
     if (oWrapper) {
-        // 2. Retirer la classe si elle existe déjà (pour reset l'animation)
-        //oWrapper.removeStyleClass("quai-slide-out");    //quai-slide-in
-    // On récupère la direction : slide vers la gauche si le numéro diminue, vers la droite sinon
-
-  const iDuration = 900; // On prend une marge de sécurité par rapport aux 400ms CSS
-
-if (quai_number < this.gv_current_quai_number) {
-    // SCÉNARIO : On recule (ex: Quai 5 -> Quai 4)
-    oWrapper.removeStyleClass("quai-slide-in-right quai-slide-in-left");
-    oWrapper.addStyleClass("quai-slide-out-right"); // Sort vers la droite
-
-    setTimeout(() => {
-        //this.gv_current_quai_number = quai_number;
-        // Ici tu mets à jour ton modèle JSON/OData
-         oWrapper.removeStyleClass("quai-slide-out-right");
-         oWrapper.addStyleClass("quai-slide-in-left"); // Arrive de la gauche
-    }, iDuration);
-
-} else if (quai_number > this.gv_current_quai_number) {
-    // SCÉNARIO : On avance (ex: Quai 4 -> Quai 5)
-    oWrapper.removeStyleClass("quai-slide-in-right quai-slide-in-left");
-    oWrapper.addStyleClass("quai-slide-out-left"); // Sort vers la gauche
-
-    setTimeout(() => {
-        //this.gv_current_quai_number = quai_number;
-         oWrapper.removeStyleClass("quai-slide-out-left");
-         oWrapper.addStyleClass("quai-slide-in-right"); // Arrive de la droite
-    }, iDuration);
-}   
-  
-}              
+      const iDuration = 900; // On prend une marge de sécurité par rapport aux 400ms CSS
+   // Appel de la méthode fonctionnalisée
+    this._triggerQuaiTransition(oWrapper, quai_number, iDuration);
+    }              
            
      // Amélioration GEMINI pour déclechement transition END
     // 2. On attend un petit délai avant de changer l'URL pour ne pas casser l'anim
@@ -348,22 +383,21 @@ if (quai_number < this.gv_current_quai_number) {
            router.navTo("RouteChargementQuai", { quainumber: quai_number  });
        },1000);
     }
-    else   //Si aucun chargement en cours sur le quai alors on affiche un formulaire de lancement de chargement
-    {      
-      //  REINITIALISATION DU FORMULAIRE DE SAISIE Uniquement si on ne clique pas sur le quai actuellement affiché  
-      if ( this.gv_current_quai_number != quai_number )
-      {
-      chargementStartModel.setProperty("/results/tknum",""); 
-      chargementStartModel.setProperty("/results/matri",""); 
-      notificationsQuaisModel.setProperty("/chargementstartnotifs/notiferror/msg_txt",""); 
-      notificationsQuaisModel.setProperty("/chargementstartnotifs/notiferror/visible",false); 
-      }
+else   //Si aucun chargement en cours sur le quai alors on affiche un formulaire de lancement de chargement
+{      
+  //  REINITIALISATION DU FORMULAIRE DE SAISIE Uniquement si on ne clique pas sur le quai actuellement affiché  
+  if ( this.gv_current_quai_number != quai_number )
+  {
+  chargementStartModel.setProperty("/results/tknum",""); 
+  chargementStartModel.setProperty("/results/matri",""); 
+  notificationsQuaisModel.setProperty("/chargementstartnotifs/notiferror/msg_txt",""); 
+  notificationsQuaisModel.setProperty("/chargementstartnotifs/notiferror/visible",false); 
+  }
 
-    router.navTo("RouteChargementStart", {quainumber: quai_number}); 
-    }
-   // this.gv_current_quai_number = quai_number; // GEMINI [Check] La MAJ du noeud courant est déja faite dans les handlers de routing . A priori pas besoin de faire cette MAJ ici
-   // this.gv_current_quai = iconTabBarkey;      // iconTabBarkey contient QUAI08, QUAI09, QUAI10,ect
-    } 
+router.navTo("RouteChargementStart", {quainumber: quai_number}); 
+}  //Fin condition Chargement en cours ou non
+
+} // Fin de la méthode onTabSelect 
 
   async onOpenDialogValidCharg(): Promise<void> {
     this.gv_dialog_validation_charg ??= await this.loadFragment({                                // A noter qu'il existe également une méthode sur la classe Fragement pour instantier un fragment

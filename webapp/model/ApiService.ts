@@ -5,6 +5,7 @@ import Component from "../Component";
 import MessageToast from "sap/m/MessageToast";
 import MessageBox from "sap/m/MessageBox";
 import Log from "sap/base/Log";
+import {  IMotifNchStructure} from "./Interfaces";
 
 
 /**
@@ -328,7 +329,7 @@ public post_motifs_nonchargement_old(i_finChargementQuaiModelJSON : JSONModel, i
         );  
     }
 
-public async post_motifs_nonchargement(oModel: JSONModel, i_quai1: string, i_quainumber: number, i_tknum: string, i_tMotifNocharg: string[]): Promise<void> {
+public async post_motifs_nonchargement(oModel: JSONModel, i_quai1: string, i_quainumber: number, i_tknum: string, i_tMotifNocharg: IMotifNchStructure[]): Promise<void> {
     const sUrl = `${this.gv_endchargement_api_url}`;
     
     const oPayload = { motifs: i_tMotifNocharg };

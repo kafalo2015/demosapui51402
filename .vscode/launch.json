@@ -5,11 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
-            "request": "launch",
-            "name": "Launch Chrome against localhost",
-            "url": "http://localhost:8080",
-            "webRoot": "${workspaceFolder}"
+           "type": "chrome",
+      "request": "launch",
+      "name": "Déboguer UI5 - Chargement Quais",
+      "url": "http://localhost:8080", 
+      "webRoot": "${workspaceFolder}/webapp", // <-- Modifié ici pour cibler le dossier des sources
+      "sourceMaps": true
         }
     ]
 }

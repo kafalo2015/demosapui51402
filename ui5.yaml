@@ -17,8 +17,6 @@ framework:
    - name: sap.ui.layout
    - name: sap.f
    - name: sap.tnt
-  
-  
 server:
   customMiddleware:
     - name: fiori-tools-proxy
@@ -29,65 +27,16 @@ server:
           path:
             - /resources
             - /test-resources
-          url: https://ui5.sap.com        
+          url: https://ui5.sap.com   
+      #  backend:
+      #    - path: /sap
+      #      url: https://sapdev.exaclair.eu       
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:
         port: 35729
         path: webapp
         delay: 300
-    - name: ui5-middleware-simpleproxy
-      afterMiddleware: compression
-      mountPath: /rest_bas
-      configuration:
-       baseUri: "http://sexa-sapoc-s4.exaclair.clairefontaine.local:8001"
-       enableWebSocket: true
-       strictSSL: false
-       httpHeaders:
-         Access-Control-Allow-Origin: '*' 
-       username: env:FIORI_TOOLS_USER
-       password: env:FIORI_TOOLS_PASSWORD   
-    - name: ui5-middleware-simpleproxy
-      afterMiddleware: compression
-      mountPath: /rest_dev
-      configuration:
-       baseUri: "http://shds-sapdev.exaclair.clairefontaine.local:1080"
-       enableWebSocket: true
-       strictSSL: false
-       httpHeaders:
-         Access-Control-Allow-Origin: '*' 
-       username: env:FIORI_TOOLS_USER
-       password: env:FIORI_TOOLS_PASSWORD   
-    - name: ui5-middleware-simpleproxy
-      afterMiddleware: compression
-      mountPath: /rest_qual
-      configuration:
-       baseUri: "http://shds-sapqual.exaclair.clairefontaine.local:1080"
-       enableWebSocket: true
-       strictSSL: false
-       httpHeaders:
-         Access-Control-Allow-Origin: '*' 
-       username: env:FIORI_TOOLS_USER
-       password: env:FIORI_TOOLS_PASSWORD   
-    - name: ui5-middleware-simpleproxy
-      afterMiddleware: compression
-      mountPath: /odata_dev
-      configuration:
-       baseUri: "https://shds-sapdev.exaclair.clairefontaine.local:1080"
-       enableWebSocket: true
-       strictSSL: false
-       httpHeaders:
-         Access-Control-Allow-Origin: '*' 
-       username: env:FIORI_TOOLS_USER
-       password: env:FIORI_TOOLS_PASSWORD    
-    - name : ui5-middleware-simpleproxy
-      afterMiddleware: compression
-      mountPath: /odata_test
-      configuration:
-       baseUri: "https://services.odata.org"
-       strictSSL: false
-       httpHeader:
-        Access-Control-Allow-Origin: '*'  
     - name: fiori-tools-preview
       afterMiddleware: fiori-tools-appreload
       configuration:

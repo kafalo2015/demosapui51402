@@ -243,10 +243,11 @@ public onScanManuelUm(event: Button$PressEvent): void {
  public onSubmitUm(event:Input$SubmitEvent):void {
   //===================================Déclaration des modèles utilisés dans le Handler=================================================================//
   let ChargementUmModel: JSONModel =   this.getOwnerComponent()?.getModel( "ChargementUmModel") as JSONModel;
+  let notificationsQuaisModel : JSONModel  = this.getOwnerComponent()?.getModel("notificationsQuaisModel") as JSONModel;   // LOT 22 Indicateur Visuel rFID
   //===================================Récupération des valeurs du modèle =================================================================//
   let input_data:any = ChargementUmModel.getData();   // CHECK GEMINI -> Pourquoi appeler la méthode getData() d'un JSON Modèle avant de faire un post sur le même modèle
  // Amélioration GEMINI LOT 20/21 Typage des payload des APIS POST
- const oComponent = this.getOwnerComponent() as Component;
+  const oComponent = this.getOwnerComponent() as Component;
 
  // Dans ton fragment ou contrôleur de départ :
 const oPayload: IChargementUmPayload = {
@@ -260,6 +261,14 @@ const oPayload: IChargementUmPayload = {
  // bEGIN Recommandation GEMINI LOT 21 -> Vider le code UM après chaque Scan
   ChargementUmModel?.setProperty("/codum", "");
   // END Recommandation GEMINI LOT 21 -> Vider le code UM après chaque Scan
+
+     let aQuais = notificationsQuaisModel.getProperty("/quais");
+  // Trouver dynamiquement l'indice du quai par son nom (ex: "QUAI08")
+     let iIndexQuai = aQuais.findIndex((oQuai: any) => oQuai.quai === oComponent.gv_current_quai);
+     notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/isRfidLoading`, false);   //-> Repasser l'indicateur de chargment RFID à X chargement manuel
+  // LOt 22 -> L'indicateur Visual de Chargement RFID doit être fermé en cas de chargement manuel [En toute rigueur il faudrait le faire dans le then de l'api plus en aval]
+
+  ///
  }
   
  async onLoadFragmentFauxCam(): Promise<void> {

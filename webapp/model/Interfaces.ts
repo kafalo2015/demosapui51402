@@ -17,7 +17,8 @@ export interface IRouteParams {
      action: string,
      user:string,
      time:Date, 
-     checkid : string
+     checkid : string,
+     i_rfid:string
 }
 
  export interface IChargementMsgValidation {
@@ -72,12 +73,30 @@ export interface IMotifsNchGetPayload {
 }
 
 
+// Structure équivalente au ty_motnch ABAP
+export interface IMotifNchStructure {
+    codmot: string, // LENGTH 2
+    libmot: string, // LENGTH 25
+    // Ajoutez ici les propriétés de zpcf_cha_pstnch si elles doivent être poussées par le front
+    numtra: string,
+    numliv: string,
+    pstliv : string,
+    typum: string,
+    numcde: string,
+    pstcde: string,
+    codssp: string,
+    numssp: string,
+    codart: string,
+    nbumch: string,
+    nbumac: string,
+}
+
 // Payload pour le scan d'une UM
 export interface IMotifsNchPostPayload {
     quai1: string,
     quai_number : number,
     tknum:string,
-    tMotifNocharg: string[]
+    tMotifNocharg: IMotifNchStructure[],
 }
 
 

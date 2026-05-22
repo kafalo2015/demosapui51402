@@ -3,7 +3,7 @@ import Component from "../Component";
 import { application_events_enum, chargement_um_context } from "./Enums";
 import MessageToast from "sap/m/MessageToast";
 import { IWebSocketNotifs, IChargementUmContext, IChargementUmGetPayload, IChargementUmPayload, IChargementUmValidationPayload, 
-       IChargementStartPayload,IMotifsNchGetPayload,IMotifsNchPostPayload, IUmStockForMaterialPayload } from "./Interfaces";
+       IChargementStartPayload,IMotifsNchGetPayload,IMotifsNchPostPayload, IUmStockForMaterialPayload,  IMotifNchStructure} from "./Interfaces";
 /**
  * @namespace clf.logistique.chargementquais.model
  */
@@ -129,7 +129,7 @@ private _notificationWebSocketHandler(channel: string, event: string, data: any)
     
     const payload =  data as IWebSocketNotifs;
     this._oComponent.notificationWebSocketHandler(payload.type_msg,payload.msg_txt, payload.transport, payload.um, payload.quai, payload.action,
-                                                payload.user, payload.time, payload.checkid);
+                                                payload.user, payload.time, payload.checkid,  payload.i_rfid);
     
     // GEMINI END  [Amélioration] Créer un payload   
 }
