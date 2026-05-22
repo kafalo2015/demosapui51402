@@ -17,7 +17,8 @@ export interface IRouteParams {
      action: string,
      user:string,
      time:Date, 
-     checkid : string
+     checkid : string,
+     i_rfid:string
 }
 
  export interface IChargementMsgValidation {

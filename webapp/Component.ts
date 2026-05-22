@@ -1,5 +1,5 @@
 import BaseComponent from "sap/ui/core/UIComponent";
-import WebSocket, { WebSocket$MessageEvent,WebSocket$ErrorEvent } from "sap/ui/core/ws/WebSocket";
+import   WebSocket , {WebSocket$MessageEvent, WebSocket$ErrorEvent,  WebSocket$CloseEvent} from "sap/ui/core/ws/WebSocket";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import ResourceModel from "sap/ui/model/resource/ResourceModel";
 import MessageToast from "sap/m/MessageToast";
@@ -44,6 +44,12 @@ export default class Component extends BaseComponent {
 
     public  gsContentDensityClass!:string;
     private _gv_environment !:environment_enum;
+       // Au sommet de ton contrôleur, dans la zone de déclaration des propriétés privées :
+    private _rfidTimeoutId: any = null;  //LOT 12 Bombardement Notifications Chargement RFID/Debounce
+    // Tableau associatif pour isoler les minuteurs par quai
+    //private _rfidTimeouts: Record<string, number> = {};
+   private _rfidTimeouts: Record<string, ReturnType<typeof setTimeout> | null> = {};   // GEMINI [Astuce] Gestion du type timeout de node ou javascrit pour éviter erreurs compilation
+   
 
     public gv_websocket!: WebSocket;          // URL Web Socket LOT16
     public gv_current_application!: string;   // Stocke le nom de l'application actuellement affiché (Liste des chargmentn ou Chargement des quais)
@@ -54,8 +60,9 @@ export default class Component extends BaseComponent {
         // call the base component's init function
     super.init();
     // Changemment de variable environnement (dev ou qual) pour appeler les API de la qual ou de la dev
-    this._gv_environment = environment_enum.test;  // GEMINI[QUESTIONS] J'ai géré la variable d'environnement au niveau du contrôlleur. 
+    this._gv_environment = environment_enum.dev;  // GEMINI[QUESTIONS] J'ai géré la variable d'environnement au niveau du contrôlleur. 
                                                     // Est-ce qu'il n'y avait pas une autre méthode?
+
 
     // console.log("P1 HIGH Lecture de la variable de configuration du manifest /sap.ui5/config/api_env : " +    this.gv_environment )
     const oBundle = this.getModel("i18n") as ResourceModel;
@@ -69,6 +76,9 @@ export default class Component extends BaseComponent {
     // GEMINI BEGIN [Questions]
     
         this._createDynamicQuaisModel();
+
+        // === INITIALISATION CRITIQUE DES TIMEOUTS PAR QUAI ===
+    this._rfidTimeouts = {}; // LOT22 Debounce RFID + Lazy refresh
 
     // BEGIN GEMINI[ACTION] Refonte appel des APi dans le module ApiService -> ETAPE 1 getApiUrl dans le nouveau module-> Est-ce que c'est ok 
     this._apiService = new ApiService(this._gv_environment,this.getEventBus(),this);
@@ -127,6 +137,8 @@ private _createDynamicQuaisModel(): void {
                     backgroundcolorshade: "ShadeE"
                 },
                 um: "",
+                isRfidLoading : false,     //LOT 22 Debounce refresh RFID/Lazy refresh
+                NotRefreshed: [], // <-- On initialise CHAQUE quai avec un tableau vide local   //LOT 22 Debounce refresh RFID/Lazy refresh
                 notifs: {
                     notifsuccess: { msg_txt: "", visible: false },
                     notifwarning: { msg_txt: "", visible: false },
@@ -148,7 +160,7 @@ private _createDynamicQuaisModel(): void {
 //---------------------------------------------------------------------------------------------------------------------------------//
 //                                                                                                                                 //  
 //---------------------------------------------------------------------------------------------------------------------------------// 
-public notificationWebSocketHandler(type_msg:string, msg_txt: string,transport:string, um: String, current_quai: string, action :string, user:string, time:any,  p_checkid:string ) : void{ 
+public notificationWebSocketHandler(type_msg:string, msg_txt: string,transport:string, um: String, current_quai: string, action :string, user:string, time:any,  p_checkid:string, i_rfid:string ) : void{ 
     let notificationsQuaisModel : JSONModel  = this.getModel("notificationsQuaisModel") as JSONModel;
 
     let aQuais = notificationsQuaisModel.getProperty("/quais");
@@ -171,7 +183,7 @@ public notificationWebSocketHandler(type_msg:string, msg_txt: string,transport:s
     this.notif_all_quais(notificationsQuaisModel, type_msg, msg_txt,time);
     console.table(notificationsQuaisModel.getData().quais)  //=>  //GEMINI [A CAPITALISER] Méthode de logging : console.table ou Log.table => Donnez moi des explications sur les différentes techniques 
 // Relances des API de chargement, de validation de chargement -> Vérifier que la relance des API ne fait pas trop souvent- > Peut être relancer uniquement si l'utiliseur se trouve sur le quai concerné
-    this.refresh_after_wsnotification(action,type_msg,msg_txt);
+    this.refresh_after_wsnotification(action,type_msg,msg_txt,i_rfid,current_quai);
 // Affichage de la popup de Validation de chargement (si la notification concerne le quais en cours)
     this.open_validationchargement_popup(action,type_msg,current_quai);        
 }
@@ -255,14 +267,219 @@ private notif_all_quais(p_notificationsQuaisModel : JSONModel, type_msg :string,
     p_notificationsQuaisModel.setProperty("/notif_txt_all",msg_text_all_object);
 }
 
-public refresh_after_wsnotification(action :string, type_msg:string, msg_txt: string)
+//public refresh_after_wsnotification(action :string, type_msg:string, msg_txt: string)
+public refresh_after_wsnotification(action :string, type_msg:string, msg_txt: string, i_rfid :string, current_quai:string)    // LOT22 -> Rafraichissement différent si RFID ou manuel
 {
-    if ((action == action_code_enum.chargement) && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai    //LOT17 => Amélioration code
-    {
-    this.getEventBus().publish("Default", application_events_enum.chargement_quais_event, {}); 
-    //this.getEventBus().publish("Default", application_events_enum.chargement_prevus_event, {}); "Rechargement de la liste des chargements prévus"
-    this.getEventBus().publish("Default", application_events_enum.validation_msg_chargement_event, {});    //LOT 13 
+    // =========================================================================================================================================
+    //   GEMINI [TODO] LOT 22 BEGIN    Le rafraichisssement doit se fait différement en fonction de si c'est un chargement d'UM manuel ou RFID
+    //  - Si Chargement UM Manuel alors on rafraichit le modèle de validation de chargement et le modèle de chargement(grosse requête)
+    //  - si Chargement IM RFID on rafraîchit seulement le modèle de validation de chargement mais on ne rafraîchit le modèle de chargement 
+    //    uniquement si la dernière notification de chargement RFID a plus de  4 secondes avec la notification actuelle
+    // ========================================================================================================================================
+
+    // // ==========================================
+    // // LOGIQUE 1 : GESTION DES VALIDATIONS (W)
+    // // ==========================================
+    // // Si c'est une action de chargement avec une validation ('V')ou une confirmation ('C')
+    // if (action === action_code_enum.chargement && (type_msg === 'V' || type_msg === 'C') ) 
+    // {
+    //     // On rafraîchit immédiatement le modèle unitaire pour lever le pop-up Oui/Non
+    //     this.getEventBus().publish("Default", application_events_enum.validation_msg_chargement_event, {}); 
+    // }
+    // // ==========================================
+    // // LOGIQUE 2 : GESTION DU MODÈLE GLOBAL
+    // // ==========================================
+    // // Si c'est une action de chargement (par exemple confirmation de type 'information' / 'S')
+    // if (action === action_code_enum.chargement && type_msg === 'information') 
+    // {
+    //    // Si i_rfid est vide (""), c'est un chargement MANUEL
+    //     if (i_rfid === "")
+    //     {
+    //     // --- CAS MANUEL : Refresh Global Immédiat ---
+    //         this.getEventBus().publish("Default", application_events_enum.chargement_quais_event, {}); 
+    //     }
+    //     // Si i_rfid vaut "X", c'est un chargement RFID
+    //     else if (i_rfid === "X")
+    //     {
+    //           // --- CAS RFID : Mode "Debounce" (Temporisation de 4s) ---
+    //         if (this._rfidTimeoutId) {
+    //             clearTimeout(this._rfidTimeoutId); // On reset le ticket de vestiaire précédent
+    //         }
+
+    //         this._rfidTimeoutId = setTimeout(() => {
+    //             // S'exécute uniquement après 4 secondes de silence radio
+    //             this.getEventBus().publish("Default", application_events_enum.chargement_quais_event, {}); 
+    //             this._rfidTimeoutId = null;
+    //         }, 4000);
+          
+let notificationsQuaisModel: JSONModel = this.getModel("notificationsQuaisModel") as JSONModel; 
+
+let aQuais = notificationsQuaisModel.getProperty("/quais");
+// Trouver dynamiquement l'indice du quai par son nom (ex: "QUAI08")
+let iIndexQuai = aQuais.findIndex((oQuai: any) => oQuai.quai === current_quai);
+
+if (iIndexQuai === -1) {
+    return;
+}
+
+//===================================Nouveau code avec stockage statut chargement RfID sur un quai au niveau du modèle de Notifications de quais================//
+// if (action === action_code_enum.chargement && i_rfid === "X") //Cas chargement UM avec RFID
+// {
+//     if (type_msg === 'information') //Cas Chargement UM avec succès (information)
+//     {
+//         // 1. On active le témoin RFID uniquement pour CE quai
+//         notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/isRfidLoading`, true);
+
+//         // 2. Gestion du Debounce par quai pour ne pas mélanger les pinceaux
+//         if (this._rfidTimeouts[current_quai]) { 
+//             clearTimeout(this._rfidTimeouts[current_quai]); 
+//         }
+
+//         this._rfidTimeouts[current_quai] = setTimeout(() => {
+//             // Fin de la rafale pour ce quai : Refresh global
+//             // Attention on ne doit rafraichir que si l'on se trouve sur le quai concerné par la notification sinon on le met en dirty
+//             if (this.gv_current_quai === current_quai) {
+//                 this.getEventBus().publish("Default", application_events_enum.chargement_quais_event, {}); 
+//             } else {
+
+//                 let aRefreshes = notificationsQuaisModel.getProperty(`/quais/${iIndexQuai}/NotRefreshed`) || [];
+//                     if (!aRefreshes.includes("GLOBAL")) {
+//                     aRefreshes.push("GLOBAL");
+//                     notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/NotRefreshed`, aRefreshes);
+// }
+//                 //notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/NotRefreshed`, true);
+//             }
+            
+//             // Extinction du témoin RFID uniquement pour ce quai
+//             notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/isRfidLoading`, false);
+//             this._rfidTimeouts[current_quai] = null;
+//         }, 4000);
+//     }
+
+//     if (type_msg === 'V' || type_msg === 'W') // Cas chargement avec validation
+//     {
+//         if (this.gv_current_quai === current_quai) {
+//             // On rafraîchit immédiatement le modèle unitaire pour lever le pop-up Oui/Non
+//             this.getEventBus().publish("Default", application_events_enum.validation_msg_chargement_event, {}); 
+//         } else {  
+
+//             let aRefreshes = notificationsQuaisModel.getProperty(`/quais/${iIndexQuai}/NotRefreshed`) || [];
+//             if (!aRefreshes.includes("VALIDATION")) {
+//             aRefreshes.push("VALIDATION");
+//             notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/NotRefreshed`, aRefreshes);
+//             }
+
+//             //notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/NotRefreshed`, true);
+//         } 
+//     } 
+// }
+
+// //=============================Cas non RFID=======================================================================
+// if (action === action_code_enum.chargement && i_rfid === "") 
+// {  
+//      if (type_msg === 'information') //Cas Chargement UM avec succès (information)
+//       {        
+//             if (this.gv_current_quai === current_quai) {
+//                 this.getEventBus().publish("Default", application_events_enum.chargement_quais_event, {}); 
+//             } else {
+//                 let aRefreshes = notificationsQuaisModel.getProperty(`/quais/${iIndexQuai}/NotRefreshed`) || [];
+//                     if (!aRefreshes.includes("GLOBAL")) {
+//                     aRefreshes.push("GLOBAL");
+//                     notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/NotRefreshed`, aRefreshes);
+//                     }
+//                 }
+//        }     
+       
+       
+//         if (type_msg === 'V' || type_msg === 'W') // Cas chargement avec validation
+//     {
+//         if (this.gv_current_quai === current_quai) {
+//             // On rafraîchit immédiatement le modèle unitaire pour lever le pop-up Oui/Non
+//             this.getEventBus().publish("Default", application_events_enum.validation_msg_chargement_event, {}); 
+//         } else {  
+//             let aRefreshes = notificationsQuaisModel.getProperty(`/quais/${iIndexQuai}/NotRefreshed`) || [];
+//             if (!aRefreshes.includes("VALIDATION")) {
+//             aRefreshes.push("VALIDATION");
+//             notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/NotRefreshed`, aRefreshes);
+//             }
+//         }   
+       
+//     }
+   
+// } 
+
+//=============================Cas non RFID=======================================================================
+
+
+//----------------------------LOt22 Amélioration du code GEMINI BEGIN ---------------------------------------------------
+
+if (action === action_code_enum.chargement) {
+    
+    // ==========================================
+    // 1. TRAITEMENT DES MESSAGES DE VALIDATION (V ou W) - RFID ou MANUEL idem
+    // ==========================================
+    if (type_msg === 'V' || type_msg === 'W') {
+        if (this.gv_current_quai === current_quai) {
+            // On rafraîchit immédiatement le modèle unitaire pour lever le pop-up Oui/Non
+            this.getEventBus().publish("Default", application_events_enum.validation_msg_chargement_event, {}); 
+        } else {  
+            let aRefreshes = notificationsQuaisModel.getProperty(`/quais/${iIndexQuai}/NotRefreshed`) || [];
+            if (!aRefreshes.includes("VALIDATION")) {
+                aRefreshes.push("VALIDATION");
+                notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/NotRefreshed`, aRefreshes);
+            }
+        } 
     }
+
+    // ==========================================
+    // 2. TRAITEMENT DES SUCCÈS (INFORMATION)
+    // ==========================================
+    if (type_msg === 'information') {
+        
+        // Fonction utilitaire interne pour centraliser la décision de rafraîchissement
+        const fnExecuteRefreshOrFlag = () => {
+            if (this.gv_current_quai === current_quai) {
+                this.getEventBus().publish("Default", application_events_enum.chargement_quais_event, {}); 
+            } else {
+                let aRefreshes = notificationsQuaisModel.getProperty(`/quais/${iIndexQuai}/NotRefreshed`) || [];
+                if (!aRefreshes.includes("GLOBAL")) {
+                    aRefreshes.push("GLOBAL");
+                    notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/NotRefreshed`, aRefreshes);
+                }
+            }
+        };
+
+        if (i_rfid === "X") {
+            // --- CAS RFID : Gestion du Debounce ---
+            notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/isRfidLoading`, true);
+
+            if (this._rfidTimeouts[current_quai]) { 
+                clearTimeout(this._rfidTimeouts[current_quai]); 
+            }
+
+            this._rfidTimeouts[current_quai] = setTimeout(() => {
+                // Exécution de la logique de refresh sélective
+                fnExecuteRefreshOrFlag();
+                
+                // Extinction du témoin RFID et nettoyage du handle
+                notificationsQuaisModel.setProperty(`/quais/${iIndexQuai}/isRfidLoading`, false);
+                this._rfidTimeouts[current_quai] = null;
+            }, 4000);
+
+        } else {
+            // --- CAS MANUEL (i_rfid === "") : Exécution instantanée ---
+            fnExecuteRefreshOrFlag();
+        }
+    }
+}
+
+//----------------------------LOt22 Amélioration du code GEMINI BEGIN ---------------------------------------------------
+
+
+
+
+   //GEMINI [TODO] LOT 22 END    Le rafraichisssement doit se fait différement en fonction de si c'est un chargement manuel ou RFID
+    
     if ((action == action_code_enum.dechargement) && (type_msg == 'information' ) ) // TODO => && ( IconTabBarControl.getSelectedKey() == current_quai
     {
     this.getEventBus().publish("Default", application_events_enum.chargement_quais_event, {}); 
@@ -424,7 +641,22 @@ public open_websocket_NotificationUM(): void {
         // Tentative de reconnexion après 5 secondes
         setTimeout(() => this.open_websocket_NotificationUM(), 5000);
         
-        MessageToast.show("Perte de connexion temps réel. Tentative de reconnexion...");
+        MessageToast.show("Perte de connexion temps réel. T entative de reconnexion...");
+    });
+
+     this.gv_websocket.attachClose((  oEvent: WebSocket$CloseEvent  ) => {
+        Log.error("Fermeture de connexion WebSocket");
+    const iCode = oEvent.getParameter("code");   // TypeScript sait que c'est un number
+    const sReason = oEvent.getParameter("reason"); // TypeScript sait que c'est une string
+
+    console.log("--- Diagnostic WebSocket Production ---");
+    console.log("Code de fermeture :", iCode);
+    console.log("Raison :", sReason || "Aucune raison fournie (probable blocage réseau/SSL)");
+    
+    // Logique d'aide au diagnostic
+    // if (iCode === 1006) {
+    //     console.warn("Alerte : Code 1006 détecté. Vérifier le Firewall du serveur ou le protocole WSS.");
+    // }   
     });
 
     this.gv_websocket.attachMessage( (oEvent: WebSocket$MessageEvent) => {

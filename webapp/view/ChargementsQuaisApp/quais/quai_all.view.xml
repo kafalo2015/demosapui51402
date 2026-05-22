@@ -15,7 +15,7 @@
 		<l:BlockLayoutRow >
 			<l:BlockLayoutCell id = "Header_BlockLayoutCell1" class="compactCell"
 
-			   width = "75"
+			   width = "75"	
 			   
 			   backgroundColorSet="{notificationsQuaisModel>header/backgroundcolorset}"
 			   backgroundColorShade="{notificationsQuaisModel>header/backgroundcolorshade}">
@@ -112,6 +112,16 @@
 			</l:BlockLayoutCell>
 		</l:BlockLayoutRow>
 	</l:BlockLayout> 
+
+			<HBox width="100%" 
+					visible="{notificationsQuaisModel>isRfidLoading}"
+					class="rfidMarqueeDrawer">
+				<div class="rfidMarqueeTrack">
+					<span class="rfidMarqueeText">
+						+++ LECTURE RFID EN COURS... VEUILLEZ PATIENTER +++ LECTURE RFID EN COURS... VEUILLEZ PATIENTER +++
+					</span>
+				</div>
+			</HBox>
 	       <MessageStrip id = "messageStripInformationV2"
 				text="{notificationsQuaisModel>notifs/notifsuccess/msg_txt}"
 				type="Success"

@@ -85,3 +85,54 @@
 .sapUiBlockLayoutSizeL .compactCell .sapUiBlockCellContent {
     padding: 0.6rem 0.8rem !important; /* On divise par 4 l'espace par défaut */
 }
+
+
+/*LOT 22  Debounce RFID/Lazyloading quai/indicateur visuel RFID  */
+
+/* Le conteneur du tiroir qui s'ouvre */
+.rfidMarqueeDrawer {
+    width: 100%;
+    background-color: #cc0000 !important; /* Rouge standard SAP très vif (Negative) */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    box-shadow: inset 0px 0px 15px rgba(0, 0, 0, 0.6);
+    border-bottom: 3px solid #660000;
+    
+    /* Animation d'ouverture fluide */
+    height: 0px;
+    animation: openRfidDrawer 0.3s forwards ease-out;
+}
+
+/* Le rail pour le défilement */
+.rfidMarqueeTrack {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* Le texte géant */
+.rfidMarqueeText {
+    display: inline-block;
+    font-size: 2.6rem !important; /* Écrit en TRÈS grand pour être lu depuis le chariot */
+    font-weight: bold !important;
+    color: #FFFFFF !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    padding-left: 100%;
+    animation: rfidMarqueeLoop 10s linear infinite;
+}
+
+/* --- KEYFRAMES ANIMATIONS --- */
+
+/* 1. Déploiement du bandeau */
+@keyframes openRfidDrawer {
+    from { height: 0px; }
+    to { height: 70px; } /* Hauteur finale du bandeau */
+}
+
+/* 2. Défilement infini de droite à gauche */
+@keyframes rfidMarqueeLoop {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-100%, 0, 0); }
+}
+
